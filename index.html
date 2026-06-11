@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贵州古芝源品牌管理有限公司 - 传承古法·芝养人生</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2d5016;
+            --light-green: #4a7c23;
+            --earth-brown: #8b6f47;
+            --cream: #f5f0e8;
+            --dark-brown: #3e2723;
+            --gold: #d4a574;
+            --text-dark: #2c2c2c;
+            --text-light: #666;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "SimSun", serif;
+            line-height: 1.8;
+            color: var(--text-dark);
+            background-color: var(--cream);
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(45, 80, 22, 0.95);
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero区域 */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(45, 80, 22, 0.7), rgba(62, 39, 35, 0.8)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%232d5016" width="1200" height="800"/><circle fill="%234a7c23" opacity="0.3" cx="200" cy="200" r="300"/><circle fill="%238b6f47" opacity="0.2" cx="800" cy="600" r="400"/></svg>');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding-top: 80px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            letter-spacing: 5px;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--gold);
+            font-style: italic;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 2;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: var(--gold);
+            color: var(--dark-brown);
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+        }
+
+        .cta-button:hover {
+            background: var(--earth-brown);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 111, 71, 0.4);
+        }
+
+        /* 内容区域 */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--gold);
+            margin: 1rem auto;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* 关于我们 */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .about-text {
+            font-size: 1.05rem;
+            line-height: 2;
+            color: var(--text-light);
+        }
+
+        .about-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            box-shadow: 0 10px 30px rgba(45, 80, 22, 0.2);
+        }
+
+        /* 产品展示 */
+        .products {
+            background: white;
+            padding: 5rem 2rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: var(--cream);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(212, 165, 116, 0.3);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(45, 80, 22, 0.15);
+        }
+
+        .product-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .product-card h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .product-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* 文化理念 */
+        .culture {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-brown));
+            color: white;
+            padding: 5rem 2rem;
+        }
+
+        .culture-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .culture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .culture-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .culture-item .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .culture-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .culture-item p {
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        /* 联系方式 */
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .contact-item {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .contact-item .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .contact-item h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .contact-item p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: var(--dark-brown);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin: 0.5rem 0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">芝</span>
+                古芝源
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#about">关于我们</a></li>
+                <li><a href="#products">产品展示</a></li>
+                <li><a href="#culture">文化理念</a></li>
+                <li><a href="#contact">联系方式</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section id="home" class="hero">
+        <div class="hero-content fade-in">
+            <h1>贵州古芝源品牌管理有限公司</h1>
+            <p class="subtitle">传承古法 · 芝养人生</p>
+            <p>秉承千年中医药文化精髓，融合现代科技与古法工艺<br>
+               致力于打造高品质中药材与健康养生产品<br>
+               让传统智慧惠及现代生活</p>
+            <a href="#about" class="cta-button">了解更多</a>
+        </div>
+    </section>
+
+    <!-- 关于我们 -->
+    <section id="about" class="section">
+        <h2 class="section-title fade-in">关于我们</h2>
+        <p class="section-subtitle fade-in">扎根贵州，传承古法，守护健康</p>
+        <div class="about-content">
+            <div class="about-text fade-in">
+                <p>贵州古芝源品牌管理有限公司，立足于中药材资源丰富的贵州大地，秉承"传承不泥古，创新不离宗"的理念。</p>
+                <br>
+                <p>我们深耕中医药汉方领域，依托贵州得天独厚的自然环境和丰富的中药材资源，甄选道地药材，遵循古法炮制工艺，结合现代科技手段，为消费者提供安全、有效、优质的中医药健康产品。</p>
+                <br>
+                <p>公司业务涵盖中药材种植、研发、生产、销售及品牌管理全产业链，致力于成为中医药文化传承与创新的引领者。</p>
+            </div>
+            <div class="about-image fade-in">
+                <span>🌿</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 产品展示 -->
+    <section id="products" class="products">
+        <div class="section">
+            <h2 class="section-title fade-in">产品展示</h2>
+            <p class="section-subtitle fade-in">道地药材 · 古法炮制 · 品质保证</p>
+            <div class="product-grid">
+                <div class="product-card fade-in">
+                    <div class="product-icon">🌱</div>
+                    <h3>道地药材</h3>
+                    <p>甄选贵州及全国各地道地中药材，从源头把控品质，确保每一味药材都符合最高标准。</p>
+                </div>
+                <div class="product-card fade-in">
+                    <div class="product-icon">🫖</div>
+                    <h3>养生茶饮</h3>
+                    <p>融合传统汉方与现代养生理念，研发系列养生茶饮产品，方便现代人日常调理。</p>
+                </div>
+                <div class="product-card fade-in">
+                    <div class="product-icon">💊</div>
+                    <h3>汉方制剂</h3>
+                    <p>遵循古法炮制工艺，结合现代制药技术，生产高品质中药饮片及制剂产品。</p>
+                </div>
+                <div class="product-card fade-in">
+                    <div class="product-icon">🎁</div>
+                    <h3>健康礼品</h3>
+                    <p>精心打造中医药文化礼品系列，传递健康祝福，弘扬中医药文化。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 文化理念 -->
+    <section id="culture" class="culture">
+        <div class="culture-content">
+            <h2 class="section-title fade-in" style="color: white;">文化理念</h2>
+            <p class="section-subtitle fade-in" style="color: var(--gold);">传承中医药文化 · 守护国民健康</p>
+            <div class="culture-grid">
+                <div class="culture-item fade-in">
+                    <span class="icon">📜</span>
+                    <h3>传承古法</h3>
+                    <p>秉承千年中医药传统，遵循古法炮制工艺，保留药材最纯正的功效与品质</p>
+                </div>
+                <div class="culture-item fade-in">
+                    <span class="icon">🔬</span>
+                    <h3>科技创新</h3>
+                    <p>结合现代科技手段，提升产品质量与安全性，让传统中医药焕发新生机</p>
+                </div>
+                <div class="culture-item fade-in">
+                    <span class="icon">🌍</span>
+                    <h3>道地药材</h3>
+                    <p>甄选全国各地道地药材，建立可追溯的供应链体系，确保源头品质</p>
+                </div>
+                <div class="culture-item fade-in">
+                    <span class="icon">❤️</span>
+                    <h3>健康守护</h3>
+                    <p>以"治未病"为理念，为现代人提供全方位的健康养生解决方案</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section id="contact" class="section">
+        <h2 class="section-title fade-in">联系方式</h2>
+        <p class="section-subtitle fade-in">期待与您携手，共创健康未来</p>
+        <div class="contact-info">
+            <div class="contact-item fade-in">
+                <span class="icon">📍</span>
+                <h3>公司地址</h3>
+                <p>贵州省贵阳市<br>具体地址请联系我们</p>
+            </div>
+            <div class="contact-item fade-in">
+                <span class="icon">📞</span>
+                <h3>联系电话</h3>
+                <p>电话：待补充<br>传真：待补充</p>
+            </div>
+            <div class="contact-item fade-in">
+                <span class="icon">📧</span>
+                <h3>电子邮箱</h3>
+                <p>邮箱：待补充<br>欢迎垂询合作</p>
+            </div>
+            <div class="contact-item fade-in">
+                <span class="icon">💬</span>
+                <h3>在线咨询</h3>
+                <p>微信：待补充<br>工作时间：9:00-18:00</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2026 贵州古芝源品牌管理有限公司 版权所有</p>
+        <p>传承古法 · 芝养人生</p>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 滚动动画
+        const fadeInElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        fadeInElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(45, 80, 22, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(45, 80, 22, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>

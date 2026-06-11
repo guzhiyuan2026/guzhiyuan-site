@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联系方式 - 贵州古芝源品牌管理有限公司</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .contact-page {
+            padding: 120px 2rem 5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .contact-info-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .contact-info-section h3 {
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--cream);
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--cream);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .contact-details h4 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-details p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .contact-form-section {
+            background: var(--cream);
+            padding: 3rem;
+            border-radius: 10px;
+        }
+
+        .contact-form-section h3 {
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(45, 80, 22, 0.1);
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .form-submit:hover {
+            background: var(--light-green);
+        }
+
+        .map-section {
+            margin-top: 3rem;
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .map-section h3 {
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .faq-section {
+            margin-top: 3rem;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 5px 20px rgba(45, 80, 22, 0.15);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary-green);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .faq-answer {
+            margin-top: 1rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-toggle {
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        @media (max-width: 768px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">芝</span>
+                古芝源
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="products.html">产品中心</a></li>
+                <li><a href="news.html">新闻动态</a></li>
+                <li><a href="contact.html" style="color: var(--gold);">联系方式</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 联系方式页面 -->
+    <section class="contact-page">
+        <h2 class="section-title fade-in">联系方式</h2>
+        <p class="section-subtitle fade-in">期待与您携手，共创健康未来</p>
+
+        <div class="contact-container">
+            <!-- 联系信息 -->
+            <div class="contact-info-section fade-in">
+                <h3>联系信息</h3>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-details">
+                        <h4>公司地址</h4>
+                        <p>贵州省贵阳市观山湖区某某路123号<br>古芝源大厦 550001</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-details">
+                        <h4>联系电话</h4>
+                        <p>总机：0851-12345678<br>客服热线：400-123-4567<br>传真：0851-87654321</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div class="contact-details">
+                        <h4>电子邮箱</h4>
+                        <p>商务合作：business@guzhiyuan.com<br>客服支持：service@guzhiyuan.com<br>人力资源：hr@guzhiyuan.com</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">🕐</div>
+                    <div class="contact-details">
+                        <h4>工作时间</h4>
+                        <p>周一至周五：9:00-18:00<br>周六：9:00-12:00<br>周日及法定节假日休息</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">💬</div>
+                    <div class="contact-details">
+                        <h4>在线客服</h4>
+                        <p>微信：Guzhiyuan_Health<br>企业微信：古芝源客服</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 联系表单 -->
+            <div class="contact-form-section fade-in">
+                <h3>在线留言</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">姓名 *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">电话 *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">咨询类型 *</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">请选择咨询类型</option>
+                            <option value="product">产品咨询</option>
+                            <option value="cooperation">商务合作</option>
+                            <option value="agent">代理加盟</option>
+                            <option value="complaint">投诉建议</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">留言内容 *</label>
+                        <textarea id="message" name="message" required placeholder="请详细描述您的需求或问题..."></textarea>
+                    </div>
+
+                    <button type="submit" class="form-submit">提交留言</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 地图 -->
+        <div class="map-section fade-in">
+            <h3>公司位置</h3>
+            <div class="map-placeholder">
+                📍 贵州省贵阳市观山湖区某某路123号 古芝源大厦
+            </div>
+        </div>
+
+        <!-- 常见问题 -->
+        <div class="faq-section fade-in">
+            <h2 class="section-title">常见问题</h2>
+            <div class="faq-list" style="max-width: 900px; margin: 3rem auto 0;">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>如何购买古芝源的产品？</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>您可以通过以下方式购买我们的产品：<br>
+                        1. 在本网站直接下单购买<br>
+                        2. 前往全国各大药店、商场专柜<br>
+                        3. 拨打我们的客服热线 400-123-4567<br>
+                        4. 添加官方微信 Guzhiyuan_Health 咨询购买</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>产品如何保证品质？</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>古芝源所有产品均遵循以下品质保证措施：<br>
+                        1. 甄选道地药材，建立可追溯体系<br>
+                        2. 遵循古法炮制工艺，保留有效成分<br>
+                        3. 通过ISO9001、GMP等多项权威认证<br>
+                        4. 每批次产品均经过严格质量检测</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>是否支持代理加盟？</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>是的，我们欢迎有实力的合作伙伴加入古芝源大家庭。加盟条件包括：<br>
+                        1. 认可古芝源品牌理念<br>
+                        2. 具备一定的资金实力和市场资源<br>
+                        3. 有固定的经营场所<br>
+                        有意者请拨打商务合作热线：0851-12345678</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>产品适合哪些人群？</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>古芝源产品主要适合以下人群：<br>
+                        1. 亚健康人群<br>
+                        2. 免疫力低下者<br>
+                        3. 注重养生保健的中老年人<br>
+                        4. 工作压力大、需要调理的职场人士<br>
+                        具体产品适用人群请参考产品说明书或咨询在线客服。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2026 贵州古芝源品牌管理有限公司 版权所有</p>
+        <p>传承古法 · 芝养人生</p>
+    </footer>
+
+    <script>
+        // FAQ切换
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // 表单提交
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('感谢您的留言！我们将尽快与您联系。');
+            this.reset();
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 滚动动画
+        const fadeInElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        fadeInElements.forEach(element => {
+            observer.observe(element);
+        });
+    </script>
+</body>
+</html>

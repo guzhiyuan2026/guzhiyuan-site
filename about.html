@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - 贵州古芝源品牌管理有限公司</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .about-page {
+            padding: 120px 2rem 5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-section {
+            margin-bottom: 5rem;
+        }
+
+        .about-section h2 {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .about-section h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--gold);
+            margin: 1rem auto;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: var(--text-light);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: var(--primary-green);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            padding: 2rem;
+            background: var(--cream);
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .timeline-year {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-green);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .timeline-content h3 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .timeline-content p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .team-member h3 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member .position {
+            color: var(--earth-brown);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .team-member p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .certifications {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .cert-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--cream);
+            border-radius: 10px;
+        }
+
+        .cert-item .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .cert-item h3 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-item p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                flex-direction: column !important;
+                padding-left: 50px;
+            }
+
+            .timeline-content {
+                width: 100%;
+            }
+
+            .timeline-year {
+                left: 20px;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">芝</span>
+                古芝源
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="about.html" style="color: var(--gold);">关于我们</a></li>
+                <li><a href="products.html">产品中心</a></li>
+                <li><a href="news.html">新闻动态</a></li>
+                <li><a href="contact.html">联系方式</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 关于我们页面 -->
+    <section class="about-page">
+        <!-- 公司简介 -->
+        <div class="about-section fade-in">
+            <h2>公司简介</h2>
+            <div class="about-text">
+                <p>贵州古芝源品牌管理有限公司，立足于中药材资源丰富的贵州大地，秉承"传承不泥古，创新不离宗"的理念，深耕中医药汉方领域。</p>
+                <p>我们依托贵州得天独厚的自然环境和丰富的中药材资源，甄选道地药材，遵循古法炮制工艺，结合现代科技手段，为消费者提供安全、有效、优质的中医药健康产品。</p>
+                <p>公司业务涵盖中药材种植、研发、生产、销售及品牌管理全产业链，致力于成为中医药文化传承与创新的引领者，让千年中医药智慧惠及现代生活。</p>
+                <p>展望未来，古芝源将继续秉持"品质为本、创新为魂、文化为根"的核心价值观，不断提升产品品质和服务水平，为推动中医药事业发展、提高人民健康水平贡献力量。</p>
+            </div>
+        </div>
+
+        <!-- 发展历程 -->
+        <div class="about-section fade-in">
+            <h2>发展历程</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2018</div>
+                    <div class="timeline-content">
+                        <h3>创立之初</h3>
+                        <p>古芝源品牌在贵州贵阳创立，确立了"传承古法、芝养人生"的品牌理念，开始中药材贸易业务。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2019</div>
+                    <div class="timeline-content">
+                        <h3>基地建设</h3>
+                        <p>在贵州毕节建立首个中药材种植基地，面积达500亩，主要种植灵芝、天麻等道地药材。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-content">
+                        <h3>产品研发</h3>
+                        <p>组建研发团队，与多所高校合作，成功研发出首款产品"古法灵芝茶"，获得市场好评。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                        <h3>品牌升级</h3>
+                        <p>完成品牌升级，正式更名为"贵州古芝源品牌管理有限公司"，业务拓展至品牌管理领域。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-content">
+                        <h3>市场拓展</h3>
+                        <p>产品进入全国20多个省市，开设品牌体验店50余家，年销售额突破5000万元。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2026</div>
+                    <div class="timeline-content">
+                        <h3>创新发展</h3>
+                        <p>推出智能养生茶饮机，布局"中医药+AI"新赛道，开启品牌发展新篇章。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心团队 -->
+        <div class="about-section fade-in">
+            <h2>核心团队</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-avatar">👨💼</div>
+                    <h3>张明远</h3>
+                    <div class="position">创始人 & CEO</div>
+                    <p>中医药世家出身，拥有20年中药材行业经验，致力于中医药现代化事业。</p>
+                </div>
+
+                <div class="team-member">
+                    <div class="team-avatar">👩🔬</div>
+                    <h3>李思颖</h3>
+                    <div class="position">研发总监</div>
+                    <p>药学博士，毕业于北京中医药大学，专注于中药新产品研发。</p>
+                </div>
+
+                <div class="team-member">
+                    <div class="team-avatar">👨🌾</div>
+                    <h3>王建国</h3>
+                    <div class="position">种植基地总监</div>
+                    <p>中药材种植专家，负责道地药材种植与质量控制。</p>
+                </div>
+
+                <div class="team-member">
+                    <div class="team-avatar">👩💼</div>
+                    <h3>陈雅婷</h3>
+                    <div class="position">品牌总监</div>
+                    <p>品牌管理专家，负责古芝源品牌战略规划与推广。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 资质认证 -->
+        <div class="about-section fade-in">
+            <h2>资质认证</h2>
+            <div class="certifications">
+                <div class="cert-item">
+                    <span class="icon">🏅</span>
+                    <h3>ISO9001</h3>
+                    <p>质量管理体系认证</p>
+                </div>
+                <div class="cert-item">
+                    <span class="icon">🌿</span>
+                    <h3>有机认证</h3>
+                    <p>中药材有机产品认证</p>
+                </div>
+                <div class="cert-item">
+                    <span class="icon">🔬</span>
+                    <h3>GMP认证</h3>
+                    <p>药品生产质量管理规范</p>
+                </div>
+                <div class="cert-item">
+                    <span class="icon">📜</span>
+                    <h3>SC认证</h3>
+                    <p>食品生产许可证</p>
+                </div>
+                <div class="cert-item">
+                    <span class="icon">🏆</span>
+                    <h3>著名商标</h3>
+                    <p>贵州省著名商标</p>
+                </div>
+                <div class="cert-item">
+                    <span class="icon">🤝</span>
+                    <h3>诚信企业</h3>
+                    <p>贵州省守合同重信用企业</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2026 贵州古芝源品牌管理有限公司 版权所有</p>
+        <p>传承古法 · 芝养人生</p>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 滚动动画
+        const fadeInElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        fadeInElements.forEach(element => {
+            observer.observe(element);
+        });
+    </script>
+</body>
+</html>

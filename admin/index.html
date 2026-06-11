@@ -5,63 +5,662 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>内容管理 - 古芝源后台</title>
     <style>
-        body { margin: 0; padding: 0; }
-        .login-hint {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background: #f5f0e8;
-            border-radius: 10px;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", sans-serif; background: #f0ede5; color: #333; }
+
+        /* Login */
+        .login-box {
+            max-width: 420px; margin: 80px auto; padding: 36px 28px;
+            background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             text-align: center;
-            font-family: "Microsoft YaHei", sans-serif;
-            display: none;
         }
-        .login-hint h2 { color: #2d5016; margin-bottom: 20px; }
-        .login-hint p { color: #666; line-height: 1.8; margin-bottom: 15px; }
-        .login-hint ol { text-align: left; color: #666; line-height: 2; }
-        .login-hint code {
-            background: #e0d5c0;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
+        .login-box h2 { color: #2d5016; margin-bottom: 8px; }
+        .login-box .sub { color: #999; font-size: 13px; margin-bottom: 22px; }
+        .login-box input[type="password"] {
+            width: 100%; padding: 12px; border: 1px solid #d5cdb8; border-radius: 6px;
+            font-size: 14px; margin-bottom: 10px;
         }
+        .login-box button {
+            width: 100%; padding: 12px; background: #2d5016; color: #fff;
+            border: none; border-radius: 6px; font-size: 15px; cursor: pointer;
+        }
+        .login-box button:hover { background: #3a6a1e; }
+        .login-box .note { font-size: 11px; color: #aaa; margin-top: 12px; line-height: 1.6; }
+        .login-box .error { color: #c0392b; font-size: 13px; margin-top: 8px; }
+
+        /* Admin */
+        .admin-panel { display: none; }
+        .topbar {
+            background: #2d5016; color: #fff; padding: 12px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .topbar h1 { font-size: 18px; }
+        .topbar button { background: rgba(255,255,255,0.2); color:#fff; border:none; padding:6px 16px; border-radius:4px; cursor:pointer; }
+        .main { display: flex; min-height: calc(100vh - 48px); }
+        .sidebar {
+            width: 220px; background: #fff; border-right: 1px solid #e5dfcf;
+            padding: 12px 0; flex-shrink: 0;
+        }
+        .sidebar a {
+            display: block; padding: 10px 24px; color: #555; text-decoration: none;
+            font-size: 14px; border-left: 3px solid transparent;
+        }
+        .sidebar a:hover, .sidebar a.active { color: #2d5016; background: #f5f0e2; border-left-color: #2d5016; }
+        .content { flex: 1; padding: 24px 32px; overflow-y: auto; }
+        .section-title { color: #2d5016; font-size: 20px; margin-bottom: 18px; border-bottom: 2px solid #e5dfcf; padding-bottom: 8px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; font-weight: bold; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 8px 12px; border: 1px solid #d5cdb8; border-radius: 5px;
+            font-size: 13px; font-family: inherit;
+        }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .btn-save {
+            background: #2d5016; color: #fff; border: none; padding: 10px 28px;
+            border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 8px;
+        }
+        .btn-save:hover { background: #3a6a1e; }
+        .status { font-size: 13px; margin-left: 14px; }
+        .status.success { color: #27ae60; }
+        .status.error { color: #c0392b; }
+        .status.info { color: #3498db; }
+
+        .list-item {
+            background: #fff; border: 1px solid #e5dfcf; border-radius: 6px;
+            padding: 14px 18px; margin-bottom: 10px; display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer;
+        }
+        .list-item:hover { border-color: #2d5016; background: #fafbf5; }
+        .list-item .delete-btn { color: #c0392b; font-size: 13px; cursor: pointer; margin-left:12px; }
+        .empty-hint { color: #aaa; text-align: center; padding: 40px; }
     </style>
 </head>
 <body>
-    <div class="login-hint" id="login-hint">
-        <h2>🔐 登录说明</h2>
-        <p>首次使用后台管理，需要 GitHub 个人访问令牌（PAT）：</p>
-        <ol>
-            <li>打开 <a href="https://github.com/settings/tokens" target="_blank">GitHub Token 设置</a></li>
-            <li>点击 <b>Generate new token (classic)</b></li>
-            <li>勾选 <code>repo</code> 权限</li>
-            <li>生成后复制 Token</li>
-            <li>在此页面登录时粘贴 Token</li>
-        </ol>
-        <p><b>注意：</b>Token 仅在本地浏览器保存，不会上传到任何服务器。</p>
+
+<!-- LOGIN -->
+<div class="login-box" id="login-box">
+    <h2>🌿 古芝源后台管理</h2>
+    <p class="sub">www.gzguzhiyuan.com</p>
+    <input type="password" id="token-input" placeholder="输入 GitHub Personal Access Token">
+    <button onclick="login()">登录</button>
+    <p class="note">Token 仅保存在浏览器会话中，不会上传到任何服务器。<br>需要勾选 <b>repo</b> 权限的 Personal Access Token。</p>
+    <div class="error" id="login-error"></div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="admin-panel">
+    <div class="topbar">
+        <h1>🌿 古芝源 · 后台管理</h1>
+        <button onclick="logout()">退出登录</button>
     </div>
-    <script>
-        // crypto.randomUUID polyfill (兼容非 HTTPS 或旧浏览器)
-        if (!crypto.randomUUID) {
-            crypto.randomUUID = function() {
-                var values = new Uint8Array(16);
-                crypto.getRandomValues(values);
-                values[6] = (values[6] & 0x0f) | 0x40;
-                values[8] = (values[8] & 0x3f) | 0x80;
-                var hex = Array.prototype.map.call(values, function(b) {
-                    return ('00' + b.toString(16)).slice(-2);
-                }).join('');
-                return hex.slice(0,8) + '-' + hex.slice(8,12) + '-' + hex.slice(12,16) + '-' + hex.slice(16,20) + '-' + hex.slice(20);
-            };
+    <div class="main">
+        <div class="sidebar" id="sidebar">
+            <a href="#" data-page="site" class="active">⚙️ 站点设置</a>
+            <a href="#" data-page="home">🏠 首页内容</a>
+            <a href="#" data-page="about">📖 关于我们</a>
+            <a href="#" data-page="contact">📞 联系我们</a>
+            <a href="#" data-page="news">📰 新闻管理</a>
+            <a href="#" data-page="products">📦 产品管理</a>
+        </div>
+        <div class="content" id="content-area"></div>
+    </div>
+</div>
+
+<script>
+const OWNER = 'guzhiyuan2026';
+const REPO = 'guzhiyuan-site';
+let TOKEN = '';
+
+function login() {
+    TOKEN = document.getElementById('token-input').value.trim();
+    if (!TOKEN) { showError('请输入 Token'); return; }
+    showError('');
+    fetch('https://api.github.com/repos/' + OWNER + '/' + REPO, {
+        headers: { Authorization: 'token ' + TOKEN }
+    }).then(r => {
+        if (r.ok) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            loadPage('site');
+        } else {
+            showError('Token 无效或无 repo 权限');
         }
-    </script>
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-    <script>
-        // 页面加载后显示登录提示 3 秒
-        setTimeout(function() {
-            var hint = document.getElementById('login-hint');
-            if (hint) hint.style.display = 'block';
-        }, 2000);
-    </script>
+    }).catch(() => showError('网络错误，GitHub API 不可达'));
+}
+
+function logout() {
+    TOKEN = '';
+    document.getElementById('login-box').style.display = 'block';
+    document.getElementById('admin-panel').style.display = 'none';
+}
+
+function showError(msg) {
+    document.getElementById('login-error').textContent = msg;
+}
+
+// ---- Sidebar ----
+document.getElementById('sidebar').addEventListener('click', function(e) {
+    if (e.target.tagName === 'A') {
+        e.preventDefault();
+        document.querySelectorAll('#sidebar a').forEach(a => a.classList.remove('active'));
+        e.target.classList.add('active');
+        loadPage(e.target.dataset.page);
+    }
+});
+
+// ---- Load Pages ----
+async function loadPage(page) {
+    const area = document.getElementById('content-area');
+    area.innerHTML = '<p style="color:#999;text-align:center;padding:40px;">加载中...</p>';
+    switch(page) {
+        case 'site': await loadSiteSettings(); break;
+        case 'home': await loadHomeContent(); break;
+        case 'about': await loadAboutContent(); break;
+        case 'contact': await loadContactContent(); break;
+        case 'news': await loadNewsList(); break;
+        case 'products': await loadProductsList(); break;
+    }
+}
+
+// ---- GitHub API helpers ----
+async function getFile(path) {
+    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path, {
+        headers: { Authorization: 'token ' + TOKEN }
+    });
+    if (!resp.ok) throw new Error('Failed to load ' + path);
+    const data = await resp.json();
+    return { content: JSON.parse(atob(data.content)), sha: data.sha };
+}
+
+async function saveFile(path, content, sha, message) {
+    const body = JSON.stringify({
+        message: message || 'Update ' + path,
+        content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
+        branch: 'main',
+        sha: sha
+    });
+    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path, {
+        method: 'PUT',
+        headers: { Authorization: 'token ' + TOKEN, 'Content-Type': 'application/json' },
+        body: body
+    });
+    if (!resp.ok) throw new Error('Save failed');
+    return resp.json();
+}
+
+async function createFile(path, content, message) {
+    const body = JSON.stringify({
+        message: message || 'Create ' + path,
+        content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
+        branch: 'main'
+    });
+    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path, {
+        method: 'PUT',
+        headers: { Authorization: 'token ' + TOKEN, 'Content-Type': 'application/json' },
+        body: body
+    });
+    if (!resp.ok) throw new Error('Create failed');
+    return resp.json();
+}
+
+async function deleteFile(path, sha, message) {
+    const body = JSON.stringify({ message: message || 'Delete ' + path, branch: 'main', sha: sha });
+    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path, {
+        method: 'DELETE',
+        headers: { Authorization: 'token ' + TOKEN, 'Content-Type': 'application/json' },
+        body: body
+    });
+    if (!resp.ok) throw new Error('Delete failed');
+}
+
+// ---- Form builder ----
+function buildForm(fields, data, section) {
+    let html = '';
+    let fieldIdx = 0;
+    for (const field of fields) {
+        const key = field.name || fieldIdx++;
+        const val = data ? (data[key] !== undefined ? data[key] : field.default || '') : (field.default || '');
+        if (field.type === 'list') {
+            html += '<div class="form-group"><label>' + field.label + '</label>';
+            const items = Array.isArray(val) ? val : [];
+            const subFields = field.children || [{ name: 'value', label: '值', type: 'text' }];
+            html += '<div id="list-' + key.replace(/[^a-zA-Z0-9]/g,'_') + '">';
+            items.forEach((item, i) => {
+                let itemHtml = '';
+                for (const sf of subFields) {
+                    const sv = typeof item === 'object' ? (item[sf.name] || '') : item;
+                    itemHtml += '<input type="text" value="' + esc(typeof item === 'object' ? (item[sf.name] || '') : item) + '" data-list="' + key.replace(/[^a-zA-Z0-9]/g,'_') + '" data-idx="' + i + '" data-field="' + sf.name + '" placeholder="' + sf.label + '" style="width:calc(100% - 40px);margin-bottom:4px;"> ';
+                }
+                html += '<div>' + itemHtml + '<button onclick="removeListItem(this)" style="color:#c0392b;border:none;background:none;cursor:pointer;font-size:18px;">&times;</button></div>';
+            });
+            html += '</div>';
+            html += '<button onclick="addListItem(\'' + key.replace(/[^a-zA-Z0-9]/g,'_') + '\',\'' + section + '\',\'' + JSON.stringify(subFields).replace(/'/g,'%27') + '\')" style="color:#2d5016;border:1px dashed #2d5016;background:none;padding:4px 12px;border-radius:4px;cursor:pointer;margin-top:4px;">+ 添加</button>';
+            html += '</div>';
+        } else if (field.widget === 'select' || field.options) {
+            html += '<div class="form-group"><label>' + field.label + '</label>';
+            html += '<select data-field="' + key + '" data-section="' + section + '">';
+            for (const opt of (field.options || [])) {
+                html += '<option' + (val === opt ? ' selected' : '') + '>' + opt + '</option>';
+            }
+            html += '</select></div>';
+        } else if (field.widget === 'textarea' || field.widget === 'text') {
+            html += '<div class="form-group"><label>' + field.label + '</label>';
+            html += '<textarea data-field="' + key + '" data-section="' + section + '" rows="4">' + esc(val) + '</textarea></div>';
+        } else {
+            html += '<div class="form-group"><label>' + field.label + '</label>';
+            html += '<input type="text" data-field="' + key + '" data-section="' + section + '" value="' + esc(val) + '"></div>';
+        }
+    }
+    return html;
+}
+
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function collectForm(section) {
+    const data = {};
+    document.querySelectorAll('[data-section="'+section+'"]').forEach(el => {
+        const key = el.dataset.field;
+        if (!key) return;
+        data[key] = el.value;
+    });
+    return data;
+}
+
+// ---- Site Settings ----
+let siteSha = '';
+async function loadSiteSettings() {
+    try {
+        const f = await getFile('content/site.json');
+        siteSha = f.sha;
+        const d = f.content.company || {};
+        const c = f.content.contact || {};
+        const ft = f.content.footer || {};
+        const html = '<h2 class="section-title">站点设置</h2>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">公司信息</h3>'
+            + '<div class="form-group"><label>公司全称</label><input type="text" data-section="site" data-field="companyName" value="' + esc(d.name) + '"></div>'
+            + '<div class="form-group"><label>简称</label><input type="text" data-section="site" data-field="shortName" value="' + esc(d.shortName) + '"></div>'
+            + '<div class="form-group"><label>品牌口号</label><input type="text" data-section="site" data-field="slogan" value="' + esc(d.slogan) + '"></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">联系方式</h3>'
+            + '<div class="form-group"><label>公司地址</label><input type="text" data-section="site" data-field="address" value="' + esc(c.address) + '"></div>'
+            + '<div class="form-group"><label>电话</label><input type="text" data-section="site" data-field="phone" value="' + esc(c.phone) + '"></div>'
+            + '<div class="form-group"><label>邮箱</label><input type="text" data-section="site" data-field="email" value="' + esc(c.emailBusiness || '') + '"></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">页脚</h3>'
+            + '<div class="form-group"><label>版权信息</label><input type="text" data-section="site" data-field="copyright" value="' + esc(ft.copyright) + '"></div>'
+            + '<button class="btn-save" onclick="saveSite()">保存站点设置</button><span class="status" id="site-status"></span>';
+        document.getElementById('content-area').innerHTML = html;
+    } catch(e) {
+        document.getElementById('content-area').innerHTML = '<p style="color:#c0392b;">加载失败: ' + e.message + '</p>';
+    }
+}
+
+async function saveSite() {
+    const status = document.getElementById('site-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const f = await getFile('content/site.json');
+        siteSha = f.sha;
+        const fields = document.querySelectorAll('[data-section="site"]');
+        const data = {};
+        fields.forEach(el => { data[el.dataset.field] = el.value; });
+        f.content.company.name = data.companyName;
+        f.content.company.shortName = data.shortName;
+        f.content.company.slogan = data.slogan;
+        f.content.contact.address = data.address;
+        f.content.contact.phone = data.phone;
+        if (!f.content.contact.emailBusiness) f.content.contact.emailBusiness = data.email;
+        else f.content.contact.emailBusiness = data.email;
+        f.content.footer.copyright = data.copyright;
+        await saveFile('content/site.json', f.content, siteSha, 'Update site settings');
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+// ---- Home Content ----
+let homeSha = '';
+async function loadHomeContent() {
+    try {
+        const f = await getFile('content/home.json');
+        homeSha = f.sha;
+        const h = f.content.hero || {};
+        const a = f.content.about || {};
+        const html = '<h2 class="section-title">首页内容</h2>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">主视觉区</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="home" data-field="heroTitle" value="' + esc(h.title) + '"></div>'
+            + '<div class="form-group"><label>副标题</label><input type="text" data-section="home" data-field="heroSubtitle" value="' + esc(h.subtitle) + '"></div>'
+            + '<div class="form-group"><label>描述</label><textarea data-section="home" data-field="heroDesc">' + esc(h.description) + '</textarea></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">关于我们摘要</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="home" data-field="aboutTitle" value="' + esc(a.title) + '"></div>'
+            + '<div class="form-group"><label>副标题</label><input type="text" data-section="home" data-field="aboutSubtitle" value="' + esc(a.subtitle) + '"></div>'
+            + '<button class="btn-save" onclick="saveHome()">保存首页内容</button><span class="status" id="home-status"></span>';
+        document.getElementById('content-area').innerHTML = html;
+    } catch(e) {
+        document.getElementById('content-area').innerHTML = '<p style="color:#c0392b;">加载失败: ' + e.message + '</p>';
+    }
+}
+
+async function saveHome() {
+    const status = document.getElementById('home-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const f = await getFile('content/home.json');
+        homeSha = f.sha;
+        const fields = document.querySelectorAll('[data-section="home"]');
+        const data = {};
+        fields.forEach(el => { data[el.dataset.field] = el.value; });
+        f.content.hero.title = data.heroTitle;
+        f.content.hero.subtitle = data.heroSubtitle;
+        f.content.hero.description = data.heroDesc;
+        f.content.about.title = data.aboutTitle;
+        f.content.about.subtitle = data.aboutSubtitle;
+        await saveFile('content/home.json', f.content, homeSha, 'Update home content');
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+// ---- About Content ----
+async function loadAboutContent() {
+    try {
+        const f = await getFile('content/about.json');
+        let introObj = f.content.intro || {};
+        let paraText = '';
+        if (Array.isArray(introObj.paragraphs)) {
+            paraText = introObj.paragraphs.map(p => p.p || '').join('\n\n');
+        }
+        const html = '<h2 class="section-title">关于我们</h2>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="about" data-field="aboutTitle" value="' + esc(introObj.title || '') + '"></div>'
+            + '<div class="form-group"><label>公司介绍（多段，用空行分隔）</label><textarea data-section="about" data-field="aboutText" rows="12">' + esc(paraText) + '</textarea></div>'
+            + '<button class="btn-save" onclick="saveAbout()">保存关于我们</button><span class="status" id="about-status"></span>';
+        document.getElementById('content-area').innerHTML = html;
+    } catch(e) {
+        document.getElementById('content-area').innerHTML = '<p style="color:#c0392b;">加载失败: ' + e.message + '</p>';
+    }
+}
+
+async function saveAbout() {
+    const status = document.getElementById('about-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const f = await getFile('content/about.json');
+        const fields = document.querySelectorAll('[data-section="about"]');
+        const data = {};
+        fields.forEach(el => { data[el.dataset.field] = el.value; });
+        const paragraphs = data.aboutText.split('\n\n').filter(p => p.trim()).map(p => ({ p: p.trim() }));
+        f.content.intro.title = data.aboutTitle;
+        f.content.intro.paragraphs = paragraphs;
+        await saveFile('content/about.json', f.content, 'Update about content');
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+// ---- Contact Content ----
+async function loadContactContent() {
+    try {
+        const f = await getFile('content/contact.json');
+        const info = f.content.info || {};
+        const html = '<h2 class="section-title">联系我们</h2>'
+            + '<div class="form-group"><label>页面标题</label><input type="text" data-section="contact" data-field="title" value="' + esc(info.title || '') + '"></div>'
+            + '<div class="form-group"><label>页面描述</label><textarea data-section="contact" data-field="description">' + esc(info.description || '') + '</textarea></div>'
+            + '<button class="btn-save" onclick="saveContact()">保存联系我们</button><span class="status" id="contact-status"></span>';
+        document.getElementById('content-area').innerHTML = html;
+    } catch(e) {
+        document.getElementById('content-area').innerHTML = '<p style="color:#c0392b;">加载失败: ' + e.message + '</p>';
+    }
+}
+
+async function saveContact() {
+    const status = document.getElementById('contact-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const f = await getFile('content/contact.json');
+        const fields = document.querySelectorAll('[data-section="contact"]');
+        const data = {};
+        fields.forEach(el => { data[el.dataset.field] = el.value; });
+        f.content.info.title = data.title;
+        f.content.info.description = data.description;
+        await saveFile('content/contact.json', f.content, 'Update contact content');
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+// ---- News List ----
+async function loadNewsList() {
+    try {
+        const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/news', {
+            headers: { Authorization: 'token ' + TOKEN }
+        });
+        if (!resp.ok) throw new Error('无法读取新闻目录');
+        const files = await resp.json();
+        let html = '<h2 class="section-title">新闻管理</h2>';
+        html += '<button class="btn-save" onclick="addNews()" style="margin-bottom:16px;">+ 新增新闻</button>';
+        if (!Array.isArray(files) || files.length === 0) {
+            html += '<p class="empty-hint">暂无新闻</p>';
+        } else {
+            for (const file of files) {
+                const nResp = await fetch(file.download_url);
+                const news = await nResp.json();
+                html += '<div class="list-item" onclick="editNews(\'' + file.name + '\',\'' + file.sha + '\')">';
+                html += '<div><b>' + esc(news.title || file.name) + '</b><br><small style="color:#999;">' + esc(news.date || '') + ' · ' + esc(news.category || '') + '</small></div>';
+                html += '<span class="delete-btn" onclick="event.stopPropagation();deleteNews(\'' + file.name + '\',\'' + file.sha + '\')">删除</span>';
+                html += '</div>';
+            }
+        }
+        document.getElementById('content-area').innerHTML = html;
+    } catch(e) {
+        document.getElementById('content-area').innerHTML = '<p style="color:#c0392b;">加载失败: ' + e.message + '</p>';
+    }
+}
+
+function addNews() {
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const timeStr = now.toISOString().replace(/[:.]/g,'-');
+    const html = '<h2 class="section-title">新增新闻</h2>'
+        + '<div class="form-group"><label>标题</label><input type="text" id="news-title"></div>'
+        + '<div class="form-group"><label>日期</label><input type="text" id="news-date" value="' + dateStr + '"></div>'
+        + '<div class="form-group"><label>分类</label><select id="news-category"><option>公司动态</option><option>荣誉奖项</option><option>产品研发</option><option>产品发布</option><option>合作动态</option><option>社会责任</option></select></div>'
+        + '<div class="form-group"><label>摘要</label><textarea id="news-summary" rows="3"></textarea></div>'
+        + '<div class="form-group"><label>正文（Markdown）</label><textarea id="news-body" rows="8"></textarea></div>'
+        + '<button class="btn-save" onclick="saveNewsNew()">保存新闻</button>'
+        + ' <button style="background:#888;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;" onclick="loadNewsList()">取消</button>'
+        + '<span class="status" id="news-status"></span>';
+    document.getElementById('content-area').innerHTML = html;
+}
+
+async function saveNewsNew() {
+    const status = document.getElementById('news-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const title = document.getElementById('news-title').value;
+        const slug = title.replace(/[^a-zA-Z0-9\\u4e00-\\u9fff]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').toLowerCase() || 'news';
+        const now = new Date();
+        const filename = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + '-' + slug + '.json';
+        const content = {
+            title: title,
+            date: document.getElementById('news-date').value,
+            category: document.getElementById('news-category').value,
+            icon: '📰',
+            summary: document.getElementById('news-summary').value,
+            body: document.getElementById('news-body').value
+        };
+        await createFile('content/news/' + filename, content, 'Add news: ' + title);
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+        setTimeout(() => loadNewsList(), 800);
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+async function editNews(filename, sha) {
+    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/news/' + filename, {
+        headers: { Authorization: 'token ' + TOKEN }
+    });
+    const file = await resp.json();
+    const news = JSON.parse(atob(file.content));
+    const html = '<h2 class="section-title">编辑新闻</h2>'
+        + '<div class="form-group"><label>标题</label><input type="text" id="news-title" value="' + esc(news.title) + '"></div>'
+        + '<div class="form-group"><label>日期</label><input type="text" id="news-date" value="' + esc(news.date) + '"></div>'
+        + '<div class="form-group"><label>分类</label><select id="news-category"><option' + (news.category==='公司动态'?' selected':'') + '>公司动态</option><option' + (news.category==='荣誉奖项'?' selected':'') + '>荣誉奖项</option><option' + (news.category==='产品研发'?' selected':'') + '>产品研发</option><option' + (news.category==='产品发布'?' selected':'') + '>产品发布</option><option' + (news.category==='合作动态'?' selected':'') + '>合作动态</option><option' + (news.category==='社会责任'?' selected':'') + '>社会责任</option></select></div>'
+        + '<div class="form-group"><label>摘要</label><textarea id="news-summary" rows="3">' + esc(news.summary || '') + '</textarea></div>'
+        + '<div class="form-group"><label>正文（Markdown）</label><textarea id="news-body" rows="8">' + esc(news.body || '') + '</textarea></div>'
+        + '<button class="btn-save" onclick="saveNewsEdit(\'' + filename + '\',\'' + sha + '\')">更新新闻</button>'
+        + ' <button style="background:#888;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;" onclick="loadNewsList()">取消</button>'
+        + '<span class="status" id="news-status"></span>';
+    document.getElementById('content-area').innerHTML = html;
+}
+
+async function saveNewsEdit(filename, sha) {
+    const status = document.getElementById('news-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const content = {
+            title: document.getElementById('news-title').value,
+            date: document.getElementById('news-date').value,
+            category: document.getElementById('news-category').value,
+            icon: '📰',
+            summary: document.getElementById('news-summary').value,
+            body: document.getElementById('news-body').value
+        };
+        await saveFile('content/news/' + filename, content, sha, 'Update news: ' + content.title);
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+async function deleteNews(filename, sha) {
+    if (!confirm('确定删除这条新闻？')) return;
+    try {
+        await deleteFile('content/news/' + filename, sha, 'Delete news: ' + filename);
+        loadNewsList();
+    } catch(e) {
+        alert('删除失败: ' + e.message);
+    }
+}
+
+// ---- Products List ----
+async function loadProductsList() {
+    try {
+        const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/products', {
+            headers: { Authorization: 'token ' + TOKEN }
+        });
+        if (!resp.ok) throw new Error('无法读取产品目录');
+        const files = await resp.json();
+        let html = '<h2 class="section-title">产品管理</h2>';
+        html += '<button class="btn-save" onclick="addProduct()" style="margin-bottom:16px;">+ 新增产品</button>';
+        if (!Array.isArray(files) || files.length === 0) {
+            html += '<p class="empty-hint">暂无产品</p>';
+        } else {
+            for (const file of files) {
+                if (file.name === 'index.html' || !file.name.endsWith('.json')) continue;
+                const pResp = await fetch(file.download_url);
+                const prod = await pResp.json();
+                html += '<div class="list-item" onclick="editProduct(\'' + file.name + '\',\'' + file.sha + '\')">';
+                html += '<div><b>' + esc(prod.title || file.name) + '</b><br><small style="color:#999;">' + esc(prod.category || '') + ' · ' + esc(prod.price || '') + '</small></div>';
+                html += '<span class="delete-btn" onclick="event.stopPropagation();deleteProduct(\'' + file.name + '\',\'' + file.sha + '\')">删除</span>';
+                html += '</div>';
+            }
+        }
+        document.getElementById('content-area').innerHTML = html;
+    } catch(e) {
+        document.getElementById('content-area').innerHTML = '<p style="color:#c0392b;">加载失败: ' + e.message + '</p>';
+    }
+}
+
+function addProduct() {
+    const html = '<h2 class="section-title">新增产品</h2>'
+        + '<div class="form-group"><label>产品名称</label><input type="text" id="prod-title"></div>'
+        + '<div class="form-group"><label>图标</label><input type="text" id="prod-icon" value="🌿"></div>'
+        + '<div class="form-group"><label>分类</label><select id="prod-category"><option value="herbs">中药材</option><option value="tea">养生茶品</option><option value="formula">配方产品</option><option value="gift">礼盒套装</option></select></div>'
+        + '<div class="form-group"><label>标签（逗号分隔）</label><input type="text" id="prod-tags" value="道地药材">'
+        + '<div class="form-group"><label>描述</label><textarea id="prod-desc" rows="3"></textarea></div>'
+        + '<div class="form-group"><label>价格</label><input type="text" id="prod-price" placeholder="¥XXX"></div>'
+        + '<div class="form-group"><label>详情（Markdown）</label><textarea id="prod-body" rows="6"></textarea></div>'
+        + '<button class="btn-save" onclick="saveProductNew()">保存产品</button>'
+        + ' <button style="background:#888;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;" onclick="loadProductsList()">取消</button>'
+        + '<span class="status" id="prod-status"></span>';
+    document.getElementById('content-area').innerHTML = html;
+}
+
+async function saveProductNew() {
+    const status = document.getElementById('prod-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const title = document.getElementById('prod-title').value;
+        const slug = title.replace(/[^a-zA-Z0-9\\u4e00-\\u9fff]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').toLowerCase() || 'product';
+        const content = {
+            title: title,
+            icon: document.getElementById('prod-icon').value,
+            category: document.getElementById('prod-category').value,
+            tags: document.getElementById('prod-tags').value.split(',').map(s => s.trim()).filter(Boolean),
+            description: document.getElementById('prod-desc').value,
+            price: document.getElementById('prod-price').value,
+            body: document.getElementById('prod-body').value
+        };
+        await createFile('content/products/' + slug + '.json', content, 'Add product: ' + title);
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+        setTimeout(() => loadProductsList(), 800);
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+async function editProduct(filename, sha) {
+    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/products/' + filename, {
+        headers: { Authorization: 'token ' + TOKEN }
+    });
+    const file = await resp.json();
+    const prod = JSON.parse(atob(file.content));
+    const html = '<h2 class="section-title">编辑产品</h2>'
+        + '<div class="form-group"><label>产品名称</label><input type="text" id="prod-title" value="' + esc(prod.title) + '"></div>'
+        + '<div class="form-group"><label>图标</label><input type="text" id="prod-icon" value="' + esc(prod.icon || '🌿') + '"></div>'
+        + '<div class="form-group"><label>分类</label><select id="prod-category"><option value="herbs"' + (prod.category==='herbs'?' selected':'') + '>中药材</option><option value="tea"' + (prod.category==='tea'?' selected':'') + '>养生茶品</option><option value="formula"' + (prod.category==='formula'?' selected':'') + '>配方产品</option><option value="gift"' + (prod.category==='gift'?' selected':'') + '>礼盒套装</option></select></div>'
+        + '<div class="form-group"><label>标签（逗号分隔）</label><input type="text" id="prod-tags" value="' + esc((prod.tags || []).join(', ')) + '">'
+        + '<div class="form-group"><label>描述</label><textarea id="prod-desc" rows="3">' + esc(prod.description || '') + '</textarea></div>'
+        + '<div class="form-group"><label>价格</label><input type="text" id="prod-price" value="' + esc(prod.price || '') + '"></div>'
+        + '<div class="form-group"><label>详情（Markdown）</label><textarea id="prod-body" rows="6">' + esc(prod.body || '') + '</textarea></div>'
+        + '<button class="btn-save" onclick="saveProductEdit(\'' + filename + '\',\'' + sha + '\')">更新产品</button>'
+        + ' <button style="background:#888;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;" onclick="loadProductsList()">取消</button>'
+        + '<span class="status" id="prod-status"></span>';
+    document.getElementById('content-area').innerHTML = html;
+}
+
+async function saveProductEdit(filename, sha) {
+    const status = document.getElementById('prod-status');
+    status.textContent = '保存中...'; status.className = 'status info';
+    try {
+        const content = {
+            title: document.getElementById('prod-title').value,
+            icon: document.getElementById('prod-icon').value,
+            category: document.getElementById('prod-category').value,
+            tags: document.getElementById('prod-tags').value.split(',').map(s => s.trim()).filter(Boolean),
+            description: document.getElementById('prod-desc').value,
+            price: document.getElementById('prod-price').value,
+            body: document.getElementById('prod-body').value
+        };
+        await saveFile('content/products/' + filename, content, sha, 'Update product: ' + content.title);
+        status.textContent = '✅ 已保存'; status.className = 'status success';
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+async function deleteProduct(filename, sha) {
+    if (!confirm('确定删除这个产品？')) return;
+    try {
+        await deleteFile('content/products/' + filename, sha, 'Delete product: ' + filename);
+        loadProductsList();
+    } catch(e) {
+        alert('删除失败: ' + e.message);
+    }
+}
+</script>
 </body>
 </html>

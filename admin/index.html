@@ -431,26 +431,26 @@ async function saveContact() {
 }
 
 // ---- News List ----
+let newsData = null;
+let newsSha = '';
+
 async function loadNewsList() {
     try {
-        const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/news', {
-            headers: { Authorization: 'token ' + TOKEN }
-        });
-        if (!resp.ok) throw new Error('无法读取新闻目录');
-        const files = await resp.json();
+        const f = await getFile('content/news.json');
+        newsData = f.content;
+        newsSha = f.sha;
+        const items = newsData.items || [];
         let html = '<h2 class="section-title">新闻管理</h2>';
-        html += '<button class="btn-save" onclick="addNews()" style="margin-bottom:16px;">+ 新增新闻</button>';
-        if (!Array.isArray(files) || files.length === 0) {
+        html += '<button class="btn-save" onclick="newNewsForm()" style="margin-bottom:16px;">+ 新增新闻</button>';
+        if (items.length === 0) {
             html += '<p class="empty-hint">暂无新闻</p>';
         } else {
-            for (const file of files) {
-                const nResp = await fetch(file.download_url);
-                const news = await nResp.json();
-                html += '<div class="list-item" onclick="editNews(\'' + file.name + '\',\'' + file.sha + '\')">';
-                html += '<div><b>' + esc(news.title || file.name) + '</b><br><small style="color:#999;">' + esc(news.date || '') + ' · ' + esc(news.category || '') + '</small></div>';
-                html += '<span class="delete-btn" onclick="event.stopPropagation();deleteNews(\'' + file.name + '\',\'' + file.sha + '\')">删除</span>';
+            items.forEach((news, idx) => {
+                html += '<div class="list-item" onclick="editNewsForm(' + idx + ')">';
+                html += '<div><b>' + esc(news.title || '') + '</b><br><small style="color:#999;">' + esc(news.date || '') + ' · ' + esc(news.category || '') + '</small></div>';
+                html += '<span class="delete-btn" onclick="event.stopPropagation();deleteNews(' + idx + ')">删除</span>';
                 html += '</div>';
-            }
+            });
         }
         document.getElementById('content-area').innerHTML = html;
     } catch(e) {
@@ -458,10 +458,9 @@ async function loadNewsList() {
     }
 }
 
-function addNews() {
+function newNewsForm() {
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0];
-    const timeStr = now.toISOString().replace(/[:.]/g,'-');
     const html = '<h2 class="section-title">新增新闻</h2>'
         + '<div class="form-group"><label>标题</label><input type="text" id="news-title"></div>'
         + '<div class="form-group"><label>日期</label><input type="text" id="news-date" value="' + dateStr + '"></div>'
@@ -478,11 +477,11 @@ async function saveNewsNew() {
     const status = document.getElementById('news-status');
     status.textContent = '保存中...'; status.className = 'status info';
     try {
+        const f = await getFile('content/news.json');
+        newsData = f.content;
+        newsSha = f.sha;
         const title = document.getElementById('news-title').value;
-        const slug = title.replace(/[^a-zA-Z0-9\\u4e00-\\u9fff]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').toLowerCase() || 'news';
-        const now = new Date();
-        const filename = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + '-' + slug + '.json';
-        const content = {
+        const news = {
             title: title,
             date: document.getElementById('news-date').value,
             category: document.getElementById('news-category').value,
@@ -490,7 +489,9 @@ async function saveNewsNew() {
             summary: document.getElementById('news-summary').value,
             body: document.getElementById('news-body').value
         };
-        await createFile('content/news/' + filename, content, 'Add news: ' + title);
+        if (!newsData.items) newsData.items = [];
+        newsData.items.unshift(news);
+        await saveFile('content/news.json', newsData, newsSha, 'Add news: ' + title);
         status.textContent = '✅ 已保存'; status.className = 'status success';
         setTimeout(() => loadNewsList(), 800);
     } catch(e) {
@@ -498,29 +499,28 @@ async function saveNewsNew() {
     }
 }
 
-async function editNews(filename, sha) {
-    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/news/' + filename, {
-        headers: { Authorization: 'token ' + TOKEN }
-    });
-    const file = await resp.json();
-    const news = JSON.parse(atob(file.content));
+function editNewsForm(idx) {
+    const news = newsData.items[idx];
     const html = '<h2 class="section-title">编辑新闻</h2>'
-        + '<div class="form-group"><label>标题</label><input type="text" id="news-title" value="' + esc(news.title) + '"></div>'
-        + '<div class="form-group"><label>日期</label><input type="text" id="news-date" value="' + esc(news.date) + '"></div>'
+        + '<div class="form-group"><label>标题</label><input type="text" id="news-title" value="' + esc(news.title || '') + '"></div>'
+        + '<div class="form-group"><label>日期</label><input type="text" id="news-date" value="' + esc(news.date || '') + '"></div>'
         + '<div class="form-group"><label>分类</label><select id="news-category"><option' + (news.category==='公司动态'?' selected':'') + '>公司动态</option><option' + (news.category==='荣誉奖项'?' selected':'') + '>荣誉奖项</option><option' + (news.category==='产品研发'?' selected':'') + '>产品研发</option><option' + (news.category==='产品发布'?' selected':'') + '>产品发布</option><option' + (news.category==='合作动态'?' selected':'') + '>合作动态</option><option' + (news.category==='社会责任'?' selected':'') + '>社会责任</option></select></div>'
         + '<div class="form-group"><label>摘要</label><textarea id="news-summary" rows="3">' + esc(news.summary || '') + '</textarea></div>'
         + '<div class="form-group"><label>正文（Markdown）</label><textarea id="news-body" rows="8">' + esc(news.body || '') + '</textarea></div>'
-        + '<button class="btn-save" onclick="saveNewsEdit(\'' + filename + '\',\'' + sha + '\')">更新新闻</button>'
+        + '<button class="btn-save" onclick="saveNewsEdit(' + idx + ')">更新新闻</button>'
         + ' <button style="background:#888;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;" onclick="loadNewsList()">取消</button>'
         + '<span class="status" id="news-status"></span>';
     document.getElementById('content-area').innerHTML = html;
 }
 
-async function saveNewsEdit(filename, sha) {
+async function saveNewsEdit(idx) {
     const status = document.getElementById('news-status');
     status.textContent = '保存中...'; status.className = 'status info';
     try {
-        const content = {
+        const f = await getFile('content/news.json');
+        newsData = f.content;
+        newsSha = f.sha;
+        newsData.items[idx] = {
             title: document.getElementById('news-title').value,
             date: document.getElementById('news-date').value,
             category: document.getElementById('news-category').value,
@@ -528,17 +528,21 @@ async function saveNewsEdit(filename, sha) {
             summary: document.getElementById('news-summary').value,
             body: document.getElementById('news-body').value
         };
-        await saveFile('content/news/' + filename, content, sha, 'Update news: ' + content.title);
+        await saveFile('content/news.json', newsData, newsSha, 'Update news: ' + newsData.items[idx].title);
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {
         status.textContent = '❌ ' + e.message; status.className = 'status error';
     }
 }
 
-async function deleteNews(filename, sha) {
+async function deleteNews(idx) {
     if (!confirm('确定删除这条新闻？')) return;
     try {
-        await deleteFile('content/news/' + filename, sha, 'Delete news: ' + filename);
+        const f = await getFile('content/news.json');
+        newsData = f.content;
+        newsSha = f.sha;
+        newsData.items.splice(idx, 1);
+        await saveFile('content/news.json', newsData, newsSha, 'Delete news');
         loadNewsList();
     } catch(e) {
         alert('删除失败: ' + e.message);
@@ -546,27 +550,26 @@ async function deleteNews(filename, sha) {
 }
 
 // ---- Products List ----
+let prodData = null;
+let prodSha = '';
+
 async function loadProductsList() {
     try {
-        const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/products', {
-            headers: { Authorization: 'token ' + TOKEN }
-        });
-        if (!resp.ok) throw new Error('无法读取产品目录');
-        const files = await resp.json();
+        const f = await getFile('content/products.json');
+        prodData = f.content;
+        prodSha = f.sha;
+        const items = prodData.items || [];
         let html = '<h2 class="section-title">产品管理</h2>';
-        html += '<button class="btn-save" onclick="addProduct()" style="margin-bottom:16px;">+ 新增产品</button>';
-        if (!Array.isArray(files) || files.length === 0) {
+        html += '<button class="btn-save" onclick="newProductForm()" style="margin-bottom:16px;">+ 新增产品</button>';
+        if (items.length === 0) {
             html += '<p class="empty-hint">暂无产品</p>';
         } else {
-            for (const file of files) {
-                if (file.name === 'index.html' || !file.name.endsWith('.json')) continue;
-                const pResp = await fetch(file.download_url);
-                const prod = await pResp.json();
-                html += '<div class="list-item" onclick="editProduct(\'' + file.name + '\',\'' + file.sha + '\')">';
-                html += '<div><b>' + esc(prod.title || file.name) + '</b><br><small style="color:#999;">' + esc(prod.category || '') + ' · ' + esc(prod.price || '') + '</small></div>';
-                html += '<span class="delete-btn" onclick="event.stopPropagation();deleteProduct(\'' + file.name + '\',\'' + file.sha + '\')">删除</span>';
+            items.forEach((prod, idx) => {
+                html += '<div class="list-item" onclick="editProductForm(' + idx + ')">';
+                html += '<div><b>' + esc(prod.name || '') + '</b><br><small style="color:#999;">' + esc(prod.category || '') + ' · ' + esc(prod.price || '') + '</small></div>';
+                html += '<span class="delete-btn" onclick="event.stopPropagation();deleteProduct(' + idx + ')">删除</span>';
                 html += '</div>';
-            }
+            });
         }
         document.getElementById('content-area').innerHTML = html;
     } catch(e) {
@@ -574,12 +577,12 @@ async function loadProductsList() {
     }
 }
 
-function addProduct() {
+function newProductForm() {
     const html = '<h2 class="section-title">新增产品</h2>'
-        + '<div class="form-group"><label>产品名称</label><input type="text" id="prod-title"></div>'
+        + '<div class="form-group"><label>产品名称</label><input type="text" id="prod-name"></div>'
         + '<div class="form-group"><label>图标</label><input type="text" id="prod-icon" value="🌿"></div>'
-        + '<div class="form-group"><label>分类</label><select id="prod-category"><option value="herbs">中药材</option><option value="tea">养生茶品</option><option value="formula">配方产品</option><option value="gift">礼盒套装</option></select></div>'
-        + '<div class="form-group"><label>标签（逗号分隔）</label><input type="text" id="prod-tags" value="道地药材">'
+        + '<div class="form-group"><label>分类</label><select id="prod-category"><option value="herbs">道地药材</option><option value="tea">养生茶饮</option><option value="formula">汉方制剂</option><option value="gift">健康礼品</option></select></div>'
+        + '<div class="form-group"><label>标签（逗号分隔）</label><input type="text" id="prod-tags" value="道地药材"></div>'
         + '<div class="form-group"><label>描述</label><textarea id="prod-desc" rows="3"></textarea></div>'
         + '<div class="form-group"><label>价格</label><input type="text" id="prod-price" placeholder="¥XXX"></div>'
         + '<div class="form-group"><label>详情（Markdown）</label><textarea id="prod-body" rows="6"></textarea></div>'
@@ -593,10 +596,12 @@ async function saveProductNew() {
     const status = document.getElementById('prod-status');
     status.textContent = '保存中...'; status.className = 'status info';
     try {
-        const title = document.getElementById('prod-title').value;
-        const slug = title.replace(/[^a-zA-Z0-9\\u4e00-\\u9fff]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').toLowerCase() || 'product';
-        const content = {
-            title: title,
+        const f = await getFile('content/products.json');
+        prodData = f.content;
+        prodSha = f.sha;
+        const name = document.getElementById('prod-name').value;
+        const prod = {
+            name: name,
             icon: document.getElementById('prod-icon').value,
             category: document.getElementById('prod-category').value,
             tags: document.getElementById('prod-tags').value.split(',').map(s => s.trim()).filter(Boolean),
@@ -604,7 +609,9 @@ async function saveProductNew() {
             price: document.getElementById('prod-price').value,
             body: document.getElementById('prod-body').value
         };
-        await createFile('content/products/' + slug + '.json', content, 'Add product: ' + title);
+        if (!prodData.items) prodData.items = [];
+        prodData.items.push(prod);
+        await saveFile('content/products.json', prodData, prodSha, 'Add product: ' + name);
         status.textContent = '✅ 已保存'; status.className = 'status success';
         setTimeout(() => loadProductsList(), 800);
     } catch(e) {
@@ -612,32 +619,31 @@ async function saveProductNew() {
     }
 }
 
-async function editProduct(filename, sha) {
-    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/content/products/' + filename, {
-        headers: { Authorization: 'token ' + TOKEN }
-    });
-    const file = await resp.json();
-    const prod = JSON.parse(atob(file.content));
+function editProductForm(idx) {
+    const prod = prodData.items[idx];
     const html = '<h2 class="section-title">编辑产品</h2>'
-        + '<div class="form-group"><label>产品名称</label><input type="text" id="prod-title" value="' + esc(prod.title) + '"></div>'
+        + '<div class="form-group"><label>产品名称</label><input type="text" id="prod-name" value="' + esc(prod.name || '') + '"></div>'
         + '<div class="form-group"><label>图标</label><input type="text" id="prod-icon" value="' + esc(prod.icon || '🌿') + '"></div>'
-        + '<div class="form-group"><label>分类</label><select id="prod-category"><option value="herbs"' + (prod.category==='herbs'?' selected':'') + '>中药材</option><option value="tea"' + (prod.category==='tea'?' selected':'') + '>养生茶品</option><option value="formula"' + (prod.category==='formula'?' selected':'') + '>配方产品</option><option value="gift"' + (prod.category==='gift'?' selected':'') + '>礼盒套装</option></select></div>'
-        + '<div class="form-group"><label>标签（逗号分隔）</label><input type="text" id="prod-tags" value="' + esc((prod.tags || []).join(', ')) + '">'
+        + '<div class="form-group"><label>分类</label><select id="prod-category"><option value="herbs"' + (prod.category==='herbs'?' selected':'') + '>道地药材</option><option value="tea"' + (prod.category==='tea'?' selected':'') + '>养生茶饮</option><option value="formula"' + (prod.category==='formula'?' selected':'') + '>汉方制剂</option><option value="gift"' + (prod.category==='gift'?' selected':'') + '>健康礼品</option></select></div>'
+        + '<div class="form-group"><label>标签（逗号分隔）</label><input type="text" id="prod-tags" value="' + esc((prod.tags || []).join(', ')) + '"></div>'
         + '<div class="form-group"><label>描述</label><textarea id="prod-desc" rows="3">' + esc(prod.description || '') + '</textarea></div>'
         + '<div class="form-group"><label>价格</label><input type="text" id="prod-price" value="' + esc(prod.price || '') + '"></div>'
         + '<div class="form-group"><label>详情（Markdown）</label><textarea id="prod-body" rows="6">' + esc(prod.body || '') + '</textarea></div>'
-        + '<button class="btn-save" onclick="saveProductEdit(\'' + filename + '\',\'' + sha + '\')">更新产品</button>'
+        + '<button class="btn-save" onclick="saveProductEdit(' + idx + ')">更新产品</button>'
         + ' <button style="background:#888;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;" onclick="loadProductsList()">取消</button>'
         + '<span class="status" id="prod-status"></span>';
     document.getElementById('content-area').innerHTML = html;
 }
 
-async function saveProductEdit(filename, sha) {
+async function saveProductEdit(idx) {
     const status = document.getElementById('prod-status');
     status.textContent = '保存中...'; status.className = 'status info';
     try {
-        const content = {
-            title: document.getElementById('prod-title').value,
+        const f = await getFile('content/products.json');
+        prodData = f.content;
+        prodSha = f.sha;
+        prodData.items[idx] = {
+            name: document.getElementById('prod-name').value,
             icon: document.getElementById('prod-icon').value,
             category: document.getElementById('prod-category').value,
             tags: document.getElementById('prod-tags').value.split(',').map(s => s.trim()).filter(Boolean),
@@ -645,17 +651,21 @@ async function saveProductEdit(filename, sha) {
             price: document.getElementById('prod-price').value,
             body: document.getElementById('prod-body').value
         };
-        await saveFile('content/products/' + filename, content, sha, 'Update product: ' + content.title);
+        await saveFile('content/products.json', prodData, prodSha, 'Update product: ' + prodData.items[idx].name);
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {
         status.textContent = '❌ ' + e.message; status.className = 'status error';
     }
 }
 
-async function deleteProduct(filename, sha) {
+async function deleteProduct(idx) {
     if (!confirm('确定删除这个产品？')) return;
     try {
-        await deleteFile('content/products/' + filename, sha, 'Delete product: ' + filename);
+        const f = await getFile('content/products.json');
+        prodData = f.content;
+        prodSha = f.sha;
+        prodData.items.splice(idx, 1);
+        await saveFile('content/products.json', prodData, prodSha, 'Delete product');
         loadProductsList();
     } catch(e) {
         alert('删除失败: ' + e.message);

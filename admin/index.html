@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容管理 - 古芝源后台</title>
+    <style>
+        body { margin: 0; padding: 0; }
+        .login-hint {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: #f5f0e8;
+            border-radius: 10px;
+            text-align: center;
+            font-family: "Microsoft YaHei", sans-serif;
+            display: none;
+        }
+        .login-hint h2 { color: #2d5016; margin-bottom: 20px; }
+        .login-hint p { color: #666; line-height: 1.8; margin-bottom: 15px; }
+        .login-hint ol { text-align: left; color: #666; line-height: 2; }
+        .login-hint code {
+            background: #e0d5c0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-hint" id="login-hint">
+        <h2>🔐 登录说明</h2>
+        <p>首次使用后台管理，需要 GitHub 个人访问令牌（PAT）：</p>
+        <ol>
+            <li>打开 <a href="https://github.com/settings/tokens" target="_blank">GitHub Token 设置</a></li>
+            <li>点击 <b>Generate new token (classic)</b></li>
+            <li>勾选 <code>repo</code> 权限</li>
+            <li>生成后复制 Token</li>
+            <li>在此页面登录时粘贴 Token</li>
+        </ol>
+        <p><b>注意：</b>Token 仅在本地浏览器保存，不会上传到任何服务器。</p>
+    </div>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+        // 页面加载后显示登录提示 3 秒
+        setTimeout(function() {
+            var hint = document.getElementById('login-hint');
+            if (hint) hint.style.display = 'block';
+        }, 2000);
+    </script>
+</body>
+</html>

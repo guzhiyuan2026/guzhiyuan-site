@@ -1,0 +1,24 @@
+{
+  "company": {
+    "name": "贵州古芝源品牌管理有限公司",
+    "shortName": "古芝源",
+    "slogan": "传承古法 · 芝养人生",
+    "logoIcon": "芝"
+  },
+  "footer": {
+    "copyright": "© 2026 贵州古芝源品牌管理有限公司 版权所有",
+    "slogan": "传承古法 · 芝养人生"
+  },
+  "contact": {
+    "address": "贵州省贵阳市观山湖区某某路123号 古芝源大厦 550001",
+    "phone": "0851-12345678",
+    "hotline": "400-123-4567",
+    "fax": "0851-87654321",
+    "emailBusiness": "business@guzhiyuan.com",
+    "emailService": "service@guzhiyuan.com",
+    "emailHR": "hr@guzhiyuan.com",
+    "wechat": "Guzhiyuan_Health",
+    "wechatWork": "古芝源客服",
+    "workHours": "周一至周五：9:00-18:00 | 周六：9:00-12:00 | 周日及法定节假日休息"
+  }
+}

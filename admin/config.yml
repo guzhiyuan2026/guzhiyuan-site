@@ -1,0 +1,181 @@
+backend:
+  name: github
+  repo: guzhiyuan2026/guzhiyuan-site
+  branch: main
+  squash_merges: true
+
+media_folder: "images"
+public_folder: "/images"
+
+site_url: https://www.gzguzhiyuan.com
+display_url: https://www.gzguzhiyuan.com
+logo_url: https://www.gzguzhiyuan.com/favicon.ico
+
+locale: zh_Hans
+
+collections:
+  - name: "settings"
+    label: "网站设置"
+    editor:
+      preview: false
+    files:
+      - name: "site"
+        label: "站点信息"
+        file: "content/site.json"
+        fields:
+          - label: "公司信息"
+            name: "company"
+            widget: "object"
+            fields:
+              - { label: "公司全称", name: "name", widget: "string" }
+              - { label: "简称", name: "shortName", widget: "string" }
+              - { label: "品牌口号", name: "slogan", widget: "string" }
+              - { label: "Logo图标文字", name: "logoIcon", widget: "string" }
+          - label: "页脚"
+            name: "footer"
+            widget: "object"
+            fields:
+              - { label: "版权信息", name: "copyright", widget: "string" }
+              - { label: "页脚口号", name: "slogan", widget: "string" }
+          - label: "联系方式"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "公司地址", name: "address", widget: "string" }
+              - { label: "总机电话", name: "phone", widget: "string" }
+              - { label: "客服热线", name: "hotline", widget: "string" }
+              - { label: "传真", name: "fax", widget: "string" }
+              - { label: "商务邮箱", name: "emailBusiness", widget: "string" }
+              - { label: "客服邮箱", name: "emailService", widget: "string" }
+              - { label: "HR邮箱", name: "emailHR", widget: "string" }
+              - { label: "微信", name: "wechat", widget: "string" }
+              - { label: "企业微信", name: "wechatWork", widget: "string" }
+              - { label: "工作时间", name: "workHours", widget: "string" }
+
+  - name: "pages"
+    label: "页面内容"
+    editor:
+      preview: false
+    files:
+      - name: "home"
+        label: "首页"
+        file: "content/home.json"
+        fields:
+          - label: "主视觉区"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - { label: "副标题", name: "subtitle", widget: "string" }
+              - { label: "描述文字", name: "description", widget: "text" }
+              - { label: "按钮文字", name: "buttonText", widget: "string" }
+              - { label: "按钮链接", name: "buttonLink", widget: "string" }
+          - label: "关于我们区域"
+            name: "about"
+            widget: "object"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - { label: "副标题", name: "subtitle", widget: "string" }
+              - label: "段落"
+                name: "paragraphs"
+                widget: "list"
+                field: { label: "段落", name: "paragraph", widget: "text" }
+          - label: "文化理念区域"
+            name: "culture"
+            widget: "object"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - { label: "副标题", name: "subtitle", widget: "string" }
+              - label: "理念条目"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "图标", name: "icon", widget: "string" }
+                  - { label: "名称", name: "name", widget: "string" }
+                  - { label: "描述", name: "description", widget: "text" }
+      - name: "about"
+        label: "关于我们"
+        file: "content/about.json"
+        fields:
+          - label: "公司简介"
+            name: "intro"
+            widget: "object"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - label: "段落"
+                name: "paragraphs"
+                widget: "list"
+                field: { label: "段落", name: "p", widget: "text" }
+          - label: "发展历程"
+            name: "timeline"
+            widget: "object"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - label: "历程条目"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "年份", name: "year", widget: "string" }
+                  - { label: "标题", name: "title", widget: "string" }
+                  - { label: "描述", name: "description", widget: "text" }
+          - label: "核心团队"
+            name: "team"
+            widget: "object"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - label: "团队成员"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "头像图标", name: "icon", widget: "string" }
+                  - { label: "姓名", name: "name", widget: "string" }
+                  - { label: "职位", name: "position", widget: "string" }
+                  - { label: "简介", name: "description", widget: "text" }
+          - label: "资质认证"
+            name: "certifications"
+            widget: "object"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - label: "认证条目"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "图标", name: "icon", widget: "string" }
+                  - { label: "名称", name: "name", widget: "string" }
+                  - { label: "描述", name: "description", widget: "string" }
+
+  - name: "news"
+    label: "新闻动态"
+    label_singular: "新闻"
+    folder: "content/news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    editor:
+      preview: false
+    fields:
+      - { label: "标题", name: "title", widget: "string" }
+      - { label: "发布日期", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "图标", name: "icon", widget: "string", default: "📰" }
+      - { label: "分类", name: "category", widget: "select", options: ["公司动态", "荣誉奖项", "产品研发", "产品发布", "合作动态", "社会责任"] }
+      - { label: "摘要", name: "summary", widget: "text" }
+      - { label: "正文", name: "body", widget: "markdown", required: false }
+
+  - name: "products_list"
+    label: "产品管理"
+    label_singular: "产品"
+    folder: "content/products"
+    create: true
+    slug: "{{slug}}"
+    editor:
+      preview: false
+    fields:
+      - { label: "产品名称", name: "title", widget: "string" }
+      - { label: "图标", name: "icon", widget: "string", default: "🌿" }
+      - { label: "分类", name: "category", widget: "select", options: ["herbs", "tea", "formula", "gift"] }
+      - label: "标签"
+        name: "tags"
+        widget: "list"
+        default: ["道地药材"]
+      - { label: "产品描述", name: "description", widget: "text" }
+      - { label: "价格", name: "price", widget: "string" }
+      - { label: "详情", name: "body", widget: "markdown", required: false }

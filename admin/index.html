@@ -40,6 +40,21 @@
         </ol>
         <p><b>注意：</b>Token 仅在本地浏览器保存，不会上传到任何服务器。</p>
     </div>
+    <script>
+        // crypto.randomUUID polyfill (兼容非 HTTPS 或旧浏览器)
+        if (!crypto.randomUUID) {
+            crypto.randomUUID = function() {
+                var values = new Uint8Array(16);
+                crypto.getRandomValues(values);
+                values[6] = (values[6] & 0x0f) | 0x40;
+                values[8] = (values[8] & 0x3f) | 0x80;
+                var hex = Array.prototype.map.call(values, function(b) {
+                    return ('00' + b.toString(16)).slice(-2);
+                }).join('');
+                return hex.slice(0,8) + '-' + hex.slice(8,12) + '-' + hex.slice(12,16) + '-' + hex.slice(16,20) + '-' + hex.slice(20);
+            };
+        }
+    </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
         // 页面加载后显示登录提示 3 秒

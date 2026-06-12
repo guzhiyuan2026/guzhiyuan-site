@@ -11,14 +11,12 @@
             max-width: 1200px;
             margin: 0 auto;
         }
-
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
             margin-top: 3rem;
         }
-
         .product-card {
             background: white;
             border-radius: 10px;
@@ -27,12 +25,10 @@
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
         }
-
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(45, 80, 22, 0.15);
         }
-
         .product-image {
             width: 100%;
             height: 250px;
@@ -43,30 +39,23 @@
             font-size: 4rem;
             color: white;
         }
-
-        .product-info {
-            padding: 2rem;
-        }
-
+        .product-info { padding: 2rem; }
         .product-info h3 {
             color: var(--primary-green);
             font-size: 1.5rem;
             margin-bottom: 1rem;
         }
-
         .product-info p {
             color: var(--text-light);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-
         .product-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-bottom: 1rem;
         }
-
         .tag {
             background: var(--cream);
             color: var(--primary-green);
@@ -74,14 +63,12 @@
             border-radius: 20px;
             font-size: 0.9rem;
         }
-
         .product-price {
             color: var(--earth-brown);
             font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 1rem;
         }
-
         .product-button {
             display: inline-block;
             padding: 0.8rem 2rem;
@@ -93,11 +80,7 @@
             width: 100%;
             text-align: center;
         }
-
-        .product-button:hover {
-            background: var(--light-green);
-        }
-
+        .product-button:hover { background: var(--light-green); }
         .category-filter {
             display: flex;
             justify-content: center;
@@ -105,7 +88,6 @@
             margin: 3rem 0;
             flex-wrap: wrap;
         }
-
         .filter-btn {
             padding: 0.8rem 2rem;
             background: white;
@@ -116,12 +98,10 @@
             transition: all 0.3s;
             font-size: 1rem;
         }
-
         .filter-btn.active {
             background: var(--primary-green);
             color: white;
         }
-
         .filter-btn:hover {
             background: var(--primary-green);
             color: white;
@@ -133,8 +113,9 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-                <span class="logo-icon">芝</span>
-                古芝源
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
+                <span class="logo-icon" id="logo-icon">芝</span>
+                <span id="logo-text">古芝源</span>
             </a>
             <ul class="nav-links">
                 <li><a href="index.html">首页</a></li>
@@ -153,206 +134,117 @@
     </nav>
 
     <!-- 产品中心页面 -->
-    <section class="products-page">
-        <h2 class="section-title fade-in">产品中心</h2>
-        <p class="section-subtitle fade-in">道地药材 · 古法炮制 · 品质保证</p>
-
-        <!-- 分类筛选 -->
-        <div class="category-filter fade-in">
-            <button class="filter-btn active" data-category="all">全部产品</button>
-            <button class="filter-btn" data-category="herbs">道地药材</button>
-            <button class="filter-btn" data-category="tea">养生茶饮</button>
-            <button class="filter-btn" data-category="formula">汉方制剂</button>
-            <button class="filter-btn" data-category="gift">健康礼品</button>
-        </div>
-
-        <!-- 产品列表 -->
-        <div class="products-grid">
-            <!-- 产品1 -->
-            <div class="product-card fade-in" data-category="herbs" onclick="location.href='product-detail.html?id=guizhou-tianma'">
-                <div class="product-image">🌿</div>
-                <div class="product-info">
-                    <h3>贵州天麻</h3>
-                    <div class="product-tags">
-                        <span class="tag">道地药材</span>
-                        <span class="tag">贵州特产</span>
-                        <span class="tag">国家地理标志</span>
-                    </div>
-                    <p>甄选贵州高原道地天麻，遵循古法炮制，品质优良，功效显著。</p>
-                    <div class="product-price">¥ 168.00 / 500g</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-
-            <!-- 产品2 -->
-            <div class="product-card fade-in" data-category="herbs" onclick="location.href='product-detail.html?id=guizhou-lingzhi'">
-                <div class="product-image">🍄</div>
-                <div class="product-info">
-                    <h3>贵州灵芝</h3>
-                    <div class="product-tags">
-                        <span class="tag">道地药材</span>
-                        <span class="tag">增强免疫力</span>
-                    </div>
-                    <p>产自贵州深山的优质灵芝，富含多糖肽，传统滋补佳品。</p>
-                    <div class="product-price">¥ 298.00 / 盒</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-
-            <!-- 产品3 -->
-            <div class="product-card fade-in" data-category="tea" onclick="location.href='product-detail.html?id=guzhi-yangsheng-cha'">
-                <div class="product-image">🫖</div>
-                <div class="product-info">
-                    <h3>古芝养生茶</h3>
-                    <div class="product-tags">
-                        <span class="tag">养生茶饮</span>
-                        <span class="tag">日常调理</span>
-                    </div>
-                    <p>融合多种中药材精华，科学配比，方便现代人日常养生饮用。</p>
-                    <div class="product-price">¥ 88.00 / 盒</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-
-            <!-- 产品4 -->
-            <div class="product-card fade-in" data-category="tea" onclick="location.href='product-detail.html?id=meigui-yangyan-cha'">
-                <div class="product-image">🌺</div>
-                <div class="product-info">
-                    <h3>玫瑰养颜茶</h3>
-                    <div class="product-tags">
-                        <span class="tag">养生茶饮</span>
-                        <span class="tag">美容养颜</span>
-                    </div>
-                    <p>精选平阴玫瑰搭配枸杞、红枣，活血化瘀，美容养颜。</p>
-                    <div class="product-price">¥ 68.00 / 盒</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-
-            <!-- 产品5 -->
-            <div class="product-card fade-in" data-category="formula" onclick="location.href='product-detail.html?id=liuwei-dihuang-wan'">
-                <div class="product-image">💊</div>
-                <div class="product-info">
-                    <h3>古方六味地黄丸</h3>
-                    <div class="product-tags">
-                        <span class="tag">汉方制剂</span>
-                        <span class="tag">经典名方</span>
-                    </div>
-                    <p>遵循古法炮制工艺，采用道地药材，滋阴补肾，经典传承。</p>
-                    <div class="product-price">¥ 128.00 / 瓶</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-
-            <!-- 产品6 -->
-            <div class="product-card fade-in" data-category="formula" onclick="location.href='product-detail.html?id=huangqi-jing-koufuye'">
-                <div class="product-image">🧪</div>
-                <div class="product-info">
-                    <h3>黄芪精口服液</h3>
-                    <div class="product-tags">
-                        <span class="tag">汉方制剂</span>
-                        <span class="tag">增强免疫力</span>
-                    </div>
-                    <p>精选内蒙古黄芪，现代工艺提取，补气固表，提升免疫力。</p>
-                    <div class="product-price">¥ 158.00 / 盒</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-
-            <!-- 产品7 -->
-            <div class="product-card fade-in" data-category="gift" onclick="location.href='product-detail.html?id=guzhiyuan-lihe-zhuang'">
-                <div class="product-image">🎁</div>
-                <div class="product-info">
-                    <h3>古芝源礼盒装</h3>
-                    <div class="product-tags">
-                        <span class="tag">健康礼品</span>
-                        <span class="tag">商务馈赠</span>
-                    </div>
-                    <p>精选多款明星产品，精美礼盒包装，传递健康与祝福。</p>
-                    <div class="product-price">¥ 588.00 / 套</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-
-            <!-- 产品8 -->
-            <div class="product-card fade-in" data-category="gift" onclick="location.href='product-detail.html?id=yangsheng-cha-lihe'">
-                <div class="product-image">🍵</div>
-                <div class="product-info">
-                    <h3>养生茶礼盒</h3>
-                    <div class="product-tags">
-                        <span class="tag">健康礼品</span>
-                        <span class="tag">节日送礼</span>
-                    </div>
-                    <p>多款养生茶饮组合，精美包装，适合探望长辈、商务往来。</p>
-                    <div class="product-price">¥ 368.00 / 套</div>
-                    <span class="product-button">查看详情</span>
-                </div>
-            </div>
-        </div>
-    </section>
+    <section class="products-page" id="products-content"></section>
 
     <!-- 页脚 -->
-    <footer class="footer">
-        <p>© 2026 贵州古芝源品牌管理有限公司 版权所有</p>
-        <p>传承古法 · 芝养人生</p>
-    </footer>
+    <footer class="footer" id="footer"></footer>
 
     <script>
-        // 分类筛选
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const productCards = document.querySelectorAll('.product-card');
+    (async function init() {
+        try {
+            const [prodRes, siteRes] = await Promise.all([
+                fetch('content/products.json'),
+                fetch('content/site.json')
+            ]);
+            const products = await prodRes.json();
+            const site = await siteRes.json();
+            const co = site.company || {};
+            const ft = site.footer || {};
 
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                // 更新按钮状态
-                filterBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+            // === Logo ===
+            if (co.logoImage) {
+                var li = document.getElementById('logo-img');
+                if (li) { li.src = co.logoImage; li.style.display = ''; }
+                var lc = document.getElementById('logo-icon');
+                if (lc) lc.style.display = 'none';
+            }
+            document.getElementById('logo-text').textContent = co.shortName || '古芝源';
+            document.title = (products.title || '产品中心') + ' - ' + (co.name || '贵州古芝源品牌管理有限公司');
 
-                const category = this.getAttribute('data-category');
+            var items = products.items || [];
 
-                // 筛选产品
-                productCards.forEach(card => {
-                    if (category === 'all' || card.getAttribute('data-category') === category) {
+            // === 收集所有分类 ===
+            var categories = ['all'];
+            var catNames = { all: '全部产品' };
+            items.forEach(function(p) {
+                if (p.category && !catNames[p.category]) {
+                    catNames[p.category] = { herbs: '道地药材', tea: '养生茶饮', formula: '汉方制剂', gift: '健康礼品', healthcare: '健康产品' }[p.category] || p.category;
+                    categories.push(p.category);
+                }
+            });
+
+            // === 渲染函数 ===
+            function renderPage(activeCat) {
+                var html = '<h2 class="section-title fade-in">' + (products.title || '产品中心') + '</h2>';
+                html += '<p class="section-subtitle fade-in">' + (products.subtitle || '道地药材 · 古法炮制 · 品质保证') + '</p>';
+
+                // 分类筛选按钮
+                html += '<div class="category-filter fade-in">';
+                categories.forEach(function(cat) {
+                    html += '<button class="filter-btn' + (cat === activeCat ? ' active' : '') +
+                        '" data-category="' + cat + '" onclick="window.productFilter(\'' + cat + '\')">' + (catNames[cat] || cat) + '</button>';
+                });
+                html += '</div>';
+
+                // 产品网格
+                html += '<div class="products-grid" id="products-grid">';
+                items.forEach(function(p) {
+                    var display = (activeCat === 'all' || p.category === activeCat) ? '' : 'display:none;';
+                    html += '<div class="product-card fade-in" data-category="' + (p.category || '') + '" style="' + display + '" onclick="location.href=\'product-detail.html?id=' + (p.id || '') + '\'">';
+                    html += '<div class="product-image">' + (p.icon || '🌿') + '</div>';
+                    html += '<div class="product-info">';
+                    html += '<h3>' + p.name + '</h3>';
+                    if (p.tags && p.tags.length > 0) {
+                        html += '<div class="product-tags">';
+                        p.tags.forEach(function(t) { html += '<span class="tag">' + t + '</span>'; });
+                        html += '</div>';
+                    }
+                    html += '<p>' + (p.description || '') + '</p>';
+                    html += '<div class="product-price">' + (p.price || '') + ' / ' + (p.unit || '') + '</div>';
+                    html += '<span class="product-button">查看详情</span>';
+                    html += '</div></div>';
+                });
+                html += '</div>';
+
+                document.getElementById('products-content').innerHTML = html;
+
+                // 重新初始化动画
+                var fadeIns = document.querySelectorAll('.fade-in');
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+                }, { threshold: 0.1 });
+                fadeIns.forEach(function(el) { observer.observe(el); });
+            }
+
+            // === 筛选切换 ===
+            window.productFilter = function(cat) {
+                var btns = document.querySelectorAll('.filter-btn');
+                btns.forEach(function(b) { b.classList.remove('active'); });
+                var activeBtn = document.querySelector('.filter-btn[data-category="' + cat + '"]');
+                if (activeBtn) activeBtn.classList.add('active');
+
+                var cards = document.querySelectorAll('.product-card');
+                cards.forEach(function(card) {
+                    if (cat === 'all' || card.getAttribute('data-category') === cat) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
                     }
                 });
-            });
-        });
+            };
 
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+            renderPage('all');
 
-        // 滚动动画
-        const fadeInElements = document.querySelectorAll('.fade-in');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
+            // === 页脚 ===
+            document.getElementById('footer').innerHTML =
+                '<p>' + (ft.copyright || '© 2026 贵州古芝源品牌管理有限公司 版权所有') + '</p>' +
+                '<p>' + (ft.slogan || '传承古法 · 芝养人生') + '</p>';
 
-        fadeInElements.forEach(element => {
-            observer.observe(element);
-        });
-
-        // 更新购物车角标
+        } catch (e) {
+            console.error('Failed to load products page:', e);
+        }
         updateCartBadge();
+    })();
     </script>
     <script src="cart.js"></script>
 </body>

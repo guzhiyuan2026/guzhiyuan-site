@@ -11,13 +11,11 @@
             max-width: 1200px;
             margin: 0 auto;
         }
-
         .news-list {
             display: grid;
             gap: 2rem;
             margin-top: 3rem;
         }
-
         .news-card {
             background: white;
             border-radius: 10px;
@@ -28,12 +26,10 @@
             display: grid;
             grid-template-columns: 300px 1fr;
         }
-
         .news-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(45, 80, 22, 0.15);
         }
-
         .news-image {
             width: 100%;
             height: 250px;
@@ -44,17 +40,12 @@
             font-size: 4rem;
             color: white;
         }
-
-        .news-content {
-            padding: 2rem;
-        }
-
+        .news-content { padding: 2rem; }
         .news-date {
             color: var(--text-light);
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
         }
-
         .news-category {
             display: inline-block;
             background: var(--cream);
@@ -64,20 +55,17 @@
             font-size: 0.85rem;
             margin-bottom: 1rem;
         }
-
         .news-content h3 {
             color: var(--primary-green);
             font-size: 1.5rem;
             margin-bottom: 1rem;
             line-height: 1.5;
         }
-
         .news-content p {
             color: var(--text-light);
             line-height: 1.8;
             margin-bottom: 1rem;
         }
-
         .news-link {
             color: var(--primary-green);
             text-decoration: none;
@@ -87,18 +75,13 @@
             gap: 0.5rem;
             transition: gap 0.3s;
         }
-
-        .news-link:hover {
-            gap: 1rem;
-        }
-
+        .news-link:hover { gap: 1rem; }
         .pagination {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
             margin-top: 3rem;
         }
-
         .page-btn {
             padding: 0.8rem 1.2rem;
             background: white;
@@ -108,25 +91,17 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .page-btn.active {
             background: var(--primary-green);
             color: white;
         }
-
         .page-btn:hover {
             background: var(--primary-green);
             color: white;
         }
-
         @media (max-width: 768px) {
-            .news-card {
-                grid-template-columns: 1fr;
-            }
-
-            .news-image {
-                height: 200px;
-            }
+            .news-card { grid-template-columns: 1fr; }
+            .news-image { height: 200px; }
         }
     </style>
 </head>
@@ -135,8 +110,9 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-                <span class="logo-icon">芝</span>
-                古芝源
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
+                <span class="logo-icon" id="logo-icon">芝</span>
+                <span id="logo-text">古芝源</span>
             </a>
             <ul class="nav-links">
                 <li><a href="index.html">首页</a></li>
@@ -155,141 +131,102 @@
     </nav>
 
     <!-- 新闻动态页面 -->
-    <section class="news-page">
-        <h2 class="section-title fade-in">新闻动态</h2>
-        <p class="section-subtitle fade-in">了解古芝源最新资讯</p>
-
-        <div class="news-list">
-            <!-- 新闻1 -->
-            <div class="news-card fade-in" onclick="location.href='news-detail.html'">
-                <div class="news-image">📰</div>
-                <div class="news-content">
-                    <div class="news-date">2026年6月1日</div>
-                    <span class="news-category">公司动态</span>
-                    <h3>贵州古芝源参加2026中国国际健康产业博览会</h3>
-                    <p>5月28日-30日，贵州古芝源品牌管理有限公司受邀参加在北京中国国际展览中心举办的2026中国国际健康产业博览会。本次展会以"传承创新，健康未来"为主题，吸引了来自全球20多个国家和地区的500多家企业参展...</p>
-                    <span class="news-link">阅读全文 →</span>
-                </div>
-            </div>
-
-            <!-- 新闻2 -->
-            <div class="news-card fade-in" onclick="location.href='news-detail.html'">
-                <div class="news-image">🏆</div>
-                <div class="news-content">
-                    <div class="news-date">2026年5月20日</div>
-                    <span class="news-category">荣誉奖项</span>
-                    <h3>古芝源荣获"2026年度中医药文化传承创新奖"</h3>
-                    <p>在由中国中医药协会主办的"2026中医药文化传承与创新高峰论坛"上，贵州古芝源品牌管理有限公司凭借在中医药文化传承与创新方面的突出贡献，荣获"2026年度中医药文化传承创新奖"...</p>
-                    <span class="news-link">阅读全文 →</span>
-                </div>
-            </div>
-
-            <!-- 新闻3 -->
-            <div class="news-card fade-in" onclick="location.href='news-detail.html'">
-                <div class="news-image">🔬</div>
-                <div class="news-content">
-                    <div class="news-date">2026年5月10日</div>
-                    <span class="news-category">产品研发</span>
-                    <h3>古芝源联合贵州中医药大学成立"古法炮制工艺研究中心"</h3>
-                    <p>为深入挖掘和传承中医药古法炮制工艺，推动中医药现代化发展，贵州古芝源品牌管理有限公司与贵州中医药大学正式签署战略合作协议，共同成立"古法炮制工艺研究中心"...</p>
-                    <span class="news-link">阅读全文 →</span>
-                </div>
-            </div>
-
-            <!-- 新闻4 -->
-            <div class="news-card fade-in" onclick="location.href='news-detail.html'">
-                <div class="news-image">🌿</div>
-                <div class="news-content">
-                    <div class="news-date">2026年4月28日</div>
-                    <span class="news-category">产品发布</span>
-                    <h3>古芝源推出全新产品系列——"古芝养生茶"</h3>
-                    <p>经过两年潜心研发，贵州古芝源品牌管理有限公司正式推出全新产品系列——"古芝养生茶"。该系列产品融合传统汉方与现代养生理念，精选道地药材，科学配比，为现代人提供便捷的养生方案...</p>
-                    <span class="news-link">阅读全文 →</span>
-                </div>
-            </div>
-
-            <!-- 新闻5 -->
-            <div class="news-card fade-in" onclick="location.href='news-detail.html'">
-                <div class="news-image">🤝</div>
-                <div class="news-content">
-                    <div class="news-date">2026年4月15日</div>
-                    <span class="news-category">合作动态</span>
-                    <h3>古芝源与多家连锁药店达成战略合作</h3>
-                    <p>近日，贵州古芝源品牌管理有限公司与国药控股、老百姓大药房、大参林等多家全国知名连锁药店签署战略合作协议，共同推进中医药健康产品的普及与发展...</p>
-                    <span class="news-link">阅读全文 →</span>
-                </div>
-            </div>
-
-            <!-- 新闻6 -->
-            <div class="news-card fade-in" onclick="location.href='news-detail.html'">
-                <div class="news-image">🎓</div>
-                <div class="news-content">
-                    <div class="news-date">2026年3月20日</div>
-                    <span class="news-category">社会责任</span>
-                    <h3>古芝源开展"中医药文化进校园"公益活动</h3>
-                    <p>为弘扬中医药文化，增强青少年对传统文化的认知与热爱，贵州古芝源品牌管理有限公司走进贵阳市多所中小学，开展"中医药文化进校园"系列公益活动...</p>
-                    <span class="news-link">阅读全文 →</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 分页 -->
-        <div class="pagination fade-in">
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn">→</button>
-        </div>
-    </section>
+    <section class="news-page" id="news-content"></section>
 
     <!-- 页脚 -->
-    <footer class="footer">
-        <p>© 2026 贵州古芝源品牌管理有限公司 版权所有</p>
-        <p>传承古法 · 芝养人生</p>
-    </footer>
+    <footer class="footer" id="footer"></footer>
 
     <script>
-        // 分页按钮
-        const pageBtns = document.querySelectorAll('.page-btn');
-        pageBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                pageBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+    (async function init() {
+        try {
+            const [newsRes, siteRes] = await Promise.all([
+                fetch('content/news.json'),
+                fetch('content/site.json')
+            ]);
+            const news = await newsRes.json();
+            const site = await siteRes.json();
+            const co = site.company || {};
+            const ft = site.footer || {};
 
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+            // === Logo ===
+            if (co.logoImage) {
+                var li = document.getElementById('logo-img');
+                if (li) { li.src = co.logoImage; li.style.display = ''; }
+                var lc = document.getElementById('logo-icon');
+                if (lc) lc.style.display = 'none';
+            }
+            document.getElementById('logo-text').textContent = co.shortName || '古芝源';
+            document.title = (news.title || '新闻动态') + ' - ' + (co.name || '贵州古芝源品牌管理有限公司');
+
+            // === 新闻列表 ===
+            const items = news.items || [];
+            const pageSize = 6;
+            let currentPage = 1;
+            const totalPages = Math.ceil(items.length / pageSize);
+
+            function formatDate(dateStr) {
+                if (!dateStr) return '';
+                var parts = dateStr.split('-');
+                return parts[0] + '年' + parseInt(parts[1]) + '月' + parseInt(parts[2]) + '日';
+            }
+
+            function renderPage(page) {
+                currentPage = page;
+                var start = (page - 1) * pageSize;
+                var end = Math.min(start + pageSize, items.length);
+                var pageItems = items.slice(start, end);
+
+                var html = '<h2 class="section-title fade-in">' + (news.title || '新闻动态') + '</h2>';
+                html += '<p class="section-subtitle fade-in">' + (news.subtitle || '了解古芝源最新资讯') + '</p>';
+                html += '<div class="news-list">';
+                pageItems.forEach(function(item, idx) {
+                    var dateStr = formatDate(item.date);
+                    html += '<div class="news-card fade-in" onclick="location.href=\'news-detail.html\'">';
+                    html += '<div class="news-image">' + (item.icon || '📰') + '</div>';
+                    html += '<div class="news-content">';
+                    if (dateStr) html += '<div class="news-date">' + dateStr + '</div>';
+                    if (item.category) html += '<span class="news-category">' + item.category + '</span>';
+                    html += '<h3>' + item.title + '</h3>';
+                    html += '<p>' + (item.summary || '') + '</p>';
+                    html += '<span class="news-link">阅读全文 →</span>';
+                    html += '</div></div>';
+                });
+                html += '</div>';
+
+                // 分页
+                if (totalPages > 1) {
+                    html += '<div class="pagination fade-in">';
+                    for (var i = 1; i <= totalPages; i++) {
+                        html += '<button class="page-btn' + (i === page ? ' active' : '') +
+                            '" onclick="renderPage(' + i + ')">' + i + '</button>';
+                    }
+                    html += '</div>';
                 }
-            });
-        });
 
-        // 滚动动画
-        const fadeInElements = document.querySelectorAll('.fade-in');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
+                document.getElementById('news-content').innerHTML = html;
 
-        fadeInElements.forEach(element => {
-            observer.observe(element);
-        });
+                // 重新初始化动画
+                var fadeIns = document.querySelectorAll('.fade-in');
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+                }, { threshold: 0.1 });
+                fadeIns.forEach(function(el) { observer.observe(el); });
+            }
 
-        // 更新购物车角标
+            // 暴露到全局
+            window.renderPage = renderPage;
+            renderPage(1);
+
+            // === 页脚 ===
+            document.getElementById('footer').innerHTML =
+                '<p>' + (ft.copyright || '© 2026 贵州古芝源品牌管理有限公司 版权所有') + '</p>' +
+                '<p>' + (ft.slogan || '传承古法 · 芝养人生') + '</p>';
+
+        } catch (e) {
+            console.error('Failed to load news page:', e);
+        }
         updateCartBadge();
+    })();
     </script>
     <script src="cart.js"></script>
 </body>

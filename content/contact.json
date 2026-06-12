@@ -33,6 +33,9 @@
   "formSubject": "咨询类型 *",
   "mapTitle": "公司位置",
   "mapText": "📍 贵州省遵义市红花岗区忠庄街道<br>共青大道遵义碧桂园一期12栋1单元1-1-2",
+  "mapLat": 27.642,
+  "mapLng": 106.895,
+  "mapZoom": 16,
   "faq": {
     "title": "常见问题",
     "items": [

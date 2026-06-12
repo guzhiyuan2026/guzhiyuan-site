@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>联系方式 - 古芝源</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         .contact-page { padding: 120px 2rem 5rem; max-width: 1200px; margin: 0 auto; }
         .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem; }
@@ -29,7 +31,10 @@
         .form-submit:hover { background: var(--light-green); }
         .map-section { margin-top: 3rem; background: white; padding: 3rem; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .map-section h3 { color: var(--primary-green); margin-bottom: 2rem; font-size: 1.8rem; }
-        .map-placeholder { width: 100%; height: 400px; background: linear-gradient(135deg, var(--primary-green), var(--light-green)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; }
+        .map-container { width: 100%; height: 450px; border-radius: 10px; overflow: hidden; z-index: 1; }
+        .map-address { margin-top: 1rem; text-align: center; color: var(--text-light); font-size: 0.95rem; }
+        .map-address a { color: var(--primary-green); text-decoration: none; font-weight: bold; }
+        .map-address a:hover { text-decoration: underline; }
         .faq-section { margin-top: 3rem; }
         .faq-item { background: white; padding: 2rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 5px 20px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.3s; }
         .faq-item:hover { box-shadow: 0 5px 20px rgba(45,80,22,0.15); }
@@ -132,9 +137,43 @@
                 });
 
                 // 地图
+                var lat = data.mapLat || 27.642;
+                var lng = data.mapLng || 106.895;
+                var zoom = data.mapZoom || 16;
+                var addrText = data.mapText.replace(/<br>/g, '，').replace(/📍\s*/g, '');
                 document.getElementById('map-section').innerHTML =
                     '<h3>' + data.mapTitle + '</h3>' +
-                    '<div class="map-placeholder">' + data.mapText + '</div>';
+                    '<div id="company-map" class="map-container"></div>' +
+                    '<div class="map-address">' + data.mapText +
+                    ' <a href="https://uri.amap.com/marker?position=' + lng + ',' + lat + '&name=贵州古芝源品牌管理有限公司&callnative=1" target="_blank" rel="noopener">📱 手机导航</a>' +
+                    ' | <a href="https://map.baidu.com/search/遵义碧桂园一期" target="_blank" rel="noopener">🗺️ 百度地图</a></div>';
+
+                // 初始化 Leaflet 地图
+                setTimeout(function() {
+                    var mapEl = document.getElementById('company-map');
+                    if (!mapEl) return;
+                    var map = L.map('company-map', {
+                        center: [lat, lng],
+                        zoom: zoom,
+                        scrollWheelZoom: false
+                    });
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                        maxZoom: 19
+                    }).addTo(map);
+                    // 自定义图标
+                    var markerIcon = L.divIcon({
+                        className: 'custom-marker',
+                        html: '<div style="background:#2d5016;color:#c8a84e;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,0.3);border:3px solid #c8a84e;"><span style="transform:rotate(45deg);font-size:16px;">芝</span></div>',
+                        iconSize: [36, 36],
+                        iconAnchor: [18, 36],
+                        popupAnchor: [0, -40]
+                    });
+                    L.marker([lat, lng], { icon: markerIcon })
+                        .addTo(map)
+                        .bindPopup('<b>贵州古芝源品牌管理有限公司</b><br>' + addrText)
+                        .openPopup();
+                }, 300);
 
                 // FAQ
                 if (data.faq && data.faq.items) {

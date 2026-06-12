@@ -555,6 +555,11 @@ async function loadContactContent() {
             + '<div class="form-group"><label>表单下拉标签</label><input type="text" data-section="contact" data-field="formSubject" value="' + esc(d.formSubject || '') + '"></div>'
             + '<div class="form-group"><label>地图标题</label><input type="text" data-section="contact" data-field="mapTitle" value="' + esc(d.mapTitle || '') + '"></div>'
             + '<div class="form-group"><label>地图描述</label><textarea data-section="contact" data-field="mapText">' + esc(d.mapText || '') + '</textarea></div>'
+            + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">'
+            + '<div class="form-group"><label>纬度 (Latitude)</label><input type="number" step="0.000001" data-section="contact" data-field="mapLat" value="' + (d.mapLat || 27.642) + '"></div>'
+            + '<div class="form-group"><label>经度 (Longitude)</label><input type="number" step="0.000001" data-section="contact" data-field="mapLng" value="' + (d.mapLng || 106.895) + '"></div>'
+            + '<div class="form-group"><label>缩放级别</label><input type="number" min="1" max="19" data-section="contact" data-field="mapZoom" value="' + (d.mapZoom || 16) + '"></div>'
+            + '</div>'
             + '<h3 style="margin-top:16px;color:#2d5016;">FAQ 常见问题</h3>'
             + '<div class="form-group"><label>FAQ 标题</label><input type="text" data-section="contact" data-field="faqTitle" value="' + esc((d.faq||{}).title || '') + '"></div>'
             + '<div class="form-group"><label>FAQ 数据 (JSON数组，每项含question/answer)</label><textarea data-section="contact" data-field="faqItems" rows="10">' + esc(JSON.stringify((d.faq||{}).items || [], null, 2)) + '</textarea></div>';
@@ -581,6 +586,9 @@ async function saveContact() {
         f.content.formSubject = data.formSubject;
         f.content.mapTitle = data.mapTitle;
         f.content.mapText = data.mapText;
+        f.content.mapLat = parseFloat(data.mapLat) || 27.642;
+        f.content.mapLng = parseFloat(data.mapLng) || 106.895;
+        f.content.mapZoom = parseInt(data.mapZoom) || 16;
         if (!f.content.faq) f.content.faq = {};
         f.content.faq.title = data.faqTitle;
         try { f.content.faq.items = JSON.parse(data.faqItems); } catch(e) {}

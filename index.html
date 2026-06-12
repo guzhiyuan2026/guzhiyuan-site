@@ -72,10 +72,6 @@
         }
 
         /* 板块公共样式 */
-        .section {
-            padding: 4rem 0;
-        }
-
         .section-inner {
             max-width: 1200px;
             margin: 0 auto;
@@ -145,7 +141,6 @@
             align-items: center;
             justify-content: center;
             font-size: 5rem;
-            color: var(--light-green);
         }
 
         /* 产品展示 */
@@ -267,7 +262,6 @@
         .contact-card .icon {
             font-size: 2rem;
             margin-bottom: 0.5rem;
-            color: var(--primary-green);
         }
 
         .contact-card h3 {
@@ -348,18 +342,8 @@
                 <span class="logo-icon" id="logo-icon">芝</span>
                 <span id="logo-text">古芝源</span>
             </a>
-            <ul class="nav-links">
-                <li><a href="index.html" style="color:var(--gold);">首页</a></li>
-                <li><a href="about.html">关于我们</a></li>
-                <li><a href="products.html">产品中心</a></li>
-                <li><a href="news.html">新闻动态</a></li>
-                <li><a href="contact.html">联系方式</a></li>
-                <li>
-                    <a href="cart.html" class="cart-link">
-                        <span class="cart-icon">&#128722;</span>
-                        <span class="cart-badge" id="cart-badge">0</span>
-                    </a>
-                </li>
+            <ul class="nav-links" id="nav-links">
+                <!-- JS 动态生成 -->
             </ul>
         </div>
     </nav>
@@ -367,34 +351,32 @@
     <!-- Hero区域 -->
     <section class="hero" id="hero">
         <div class="hero-content fade-in">
-            <h1>贵州古芝源品牌管理有限公司</h1>
-            <p class="subtitle">传承古法 · 芝养人生</p>
-            <p class="desc">
+            <h1 id="hero-title">贵州古芝源品牌管理有限公司</h1>
+            <p class="subtitle" id="hero-subtitle">传承古法 · 芝养人生</p>
+            <p class="desc" id="hero-desc">
                 秉承千年中医药文化精髓，融合现代科技与古法工艺<br>
                 致力于打造高品质中药材与健康养生产品<br>
                 让传统智慧惠及现代生活
             </p>
-            <a href="about.html" class="btn-gold">了解更多</a>
+            <a href="about.html" class="btn-gold" id="hero-btn">了解更多</a>
         </div>
     </section>
 
     <!-- 关于我们 -->
     <section class="section about-section" id="about">
         <div class="section-inner">
-            <h2 class="section-title fade-in">关于我们</h2>
-            <p class="section-subtitle fade-in">扎根贵州，传承古法，守护健康</p>
+            <h2 class="section-title fade-in" id="about-title">关于我们</h2>
+            <p class="section-subtitle fade-in" id="about-subtitle">扎根贵州，传承古法，守护健康</p>
             <div class="about-content">
-                <div class="about-text fade-in">
-                    <p>贵州古芝源品牌管理有限公司成立于贵州省遵义市，是一家专注于中医药文化传承与现代健康管理的品牌企业。</p>
-                    <p>公司秉持"传承古法·芝养人生"的核心理念，深耕道地中药材领域，将传统中医药智慧与现代科技相结合，为消费者提供高品质的健康养生产品与服务。</p>
-                    <p>我们坚持"品质第一、诚信至上"的经营理念，精选贵州高原优质道地药材，采用古法炮制工艺，确保每一份产品的纯正与功效。</p>
+                <div class="about-text fade-in" id="about-text">
+                    <!-- JS 动态生成 -->
                 </div>
-                <div class="about-image fade-in">
-                    <span>&#127807;</span>
+                <div class="about-image fade-in" id="about-image">
+                    <span>🌿</span>
                 </div>
             </div>
             <div class="section-link fade-in">
-                <a href="about.html">查看详情 &#8594;</a>
+                <a href="about.html">查看详情 →</a>
             </div>
         </div>
     </section>
@@ -402,32 +384,13 @@
     <!-- 产品展示 -->
     <section class="section products-section" id="products">
         <div class="section-inner">
-            <h2 class="section-title fade-in">产品展示</h2>
-            <p class="section-subtitle fade-in">道地药材 · 古法炮制 · 品质保证</p>
-            <div class="product-grid">
-                <div class="product-card fade-in" onclick="location.href='products.html'">
-                    <div class="icon">&#127807;</div>
-                    <h3>贵州天麻</h3>
-                    <p>甄选贵州高原道地天麻，遵循古法炮制，品质优良，功效显著。</p>
-                </div>
-                <div class="product-card fade-in" onclick="location.href='products.html'">
-                    <div class="icon">&#127812;</div>
-                    <h3>贵州灵芝</h3>
-                    <p>来自贵州深山的野生灵芝，汇聚天地精华，增强免疫力。</p>
-                </div>
-                <div class="product-card fade-in" onclick="location.href='products.html'">
-                    <div class="icon">&#127812;</div>
-                    <h3>古芝养生茶</h3>
-                    <p>精选多种珍贵本草，科学配比，温润滋养，日常调理佳品。</p>
-                </div>
-                <div class="product-card fade-in" onclick="location.href='products.html'">
-                    <div class="icon">&#127800;</div>
-                    <h3>玫瑰养颜茶</h3>
-                    <p>以贵州高原玫瑰为主料，辅以多种天然本草，美容养颜，调理气血。</p>
-                </div>
+            <h2 class="section-title fade-in" id="products-title">产品展示</h2>
+            <p class="section-subtitle fade-in" id="products-subtitle">道地药材 · 古法炮制 · 品质保证</p>
+            <div class="product-grid" id="products-grid">
+                <!-- JS 动态生成 -->
             </div>
             <div class="section-link fade-in">
-                <a href="products.html">查看全部产品 &#8594;</a>
+                <a href="products.html">查看全部产品 →</a>
             </div>
         </div>
     </section>
@@ -435,32 +398,13 @@
     <!-- 文化理念 -->
     <section class="section culture-section" id="culture">
         <div class="section-inner">
-            <h2 class="section-title fade-in">文化理念</h2>
-            <p class="section-subtitle fade-in">传承中医药文化 · 守护国民健康</p>
-            <div class="culture-grid">
-                <div class="culture-item fade-in">
-                    <div class="icon">&#127807;</div>
-                    <h3>道地选材</h3>
-                    <p>严选贵州高原道地药材，确保原料的天然纯正与功效卓著。</p>
-                </div>
-                <div class="culture-item fade-in">
-                    <div class="icon">&#9878;</div>
-                    <h3>古法炮制</h3>
-                    <p>传承千年炮制工艺，保留药材精华，发挥最佳药效。</p>
-                </div>
-                <div class="culture-item fade-in">
-                    <div class="icon">&#128170;</div>
-                    <h3>品质至上</h3>
-                    <p>严格把控每一道工序，从种植到加工全程可追溯。</p>
-                </div>
-                <div class="culture-item fade-in">
-                    <div class="icon">&#10084;</div>
-                    <h3>诚信服务</h3>
-                    <p>以客户健康为己任，提供专业的健康咨询与贴心服务。</p>
-                </div>
+            <h2 class="section-title fade-in" id="culture-title">文化理念</h2>
+            <p class="section-subtitle fade-in" id="culture-subtitle">传承中医药文化 · 守护国民健康</p>
+            <div class="culture-grid" id="culture-grid">
+                <!-- JS 动态生成 -->
             </div>
             <div class="section-link fade-in">
-                <a href="about.html#culture">了解更多 &#8594;</a>
+                <a href="about.html#culture">了解更多 →</a>
             </div>
         </div>
     </section>
@@ -468,60 +412,186 @@
     <!-- 联系方式 -->
     <section class="section contact-section" id="contact">
         <div class="section-inner">
-            <h2 class="section-title fade-in">联系方式</h2>
-            <p class="section-subtitle fade-in">期待与您携手，共创健康未来</p>
-            <div class="contact-grid">
-                <div class="contact-card fade-in">
-                    <div class="icon">&#127968;</div>
-                    <h3>公司地址</h3>
-                    <p>贵州省遵义市红花岗区忠庄街道共青大道碧桂园一期12栋</p>
-                </div>
-                <div class="contact-card fade-in">
-                    <div class="icon">&#9742;</div>
-                    <h3>联系电话</h3>
-                    <p>蒋先生：13802605520<br>彭小姐：13311251885</p>
-                </div>
-                <div class="contact-card fade-in">
-                    <div class="icon">&#9993;</div>
-                    <h3>电子邮箱</h3>
-                    <p>guizhouguzhiyuan@126.com</p>
-                </div>
-                <div class="contact-card fade-in">
-                    <div class="icon">&#128172;</div>
-                    <h3>微信公众号</h3>
-                    <p>Guzhiyuan_Health</p>
-                </div>
+            <h2 class="section-title fade-in" id="contact-title">联系方式</h2>
+            <p class="section-subtitle fade-in" id="contact-subtitle">期待与您携手，共创健康未来</p>
+            <div class="contact-grid" id="contact-grid">
+                <!-- JS 动态生成 -->
             </div>
             <div class="section-link fade-in">
-                <a href="contact.html">联系我们 &#8594;</a>
+                <a href="contact.html">联系我们 →</a>
             </div>
         </div>
     </section>
 
     <!-- 页脚 -->
-    <footer class="footer">
-        <p>&copy; 2026 贵州古芝源品牌管理有限公司 版权所有</p>
-        <p>传承古法 &#183; 芝养人生</p>
-        <p style="margin-top:0.5rem;font-size:0.85rem;opacity:0.6;">
-            贵州省遵义市红花岗区忠庄街道共青大道碧桂园一期12栋 | 电话：13802605520
-        </p>
+    <footer class="footer" id="footer">
+        <!-- JS 动态生成 -->
     </footer>
 
-    <script src="cart.js"></script>
     <script>
-        // 购物车角标
-        function updateCartBadge() {
-            try {
-                const cart = JSON.parse(localStorage.getItem('guzhiyuan_cart') || '[]');
-                const count = cart.reduce((s, i) => s + i.quantity, 0);
-                const badge = document.getElementById('cart-badge');
-                if (badge) {
-                    badge.textContent = count;
-                    badge.classList.toggle('show', count > 0);
-                }
-            } catch(e) {}
+    // ============ 数据加载 ============
+    async function loadSiteData() {
+        try {
+            const res = await fetch('content/site.json?t=' + Date.now());
+            const site = await res.json();
+            renderLogo(site);
+            renderNav(site);
+            renderFooter(site);
+        } catch(e) { console.error('site.json load error:', e); }
+    }
+
+    function renderLogo(site) {
+        const img = document.getElementById('logo-img');
+        const icon = document.getElementById('logo-icon');
+        const text = document.getElementById('logo-text');
+        if (site.company && site.company.logoImage) {
+            img.src = site.company.logoImage;
+            img.style.display = '';
+            icon.style.display = 'none';
         }
+        if (site.company && site.company.name) {
+            text.textContent = site.company.name;
+        }
+    }
+
+    function renderNav(site) {
+        const nav = document.getElementById('nav-links');
+        const pages = [
+            { file: 'index.html', label: '首页' },
+            { file: 'about.html', label: '关于我们' },
+            { file: 'products.html', label: '产品中心' },
+            { file: 'news.html', label: '新闻动态' },
+            { file: 'contact.html', label: '联系方式' }
+        ];
+        const current = window.location.pathname.split('/').pop() || 'index.html';
+        let html = pages.map(p => {
+            const active = p.file === current ? 'style="color:var(--gold);"' : '';
+            return `<li><a href="${p.file}" ${active}>${p.label}</a></li>`;
+        }).join('');
+        html += `
+            <li>
+                <a href="cart.html" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-badge" id="cart-badge">0</span>
+                </a>
+            </li>`;
+        nav.innerHTML = html;
         updateCartBadge();
+    }
+
+    function renderFooter(site) {
+        const footer = document.getElementById('footer');
+        if (!site.footer) return;
+        const f = site.footer;
+        const companyName = (site.company && site.company.name) || '贵州古芝源品牌管理有限公司';
+        footer.innerHTML = `
+            <p>© ${new Date().getFullYear()} ${companyName} 版权所有</p>
+            <p>${f.slogan || '传承古法 · 芝养人生'}</p>
+            <p style="margin-top:0.5rem;font-size:0.85rem;opacity:0.6;">
+                ${(site.contact && site.contact.address) || ''} ${(site.contact && site.contact.phone) ? '| 电话：' + site.contact.phone : ''}
+            </p>
+        `;
+    }
+
+    // ============ 首页数据加载 ============
+    async function loadHomeData() {
+        try {
+            const res = await fetch('content/home.json?t=' + Date.now());
+            const home = await res.json();
+            renderHero(home.hero);
+            renderAbout(home.about);
+            renderProducts(home.products);
+            renderCulture(home.culture);
+            renderContact(home.contact);
+        } catch(e) {
+            console.error('home.json load error:', e);
+        }
+    }
+
+    function renderHero(hero) {
+        if (!hero) return;
+        document.getElementById('hero-title').textContent = hero.title || '';
+        document.getElementById('hero-subtitle').textContent = hero.subtitle || '';
+        document.getElementById('hero-desc').innerHTML = (hero.description || '').replace(/\n/g, '<br>');
+        const btn = document.getElementById('hero-btn');
+        btn.textContent = hero.buttonText || '了解更多';
+        btn.href = hero.buttonLink || 'about.html';
+    }
+
+    function renderAbout(about) {
+        if (!about) return;
+        document.getElementById('about-title').textContent = about.title || '';
+        document.getElementById('about-subtitle').textContent = about.subtitle || '';
+        const container = document.getElementById('about-text');
+        const paragraphs = about.paragraphs || about.paragraph || [];
+        container.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+    }
+
+    function renderProducts(products) {
+        if (!products) return;
+        document.getElementById('products-title').textContent = products.title || '';
+        document.getElementById('products-subtitle').textContent = products.subtitle || '';
+        const grid = document.getElementById('products-grid');
+        const items = products.items || [];
+        grid.innerHTML = items.map(item => `
+            <div class="product-card fade-in" onclick="location.href='products.html'">
+                <div class="icon">${item.icon || '🌿'}</div>
+                <h3>${item.name || ''}</h3>
+                <p>${item.description || ''}</p>
+            </div>
+        `).join('');
+    }
+
+    function renderCulture(culture) {
+        if (!culture) return;
+        document.getElementById('culture-title').textContent = culture.title || '';
+        document.getElementById('culture-subtitle').textContent = culture.subtitle || '';
+        const grid = document.getElementById('culture-grid');
+        const items = culture.items || [];
+        grid.innerHTML = items.map(item => `
+            <div class="culture-item fade-in">
+                <div class="icon">${item.icon || ''}</div>
+                <h3>${item.name || ''}</h3>
+                <p>${item.description || ''}</p>
+            </div>
+        `).join('');
+    }
+
+    function renderContact(contact) {
+        if (!contact) return;
+        document.getElementById('contact-title').textContent = contact.title || '';
+        document.getElementById('contact-subtitle').textContent = contact.subtitle || '';
+        const grid = document.getElementById('contact-grid');
+        const items = contact.items || [];
+        grid.innerHTML = items.map(item => `
+            <div class="contact-card fade-in">
+                <div class="icon">${item.icon || ''}</div>
+                <h3>${item.name || ''}</h3>
+                <p>${item.description || ''}</p>
+            </div>
+        `).join('');
+    }
+
+    // ============ 购物车角标 ============
+    function getCart() {
+        try { return JSON.parse(localStorage.getItem('guzhiyuan_cart') || '[]'); }
+        catch(e) { return []; }
+    }
+    function getCartCount() {
+        return getCart().reduce((s, i) => s + i.quantity, 0);
+    }
+    function updateCartBadge() {
+        const badge = document.getElementById('cart-badge');
+        if (!badge) return;
+        const count = getCartCount();
+        badge.textContent = count;
+        badge.classList.toggle('show', count > 0);
+    }
+
+    // ============ 初始化 ============
+    (async function() {
+        await loadSiteData();
+        await loadHomeData();
 
         // 滚动动画
         const fadeInElements = document.querySelectorAll('.fade-in');
@@ -541,24 +611,8 @@
                 navbar.style.background = 'rgba(45,80,22,0.95)';
             }
         });
-
-        // LOGO 图片加载
-        (async function() {
-            try {
-                const res = await fetch('content/site.json');
-                const site = await res.json();
-                if (site.company && site.company.logoImage) {
-                    const img = document.getElementById('logo-img');
-                    const icon = document.getElementById('logo-icon');
-                    img.src = site.company.logoImage;
-                    img.style.display = '';
-                    icon.style.display = 'none';
-                }
-                if (site.company && site.company.name) {
-                    document.getElementById('logo-text').textContent = site.company.name;
-                }
-            } catch(e) {}
-        })();
+    })();
     </script>
+    <script src="cart.js"></script>
 </body>
 </html>

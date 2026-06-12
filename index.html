@@ -338,7 +338,7 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo" id="logo-link">
-                <img id="logo-img" src="" alt="" style="display:none;height:40px;object-fit:contain;">
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
                 <span class="logo-icon" id="logo-icon">芝</span>
                 <span id="logo-text">古芝源</span>
             </a>
@@ -441,16 +441,21 @@
     }
 
     function renderLogo(site) {
+        const co = site.company || {};
         const img = document.getElementById('logo-img');
         const icon = document.getElementById('logo-icon');
         const text = document.getElementById('logo-text');
-        if (site.company && site.company.logoImage) {
-            img.src = site.company.logoImage;
+        // 使用短名称，避免"贵州古芝源品牌管理有限公司"撑破导航栏
+        text.textContent = co.shortName || co.name || '古芝源';
+        if (co.logoImage) {
+            img.src = co.logoImage;
             img.style.display = '';
             icon.style.display = 'none';
-        }
-        if (site.company && site.company.name) {
-            text.textContent = site.company.name;
+            // 图片加载失败回退到 icon+text
+            img.onerror = function() {
+                img.style.display = 'none';
+                icon.style.display = '';
+            };
         }
     }
 

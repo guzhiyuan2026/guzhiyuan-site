@@ -151,7 +151,7 @@
             // === Logo ===
             if (co.logoImage) {
                 var li = document.getElementById('logo-img');
-                if (li) { li.src = co.logoImage; li.style.display = ''; }
+                if (li) { li.src = co.logoImage; li.style.display = ''; li.onerror = function() { li.style.display = 'none'; var lc2 = document.getElementById('logo-icon'); if (lc2) lc2.style.display = ''; }; }
                 var lc = document.getElementById('logo-icon');
                 if (lc) lc.style.display = 'none';
             }

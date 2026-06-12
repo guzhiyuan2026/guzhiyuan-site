@@ -63,6 +63,8 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
+    min-width: 0;
 }
 
 .logo-icon {
@@ -76,10 +78,31 @@ body {
     font-size: 1.5rem;
 }
 
+.logo-img {
+    max-height: 45px;
+    max-width: 180px;
+    object-fit: contain;
+}
+
+.logo-text {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .nav-links {
     display: flex;
     list-style: none;
     gap: 2rem;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.nav-links li {
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .nav-links a {

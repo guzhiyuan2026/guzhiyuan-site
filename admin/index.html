@@ -301,12 +301,14 @@ async function loadSiteSettings() {
             + '<div class="form-group"><label>公司全称</label><input type="text" data-section="site" data-field="companyName" value="' + esc(d.name) + '"></div>'
             + '<div class="form-group"><label>简称</label><input type="text" data-section="site" data-field="shortName" value="' + esc(d.shortName) + '"></div>'
             + '<div class="form-group"><label>品牌口号</label><input type="text" data-section="site" data-field="slogan" value="' + esc(d.slogan) + '"></div>'
+            + '<div class="form-group"><label>Logo图标文字</label><input type="text" data-section="site" data-field="logoIcon" value="' + esc(d.logoIcon || '芝') + '"></div>'
             + '<h3 style="margin-top:16px;color:#2d5016;">联系方式</h3>'
             + '<div class="form-group"><label>公司地址</label><input type="text" data-section="site" data-field="address" value="' + esc(c.address) + '"></div>'
             + '<div class="form-group"><label>电话</label><input type="text" data-section="site" data-field="phone" value="' + esc(c.phone) + '"></div>'
             + '<div class="form-group"><label>邮箱</label><input type="text" data-section="site" data-field="email" value="' + esc(c.emailBusiness || '') + '"></div>'
             + '<h3 style="margin-top:16px;color:#2d5016;">页脚</h3>'
             + '<div class="form-group"><label>版权信息</label><input type="text" data-section="site" data-field="copyright" value="' + esc(ft.copyright) + '"></div>'
+            + '<div class="form-group"><label>页脚口号</label><input type="text" data-section="site" data-field="footerSlogan" value="' + esc(ft.slogan || '') + '"></div>'
             + '<button class="btn-save" onclick="saveSite()">保存站点设置</button><span class="status" id="site-status"></span>';
         document.getElementById('content-area').innerHTML = html;
     } catch(e) {
@@ -326,11 +328,13 @@ async function saveSite() {
         f.content.company.name = data.companyName;
         f.content.company.shortName = data.shortName;
         f.content.company.slogan = data.slogan;
+        f.content.company.logoIcon = data.logoIcon;
         f.content.contact.address = data.address;
         f.content.contact.phone = data.phone;
         if (!f.content.contact.emailBusiness) f.content.contact.emailBusiness = data.email;
         else f.content.contact.emailBusiness = data.email;
         f.content.footer.copyright = data.copyright;
+        f.content.footer.slogan = data.footerSlogan;
         await saveFile('content/site.json', f.content, siteSha, 'Update site settings');
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {
@@ -346,14 +350,33 @@ async function loadHomeContent() {
         homeSha = f.sha;
         const h = f.content.hero || {};
         const a = f.content.about || {};
+        const prod = f.content.products || {};
+        const cult = f.content.culture || {};
+        const cont = f.content.contact || {};
+        let aboutParaText = '';
+        if (Array.isArray(a.paragraphs)) {
+            aboutParaText = a.paragraphs.map(p => (typeof p === 'object' && p.p) ? p.p : String(p)).join('\n\n');
+        }
         const html = '<h2 class="section-title">首页内容</h2>'
             + '<h3 style="margin-top:16px;color:#2d5016;">主视觉区</h3>'
             + '<div class="form-group"><label>标题</label><input type="text" data-section="home" data-field="heroTitle" value="' + esc(h.title) + '"></div>'
             + '<div class="form-group"><label>副标题</label><input type="text" data-section="home" data-field="heroSubtitle" value="' + esc(h.subtitle) + '"></div>'
             + '<div class="form-group"><label>描述</label><textarea data-section="home" data-field="heroDesc">' + esc(h.description) + '</textarea></div>'
+            + '<div class="form-group"><label>按钮文字</label><input type="text" data-section="home" data-field="heroButtonText" value="' + esc(h.buttonText || '了解更多') + '"></div>'
+            + '<div class="form-group"><label>按钮链接</label><input type="text" data-section="home" data-field="heroButtonLink" value="' + esc(h.buttonLink || 'about.html') + '"></div>'
             + '<h3 style="margin-top:16px;color:#2d5016;">关于我们摘要</h3>'
             + '<div class="form-group"><label>标题</label><input type="text" data-section="home" data-field="aboutTitle" value="' + esc(a.title) + '"></div>'
             + '<div class="form-group"><label>副标题</label><input type="text" data-section="home" data-field="aboutSubtitle" value="' + esc(a.subtitle) + '"></div>'
+            + '<div class="form-group"><label>描述段落（用空行分隔）</label><textarea data-section="home" data-field="aboutParagraphs" rows="8">' + esc(aboutParaText) + '</textarea></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">产品推荐区</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="home" data-field="prodTitle" value="' + esc(prod.title || '') + '"></div>'
+            + '<div class="form-group"><label>副标题</label><input type="text" data-section="home" data-field="prodSubtitle" value="' + esc(prod.subtitle || '') + '"></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">文化理念区</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="home" data-field="cultureTitle" value="' + esc(cult.title || '') + '"></div>'
+            + '<div class="form-group"><label>副标题</label><input type="text" data-section="home" data-field="cultureSubtitle" value="' + esc(cult.subtitle || '') + '"></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">联系方式区</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="home" data-field="contactTitle" value="' + esc(cont.title || '') + '"></div>'
+            + '<div class="form-group"><label>副标题</label><input type="text" data-section="home" data-field="contactSubtitle" value="' + esc(cont.subtitle || '') + '"></div>'
             + '<button class="btn-save" onclick="saveHome()">保存首页内容</button><span class="status" id="home-status"></span>';
         document.getElementById('content-area').innerHTML = html;
     } catch(e) {
@@ -373,8 +396,20 @@ async function saveHome() {
         f.content.hero.title = data.heroTitle;
         f.content.hero.subtitle = data.heroSubtitle;
         f.content.hero.description = data.heroDesc;
+        f.content.hero.buttonText = data.heroButtonText;
+        f.content.hero.buttonLink = data.heroButtonLink;
         f.content.about.title = data.aboutTitle;
         f.content.about.subtitle = data.aboutSubtitle;
+        f.content.about.paragraphs = data.aboutParagraphs.split('\n\n').filter(p => p.trim()).map(p => p.trim());
+        if (!f.content.products) f.content.products = {};
+        f.content.products.title = data.prodTitle;
+        f.content.products.subtitle = data.prodSubtitle;
+        if (!f.content.culture) f.content.culture = {};
+        f.content.culture.title = data.cultureTitle;
+        f.content.culture.subtitle = data.cultureSubtitle;
+        if (!f.content.contact) f.content.contact = {};
+        f.content.contact.title = data.contactTitle;
+        f.content.contact.subtitle = data.contactSubtitle;
         await saveFile('content/home.json', f.content, homeSha, 'Update home content');
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {
@@ -386,14 +421,25 @@ async function saveHome() {
 async function loadAboutContent() {
     try {
         const f = await getFile('content/about.json');
-        let introObj = f.content.intro || {};
+        const d = f.content;
+        let introObj = d.intro || {};
         let paraText = '';
         if (Array.isArray(introObj.paragraphs)) {
-            paraText = introObj.paragraphs.map(p => p.p || '').join('\n\n');
+            paraText = introObj.paragraphs.map(p => (typeof p === 'object' && p.p) ? p.p : String(p)).join('\n\n');
         }
-        const html = '<h2 class="section-title">关于我们</h2>'
+        let html = '<h2 class="section-title">关于我们</h2>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">公司简介</h3>'
             + '<div class="form-group"><label>标题</label><input type="text" data-section="about" data-field="aboutTitle" value="' + esc(introObj.title || '') + '"></div>'
             + '<div class="form-group"><label>公司介绍（多段，用空行分隔）</label><textarea data-section="about" data-field="aboutText" rows="12">' + esc(paraText) + '</textarea></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">发展历程</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="about" data-field="timelineTitle" value="' + esc((d.timeline||{}).title || '') + '"></div>'
+            + '<div class="form-group"><label>历程数据 (JSON数组，每项含year/title/description)</label><textarea data-section="about" data-field="timelineItems" rows="10">' + esc(JSON.stringify((d.timeline||{}).items || [], null, 2)) + '</textarea></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">核心团队</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="about" data-field="teamTitle" value="' + esc((d.team||{}).title || '') + '"></div>'
+            + '<div class="form-group"><label>团队成员 (JSON数组，每项含icon/name/position/description)</label><textarea data-section="about" data-field="teamItems" rows="10">' + esc(JSON.stringify((d.team||{}).items || [], null, 2)) + '</textarea></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">资质认证</h3>'
+            + '<div class="form-group"><label>标题</label><input type="text" data-section="about" data-field="certTitle" value="' + esc((d.certifications||{}).title || '') + '"></div>'
+            + '<div class="form-group"><label>认证数据 (JSON数组，每项含icon/name/description)</label><textarea data-section="about" data-field="certItems" rows="10">' + esc(JSON.stringify((d.certifications||{}).items || [], null, 2)) + '</textarea></div>'
             + '<button class="btn-save" onclick="saveAbout()">保存关于我们</button><span class="status" id="about-status"></span>';
         document.getElementById('content-area').innerHTML = html;
     } catch(e) {
@@ -409,9 +455,19 @@ async function saveAbout() {
         const fields = document.querySelectorAll('[data-section="about"]');
         const data = {};
         fields.forEach(el => { data[el.dataset.field] = el.value; });
-        const paragraphs = data.aboutText.split('\n\n').filter(p => p.trim()).map(p => ({ p: p.trim() }));
+        // 公司简介
+        const paragraphs = data.aboutText.split('\n\n').filter(p => p.trim()).map(p => p.trim());
         f.content.intro.title = data.aboutTitle;
         f.content.intro.paragraphs = paragraphs;
+        // 发展历程
+        f.content.timeline.title = data.timelineTitle;
+        try { f.content.timeline.items = JSON.parse(data.timelineItems); } catch(e) {}
+        // 核心团队
+        f.content.team.title = data.teamTitle;
+        try { f.content.team.items = JSON.parse(data.teamItems); } catch(e) {}
+        // 资质认证
+        f.content.certifications.title = data.certTitle;
+        try { f.content.certifications.items = JSON.parse(data.certItems); } catch(e) {}
         await saveFile('content/about.json', f.content, f.sha, 'Update about content');
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {
@@ -428,9 +484,14 @@ async function loadContactContent() {
             + '<div class="form-group"><label>页面标题</label><input type="text" data-section="contact" data-field="title" value="' + esc(d.title || '') + '"></div>'
             + '<div class="form-group"><label>页面副标题</label><input type="text" data-section="contact" data-field="subtitle" value="' + esc(d.subtitle || '') + '"></div>'
             + '<div class="form-group"><label>联系信息标题</label><input type="text" data-section="contact" data-field="infoTitle" value="' + esc(d.infoTitle || '') + '"></div>'
+            + '<div class="form-group"><label>联系信息卡片 (JSON数组，每项含icon/name/description)</label><textarea data-section="contact" data-field="items" rows="10">' + esc(JSON.stringify(d.items || [], null, 2)) + '</textarea></div>'
             + '<div class="form-group"><label>留言表单标题</label><input type="text" data-section="contact" data-field="formTitle" value="' + esc(d.formTitle || '') + '"></div>'
+            + '<div class="form-group"><label>表单下拉标签</label><input type="text" data-section="contact" data-field="formSubject" value="' + esc(d.formSubject || '') + '"></div>'
             + '<div class="form-group"><label>地图标题</label><input type="text" data-section="contact" data-field="mapTitle" value="' + esc(d.mapTitle || '') + '"></div>'
-            + '<div class="form-group"><label>地图描述</label><textarea data-section="contact" data-field="mapText">' + esc(d.mapText || '') + '</textarea></div>';
+            + '<div class="form-group"><label>地图描述</label><textarea data-section="contact" data-field="mapText">' + esc(d.mapText || '') + '</textarea></div>'
+            + '<h3 style="margin-top:16px;color:#2d5016;">FAQ 常见问题</h3>'
+            + '<div class="form-group"><label>FAQ 标题</label><input type="text" data-section="contact" data-field="faqTitle" value="' + esc((d.faq||{}).title || '') + '"></div>'
+            + '<div class="form-group"><label>FAQ 数据 (JSON数组，每项含question/answer)</label><textarea data-section="contact" data-field="faqItems" rows="10">' + esc(JSON.stringify((d.faq||{}).items || [], null, 2)) + '</textarea></div>';
         html += '<button class="btn-save" onclick="saveContact()">保存联系我们</button><span class="status" id="contact-status"></span>';
         document.getElementById('content-area').innerHTML = html;
     } catch(e) {
@@ -449,9 +510,14 @@ async function saveContact() {
         f.content.title = data.title;
         f.content.subtitle = data.subtitle;
         f.content.infoTitle = data.infoTitle;
+        try { f.content.items = JSON.parse(data.items); } catch(e) {}
         f.content.formTitle = data.formTitle;
+        f.content.formSubject = data.formSubject;
         f.content.mapTitle = data.mapTitle;
         f.content.mapText = data.mapText;
+        if (!f.content.faq) f.content.faq = {};
+        f.content.faq.title = data.faqTitle;
+        try { f.content.faq.items = JSON.parse(data.faqItems); } catch(e) {}
         await saveFile('content/contact.json', f.content, f.sha, 'Update contact content');
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {

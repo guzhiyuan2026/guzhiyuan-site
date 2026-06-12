@@ -423,11 +423,15 @@ async function saveAbout() {
 async function loadContactContent() {
     try {
         const f = await getFile('content/contact.json');
-        const info = f.content.info || {};
-        const html = '<h2 class="section-title">联系我们</h2>'
-            + '<div class="form-group"><label>页面标题</label><input type="text" data-section="contact" data-field="title" value="' + esc(info.title || '') + '"></div>'
-            + '<div class="form-group"><label>页面描述</label><textarea data-section="contact" data-field="description">' + esc(info.description || '') + '</textarea></div>'
-            + '<button class="btn-save" onclick="saveContact()">保存联系我们</button><span class="status" id="contact-status"></span>';
+        const d = f.content;
+        let html = '<h2 class="section-title">联系我们</h2>'
+            + '<div class="form-group"><label>页面标题</label><input type="text" data-section="contact" data-field="title" value="' + esc(d.title || '') + '"></div>'
+            + '<div class="form-group"><label>页面副标题</label><input type="text" data-section="contact" data-field="subtitle" value="' + esc(d.subtitle || '') + '"></div>'
+            + '<div class="form-group"><label>联系信息标题</label><input type="text" data-section="contact" data-field="infoTitle" value="' + esc(d.infoTitle || '') + '"></div>'
+            + '<div class="form-group"><label>留言表单标题</label><input type="text" data-section="contact" data-field="formTitle" value="' + esc(d.formTitle || '') + '"></div>'
+            + '<div class="form-group"><label>地图标题</label><input type="text" data-section="contact" data-field="mapTitle" value="' + esc(d.mapTitle || '') + '"></div>'
+            + '<div class="form-group"><label>地图描述</label><textarea data-section="contact" data-field="mapText">' + esc(d.mapText || '') + '</textarea></div>';
+        html += '<button class="btn-save" onclick="saveContact()">保存联系我们</button><span class="status" id="contact-status"></span>';
         document.getElementById('content-area').innerHTML = html;
     } catch(e) {
         document.getElementById('content-area').innerHTML = '<p style="color:#c0392b;">加载失败: ' + e.message + '</p>';
@@ -442,8 +446,12 @@ async function saveContact() {
         const fields = document.querySelectorAll('[data-section="contact"]');
         const data = {};
         fields.forEach(el => { data[el.dataset.field] = el.value; });
-        f.content.info.title = data.title;
-        f.content.info.description = data.description;
+        f.content.title = data.title;
+        f.content.subtitle = data.subtitle;
+        f.content.infoTitle = data.infoTitle;
+        f.content.formTitle = data.formTitle;
+        f.content.mapTitle = data.mapTitle;
+        f.content.mapText = data.mapText;
         await saveFile('content/contact.json', f.content, f.sha, 'Update contact content');
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {

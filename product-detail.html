@@ -97,7 +97,56 @@
             font-size: 2rem;
             color: var(--earth-brown);
             font-weight: bold;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quantity-selector label {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-btn {
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .quantity-input {
+            width: 60px;
+            height: 36px;
+            border: 2px solid var(--cream);
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-dark);
         }
 
         .product-actions {
@@ -105,23 +154,7 @@
             gap: 1rem;
         }
 
-        .btn-primary {
-            flex: 1;
-            padding: 1rem;
-            background: var(--primary-green);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: var(--light-green);
-        }
-
-        .btn-secondary {
+        .btn-add-cart {
             flex: 1;
             padding: 1rem;
             background: white;
@@ -131,11 +164,35 @@
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .btn-secondary:hover {
+        .btn-add-cart:hover {
             background: var(--primary-green);
             color: white;
+        }
+
+        .btn-buy-now {
+            flex: 1;
+            padding: 1rem;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-buy-now:hover {
+            background: var(--light-green);
         }
 
         .product-attributes {
@@ -302,6 +359,13 @@
             font-size: 0.9rem;
         }
 
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
         @media (max-width: 768px) {
             .product-detail-container {
                 grid-template-columns: 1fr;
@@ -309,6 +373,10 @@
 
             .product-gallery {
                 position: static;
+            }
+
+            .product-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -318,8 +386,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
-                <span class="logo-icon" id="logo-icon">芝</span>
+                <span class="logo-icon">芝</span>
                 古芝源
             </a>
             <ul class="nav-links">
@@ -328,6 +395,12 @@
                 <li><a href="products.html">产品中心</a></li>
                 <li><a href="news.html">新闻动态</a></li>
                 <li><a href="contact.html">联系方式</a></li>
+                <li>
+                    <a href="cart.html" class="cart-link">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-badge" id="cart-badge">0</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -335,10 +408,16 @@
     <!-- 产品详情页面 -->
     <section class="product-detail-page">
         <div class="breadcrumb fade-in">
-            <a href="index.html">首页</a> > <a href="products.html">产品中心</a> > <span>产品详情</span>
+            <a href="index.html">首页</a> > <a href="products.html">产品中心</a> > <span id="breadcrumb-product-name">产品详情</span>
         </div>
 
-        <div class="product-detail-container">
+        <!-- 加载状态 -->
+        <div id="loading" class="loading fade-in">
+            正在加载产品信息...
+        </div>
+
+        <!-- 产品详情容器 -->
+        <div id="product-detail-container" class="product-detail-container" style="display: none;">
             <!-- 产品图片 -->
             <div class="product-gallery fade-in">
                 <div class="main-image" id="mainImage">🌿</div>
@@ -352,152 +431,105 @@
 
             <!-- 产品信息 -->
             <div class="product-info-section fade-in">
-                <h1>贵州天麻</h1>
-                <p class="product-subtitle">道地药材 · 贵州特产 · 国家地理标志产品</p>
+                <h1 id="product-name">产品名称</h1>
+                <p class="product-subtitle" id="product-subtitle">产品副标题</p>
 
                 <div class="product-price-section">
-                    <div class="price">¥ 168.00 <span style="font-size: 1rem; color: var(--text-light);">/ 500g</span></div>
+                    <div class="price" id="product-price">¥ 0.00</div>
+
+                    <!-- 数量选择 -->
+                    <div class="quantity-selector">
+                        <label>数量：</label>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                            <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="99">
+                            <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                        </div>
+                    </div>
+
                     <div class="product-actions">
-                        <button class="btn-primary">立即购买</button>
-                        <button class="btn-secondary">加入购物车</button>
+                        <button class="btn-add-cart" onclick="handleAddToCart()">
+                            <span>🛒</span>
+                            加入购物车
+                        </button>
+                        <button class="btn-buy-now" onclick="handleBuyNow()">
+                            <span>💳</span>
+                            立即购买
+                        </button>
                     </div>
                 </div>
 
                 <div class="product-attributes">
                     <div class="attribute-item">
                         <span class="attribute-label">产品名称</span>
-                        <span class="attribute-value">贵州天麻</span>
-                    </div>
-                    <div class="attribute-item">
-                        <span class="attribute-label">产地</span>
-                        <span class="attribute-value">贵州省毕节市大方县</span>
+                        <span class="attribute-value" id="attr-name">-</span>
                     </div>
                     <div class="attribute-item">
                         <span class="attribute-label">规格</span>
-                        <span class="attribute-value">500g/袋</span>
+                        <span class="attribute-value" id="attr-spec">-</span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-label">产地</span>
+                        <span class="attribute-value" id="attr-origin">-</span>
                     </div>
                     <div class="attribute-item">
                         <span class="attribute-label">保质期</span>
-                        <span class="attribute-value">24个月</span>
+                        <span class="attribute-value" id="attr-shelf-life">-</span>
                     </div>
                     <div class="attribute-item">
                         <span class="attribute-label">储藏方法</span>
-                        <span class="attribute-value">密封，置阴凉干燥处</span>
+                        <span class="attribute-value" id="attr-storage">-</span>
                     </div>
                     <div class="attribute-item">
                         <span class="attribute-label">执行标准</span>
-                        <span class="attribute-value">《中国药典》2020年版</span>
+                        <span class="attribute-value" id="attr-standard">-</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 产品描述 -->
-        <div class="product-description fade-in">
+        <!-- 产品介绍 -->
+        <div id="product-description" class="product-description fade-in" style="display: none;">
             <h2 class="section-heading">产品介绍</h2>
-            <p>天麻，兰科天麻属植物，又名赤箭、定风草、离母等，是传统名贵中药材。贵州大方天麻，因地理环境独特、气候适宜，所产天麻素含量高，品质优良，被誉为"天麻之乡"。</p>
-            <p>本公司甄选贵州大方海拔1200-1800米高山地带种植的优质天麻，严格遵循GAP（中药材生产质量管理规范）种植标准，确保每一株天麻都达到最高品质标准。</p>
-            <p>采用传统古法炮制工艺，结合现代科技手段，最大程度保留天麻中的有效成分——天麻素、天麻多糖等，确保产品的药效和品质。</p>
+            <div id="product-body"></div>
         </div>
 
         <!-- 产品特点 -->
-        <div class="product-features fade-in">
+        <div id="product-features" class="product-features fade-in" style="display: none;">
             <h2 class="section-heading">产品特点</h2>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <span class="feature-icon">🏔️</span>
-                    <h4>道地药材</h4>
-                    <p>产自贵州大方海拔1200-1800米高山地带</p>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon">🔬</span>
-                    <h4>品质检测</h4>
-                    <p>每批次均经过严格质量检测，符合国家标准</p>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon">📜</span>
-                    <h4>古法炮制</h4>
-                    <p>遵循传统炮制工艺，保留药材有效成分</p>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon">✅</span>
-                    <h4>权威认证</h4>
-                    <p>通过GMP、ISO9001等多项权威认证</p>
-                </div>
-            </div>
+            <div class="features-grid" id="features-grid"></div>
         </div>
 
         <!-- 使用方法 -->
-        <div class="usage-section fade-in">
+        <div id="product-usage" class="usage-section fade-in" style="display: none;">
             <h2 class="section-heading">使用方法</h2>
-            <div class="usage-steps">
-                <div class="usage-step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h4>泡酒</h4>
-                        <p>取天麻30-50g，放入500ml白酒中，密封浸泡15-30天即可饮用。每日饮用1-2次，每次15-30ml。</p>
-                    </div>
-                </div>
-                <div class="usage-step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h4>炖汤</h4>
-                        <p>取天麻10-15g，与鸡肉、排骨等食材一同炖煮2-3小时，调味即可食用。</p>
-                    </div>
-                </div>
-                <div class="usage-step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h4>泡茶</h4>
-                        <p>取天麻片3-5g，用沸水冲泡，焖10-15分钟后饮用，可反复冲泡2-3次。</p>
-                    </div>
-                </div>
-                <div class="usage-step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h4>打粉</h4>
-                        <p>将天麻打磨成细粉，每次取3-5g，温水送服，每日1-2次。</p>
-                    </div>
-                </div>
-            </div>
+            <div class="usage-steps" id="usage-steps"></div>
         </div>
 
         <!-- 相关产品 -->
-        <div class="related-products fade-in">
+        <div id="related-products" class="related-products fade-in" style="display: none;">
             <h2 class="section-heading">相关产品</h2>
-            <div class="related-grid">
-                <div class="related-card" onclick="location.href='product-detail.html'">
-                    <div class="related-image">🍄</div>
-                    <div class="related-info">
-                        <h4>贵州灵芝</h4>
-                        <p>产自贵州深山的优质灵芝，富含多糖肽</p>
-                    </div>
-                </div>
-                <div class="related-card" onclick="location.href='product-detail.html'">
-                    <div class="related-image">🫖</div>
-                    <div class="related-info">
-                        <h4>古芝养生茶</h4>
-                        <p>融合多种中药材精华，科学配比</p>
-                    </div>
-                </div>
-                <div class="related-card" onclick="location.href='product-detail.html'">
-                    <div class="related-image">🧪</div>
-                    <div class="related-info">
-                        <h4>黄芪精口服液</h4>
-                        <p>精选内蒙古黄芪，现代工艺提取</p>
-                    </div>
-                </div>
-            </div>
+            <div class="related-grid" id="related-grid"></div>
         </div>
     </section>
 
     <!-- 页脚 -->
-    <footer class="footer">
+    <footer class="footer" id="footer">
         <p>© 2026 贵州古芝源品牌管理有限公司 版权所有</p>
         <p>传承古法 · 芝养人生</p>
     </footer>
 
+    <script src="cart.js"></script>
     <script>
+        let currentProduct = null;
+        let currentQuantity = 1;
+
+        // 获取 URL 参数
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
         // 切换图片
         function changeImage(emoji, element) {
             document.getElementById('mainImage').textContent = emoji;
@@ -505,6 +537,186 @@
                 thumb.classList.remove('active');
             });
             element.classList.add('active');
+        }
+
+        // 修改数量
+        function changeQuantity(delta) {
+            const input = document.getElementById('quantity');
+            let value = parseInt(input.value) || 1;
+            value += delta;
+            if (value < 1) value = 1;
+            if (value > 99) value = 99;
+            input.value = value;
+            currentQuantity = value;
+        }
+
+        // 监听数量输入
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantityInput = document.getElementById('quantity');
+            if (quantityInput) {
+                quantityInput.addEventListener('change', function() {
+                    let value = parseInt(this.value) || 1;
+                    if (value < 1) value = 1;
+                    if (value > 99) value = 99;
+                    this.value = value;
+                    currentQuantity = value;
+                });
+            }
+        });
+
+        // 加入购物车
+        function handleAddToCart() {
+            if (!currentProduct) return;
+
+            const productToAdd = {
+                id: currentProduct.id,
+                name: currentProduct.name,
+                icon: currentProduct.icon,
+                price: currentProduct.price,
+                unit: currentProduct.unit || '件',
+                spec: currentProduct.spec || ''
+            };
+
+            // 添加指定数量
+            for (let i = 0; i < currentQuantity; i++) {
+                addToCart(productToAdd);
+            }
+
+            showAddToCartToast(currentProduct.name);
+        }
+
+        // 立即购买
+        function handleBuyNow() {
+            if (!currentProduct) return;
+
+            // 添加到购物车
+            const productToAdd = {
+                id: currentProduct.id,
+                name: currentProduct.name,
+                icon: currentProduct.icon,
+                price: currentProduct.price,
+                unit: currentProduct.unit || '件',
+                spec: currentProduct.spec || ''
+            };
+
+            for (let i = 0; i < currentQuantity; i++) {
+                addToCart(productToAdd);
+            }
+
+            // 跳转到购物车页面
+            window.location.href = 'cart.html';
+        }
+
+        // 加载产品数据
+        async function loadProductData() {
+            const productId = getQueryParam('id');
+
+            if (!productId) {
+                document.getElementById('loading').textContent = '产品ID缺失，正在返回产品列表...';
+                setTimeout(() => {
+                    window.location.href = 'products.html';
+                }, 2000);
+                return;
+            }
+
+            try {
+                const response = await fetch('content/products.json');
+                const data = await response.json();
+
+                // 查找产品
+                currentProduct = data.items.find(item => item.id === productId);
+
+                if (!currentProduct) {
+                    document.getElementById('loading').textContent = '产品未找到，正在返回产品列表...';
+                    setTimeout(() => {
+                        window.location.href = 'products.html';
+                    }, 2000);
+                    return;
+                }
+
+                // 更新页面标题
+                document.title = currentProduct.name + ' - 贵州古芝源品牌管理有限公司';
+
+                // 更新面包屑
+                document.getElementById('breadcrumb-product-name').textContent = currentProduct.name;
+
+                // 更新产品基本信息
+                document.getElementById('product-name').textContent = currentProduct.name;
+                document.getElementById('product-subtitle').textContent = currentProduct.tags ? currentProduct.tags.join(' · ') : '';
+                document.getElementById('product-price').textContent = currentProduct.price + (currentProduct.unit ? ' / ' + currentProduct.unit : '');
+
+                // 更新产品属性
+                document.getElementById('attr-name').textContent = currentProduct.name;
+                document.getElementById('attr-spec').textContent = currentProduct.spec || '-';
+                document.getElementById('attr-origin').textContent = currentProduct.origin || '-';
+                document.getElementById('attr-shelf-life').textContent = currentProduct.shelfLife || '-';
+                document.getElementById('attr-storage').textContent = currentProduct.storage || '-';
+                document.getElementById('attr-standard').textContent = currentProduct.standard || '-';
+
+                // 更新产品介绍
+                if (currentProduct.body) {
+                    const bodyHtml = currentProduct.body.split('\n').map(p => `<p>${p}</p>`).join('');
+                    document.getElementById('product-body').innerHTML = bodyHtml;
+                    document.getElementById('product-description').style.display = '';
+                }
+
+                // 更新产品特点
+                if (currentProduct.features && currentProduct.features.length > 0) {
+                    const featuresGrid = document.getElementById('features-grid');
+                    featuresGrid.innerHTML = currentProduct.features.map(f => `
+                        <div class="feature-item">
+                            <span class="feature-icon">${f.icon}</span>
+                            <h4>${f.title}</h4>
+                            <p>${f.desc}</p>
+                        </div>
+                    `).join('');
+                    document.getElementById('product-features').style.display = '';
+                }
+
+                // 更新使用方法
+                if (currentProduct.usage && currentProduct.usage.length > 0) {
+                    const usageSteps = document.getElementById('usage-steps');
+                    usageSteps.innerHTML = currentProduct.usage.map(u => `
+                        <div class="usage-step">
+                            <div class="step-number">${u.step}</div>
+                            <div class="step-content">
+                                <h4>${u.title}</h4>
+                                <p>${u.desc}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('product-usage').style.display = '';
+                }
+
+                // 更新相关产品
+                const relatedProducts = data.items
+                    .filter(item => item.id !== currentProduct.id && item.category === currentProduct.category)
+                    .slice(0, 3);
+                if (relatedProducts.length > 0) {
+                    const relatedGrid = document.getElementById('related-grid');
+                    relatedGrid.innerHTML = relatedProducts.map(p => `
+                        <div class="related-card" onclick="location.href='product-detail.html?id=${p.id}'">
+                            <div class="related-image">${p.icon}</div>
+                            <div class="related-info">
+                                <h4>${p.name}</h4>
+                                <p>${p.description}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('related-products').style.display = '';
+                }
+
+                // 隐藏加载状态，显示产品详情
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('product-detail-container').style.display = '';
+
+                // 更新购物车角标
+                updateCartBadge();
+
+            } catch (error) {
+                console.error('加载产品数据失败:', error);
+                document.getElementById('loading').textContent = '加载失败，请刷新页面重试。';
+            }
         }
 
         // 平滑滚动
@@ -536,20 +748,9 @@
         fadeInElements.forEach(element => {
             observer.observe(element);
         });
-    </script>
-    <script>
-    (async function(){
-        try{
-            const r=await fetch('content/site.json');
-            const s=await r.json();
-            if(s.company&&s.company.logoImage){
-                var i=document.getElementById('logo-img');
-                if(i){i.src=s.company.logoImage;i.style.display='';}
-                var c=document.getElementById('logo-icon');
-                if(c)c.style.display='none';
-            }
-        }catch(e){}
-    })();
+
+        // 页面加载时执行
+        loadProductData();
     </script>
 </body>
 </html>

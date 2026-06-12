@@ -72,16 +72,22 @@
         <div class="faq-section fade-in" id="faq-section"></div>
     </section>
 
-    <footer class="footer">
-        <p>© 2026 贵州古芝源品牌管理有限公司 版权所有</p>
-        <p>传承古法 · 芝养人生</p>
-    </footer>
+    <footer class="footer" id="footer"></footer>
 
     <script>
         async function init() {
             try {
-                const resp = await fetch('content/contact.json');
-                const data = await resp.json();
+                const [data, site] = await Promise.all([
+                    fetch('content/contact.json').then(r => r.json()),
+                    fetch('content/site.json').then(r => r.json())
+                ]);
+
+                // 站点标题
+                document.title = '联系方式 - ' + site.company.shortName;
+
+                // 页脚
+                document.getElementById('footer').innerHTML =
+                    '<p>' + site.footer.copyright + '</p><p>' + site.footer.slogan + '</p>';
 
                 // 标题
                 document.getElementById('contact-title').textContent = data.title;

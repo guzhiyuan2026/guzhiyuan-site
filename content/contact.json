@@ -6,17 +6,17 @@
     {
       "icon": "📍",
       "name": "公司地址",
-      "description": "贵州省贵阳市观山湖区某某路123号<br>古芝源大厦 550001"
+      "description": "贵州省遵义市红花岗区忠庄街道<br>共青大道遵义碧桂园一期12栋1单元1-1-2"
     },
     {
       "icon": "📞",
       "name": "联系电话",
-      "description": "总机：0851-12345678<br>客服热线：400-123-4567<br>传真：0851-87654321"
+      "description": "蒋先生：13802605520<br>彭小姐：13311251885"
     },
     {
       "icon": "📧",
       "name": "电子邮箱",
-      "description": "商务合作：business@guzhiyuan.com<br>客服支持：service@guzhiyuan.com<br>人力资源：hr@guzhiyuan.com"
+      "description": "guizhouguzhiyuan@126.com"
     },
     {
       "icon": "🕐",
@@ -32,7 +32,7 @@
   "formTitle": "在线留言",
   "formSubject": "咨询类型 *",
   "mapTitle": "公司位置",
-  "mapText": "📍 贵州省遵义市红花岗区忠庄街道共青大道遵义碧桂园一期12栋1单元1-1-2",
+  "mapText": "📍 贵州省遵义市红花岗区忠庄街道<br>共青大道遵义碧桂园一期12栋1单元1-1-2",
   "faq": {
     "title": "常见问题",
     "items": [

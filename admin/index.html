@@ -412,7 +412,7 @@ async function saveAbout() {
         const paragraphs = data.aboutText.split('\n\n').filter(p => p.trim()).map(p => ({ p: p.trim() }));
         f.content.intro.title = data.aboutTitle;
         f.content.intro.paragraphs = paragraphs;
-        await saveFile('content/about.json', f.content, 'Update about content');
+        await saveFile('content/about.json', f.content, f.sha, 'Update about content');
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {
         status.textContent = '❌ ' + e.message; status.className = 'status error';
@@ -444,7 +444,7 @@ async function saveContact() {
         fields.forEach(el => { data[el.dataset.field] = el.value; });
         f.content.info.title = data.title;
         f.content.info.description = data.description;
-        await saveFile('content/contact.json', f.content, 'Update contact content');
+        await saveFile('content/contact.json', f.content, f.sha, 'Update contact content');
         status.textContent = '✅ 已保存'; status.className = 'status success';
     } catch(e) {
         status.textContent = '❌ ' + e.message; status.className = 'status error';

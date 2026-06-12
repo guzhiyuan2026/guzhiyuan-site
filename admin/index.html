@@ -209,6 +209,31 @@ async function saveFile(path, content, sha, message) {
     return resp.json();
 }
 
+// 上传二进制文件（图片等）
+async function uploadBinaryFile(path, binaryContent, message) {
+    const base64 = btoa(String.fromCharCode.apply(null, new Uint8Array(binaryContent)));
+    let sha = null;
+    try {
+        const checkResp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path, {
+            headers: { Authorization: 'token ' + TOKEN }
+        });
+        if (checkResp.ok) {
+            const existing = await checkResp.json();
+            sha = existing.sha;
+        }
+    } catch(e) {}
+    const bodyObj = sha
+        ? { message: message || 'Update ' + path, content: base64, branch: 'main', sha: sha }
+        : { message: message || 'Upload ' + path, content: base64, branch: 'main' };
+    const resp = await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path, {
+        method: 'PUT',
+        headers: { Authorization: 'token ' + TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyObj)
+    });
+    if (!resp.ok) throw new Error('Upload failed: ' + resp.status);
+    return resp.json();
+}
+
 async function createFile(path, content, message) {
     const body = JSON.stringify({
         message: message || 'Create ' + path,
@@ -302,6 +327,14 @@ async function loadSiteSettings() {
             + '<div class="form-group"><label>简称</label><input type="text" data-section="site" data-field="shortName" value="' + esc(d.shortName) + '"></div>'
             + '<div class="form-group"><label>品牌口号</label><input type="text" data-section="site" data-field="slogan" value="' + esc(d.slogan) + '"></div>'
             + '<div class="form-group"><label>Logo图标文字</label><input type="text" data-section="site" data-field="logoIcon" value="' + esc(d.logoIcon || '芝') + '"></div>'
+            + '<div class="form-group"><label>Logo图片上传</label>'
+            + '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'
+            + '<input type="file" id="logo-file-input" accept="image/png,image/jpeg,image/svg+xml,image/webp" style="max-width:250px;">'
+            + '<button type="button" onclick="uploadLogoImage()" style="background:#2d5016;color:#fff;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;">上传LOGO</button>'
+            + '<span class="status" id="logo-upload-status"></span>'
+            + '</div>'
+            + (d.logoImage ? '<div style="margin-top:6px;"><img src="' + esc(d.logoImage) + '" style="max-height:50px;border:1px solid #d5cdb8;border-radius:4px;padding:4px;" alt="当前Logo"><br><small style="color:#999;">当前Logo: ' + esc(d.logoImage) + '</small></div>' : '<div style="margin-top:4px;color:#999;"><small>尚未上传图片Logo，当前使用文字图标</small></div>')
+            + '</div>'
             + '<h3 style="margin-top:16px;color:#2d5016;">联系方式</h3>'
             + '<div class="form-group"><label>公司地址</label><input type="text" data-section="site" data-field="address" value="' + esc(c.address) + '"></div>'
             + '<div class="form-group"><label>电话</label><input type="text" data-section="site" data-field="phone" value="' + esc(c.phone) + '"></div>'
@@ -329,6 +362,8 @@ async function saveSite() {
         f.content.company.shortName = data.shortName;
         f.content.company.slogan = data.slogan;
         f.content.company.logoIcon = data.logoIcon;
+        // 保持 logoImage 现有值（由上传功能独立更新）
+        await saveFile('content/site.json', f.content, siteSha, 'Update site settings');
         f.content.contact.address = data.address;
         f.content.contact.phone = data.phone;
         if (!f.content.contact.emailBusiness) f.content.contact.emailBusiness = data.email;
@@ -337,6 +372,37 @@ async function saveSite() {
         f.content.footer.slogan = data.footerSlogan;
         await saveFile('content/site.json', f.content, siteSha, 'Update site settings');
         status.textContent = '✅ 已保存'; status.className = 'status success';
+    } catch(e) {
+        status.textContent = '❌ ' + e.message; status.className = 'status error';
+    }
+}
+
+// ---- Logo Image Upload ----
+async function uploadLogoImage() {
+    const fileInput = document.getElementById('logo-file-input');
+    const status = document.getElementById('logo-upload-status');
+    if (!fileInput.files || !fileInput.files[0]) {
+        status.textContent = '⚠️ 请先选择图片文件'; status.className = 'status error';
+        return;
+    }
+    const file = fileInput.files[0];
+    if (file.size > 2 * 1024 * 1024) {
+        status.textContent = '⚠️ 图片不能超过2MB'; status.className = 'status error';
+        return;
+    }
+    status.textContent = '上传中...'; status.className = 'status info';
+    try {
+        const buffer = await file.arrayBuffer();
+        const ext = file.name.split('.').pop().toLowerCase();
+        const imagePath = 'images/logo.' + ext;
+        await uploadBinaryFile(imagePath, buffer, 'Upload company logo');
+        // 更新 site.json
+        const f = await getFile('content/site.json');
+        f.content.company.logoImage = '/' + imagePath;
+        await saveFile('content/site.json', f.content, f.sha, 'Update logo image path');
+        siteSha = null;
+        status.textContent = '✅ 上传成功！'; status.className = 'status success';
+        setTimeout(() => loadSiteSettings(), 800);
     } catch(e) {
         status.textContent = '❌ ' + e.message; status.className = 'status error';
     }

@@ -31,6 +31,7 @@ collections:
               - { label: "简称", name: "shortName", widget: "string" }
               - { label: "品牌口号", name: "slogan", widget: "string" }
               - { label: "Logo图标文字", name: "logoIcon", widget: "string" }
+              - { label: "Logo图片(URL)", name: "logoImage", widget: "image", hint: "上传LOGO图片，建议400x100px PNG" }
           - label: "页脚"
             name: "footer"
             widget: "object"

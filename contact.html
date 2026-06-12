@@ -45,7 +45,8 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
-                <span class="logo-icon">芝</span>
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
+                <span class="logo-icon" id="logo-icon">芝</span>
                 古芝源
             </a>
             <ul class="nav-links">
@@ -157,6 +158,20 @@
         }
 
         init();
+    </script>
+    <script>
+    (async function(){
+        try{
+            const r=await fetch('content/site.json');
+            const s=await r.json();
+            if(s.company&&s.company.logoImage){
+                var i=document.getElementById('logo-img');
+                if(i){i.src=s.company.logoImage;i.style.display='';}
+                var c=document.getElementById('logo-icon');
+                if(c)c.style.display='none';
+            }
+        }catch(e){}
+    })();
     </script>
 </body>
 </html>

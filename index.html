@@ -183,6 +183,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
                 <span class="logo-icon" id="logo-icon">芝</span>
                 <span id="logo-text">古芝源</span>
             </a>
@@ -263,7 +264,16 @@
                 ]);
 
                 // 更新导航栏 Logo
-                document.getElementById('logo-icon').textContent = site.company.logoIcon;
+                if (site.company.logoImage) {
+                    const logoImg = document.getElementById('logo-img');
+                    logoImg.src = site.company.logoImage;
+                    logoImg.style.display = '';
+                    document.getElementById('logo-icon').style.display = 'none';
+                } else {
+                    document.getElementById('logo-icon').textContent = site.company.logoIcon;
+                    document.getElementById('logo-img').style.display = 'none';
+                    document.getElementById('logo-icon').style.display = '';
+                }
                 document.getElementById('logo-text').textContent = site.company.shortName;
 
                 // 更新页面标题

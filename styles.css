@@ -338,6 +338,120 @@ html {
         display: none;
     }
 
+    /* 汉堡菜单按钮 */
+    .nav-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 36px;
+        height: 36px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        z-index: 1002;
+        padding: 4px;
+        gap: 5px;
+    }
+    .nav-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--white);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    .nav-toggle.open span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    .nav-toggle.open span:nth-child(2) {
+        opacity: 0;
+    }
+    .nav-toggle.open span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* 移动端菜单覆盖层 */
+    .nav-mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+    }
+    .nav-mobile-overlay.open {
+        display: block;
+    }
+
+    /* 移动端导航菜单面板 */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -280px;
+        width: 260px;
+        height: 100vh;
+        background: rgba(45, 80, 22, 0.98);
+        flex-direction: column;
+        gap: 0;
+        padding: 80px 0 2rem;
+        z-index: 999;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+    }
+    .nav-links.open {
+        right: 0;
+        display: flex;
+    }
+    .nav-links li {
+        width: 100%;
+    }
+    .nav-links > li > a {
+        display: block;
+        padding: 0.9rem 2rem;
+        font-size: 1.05rem;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-links > li > a::after {
+        display: none;
+    }
+
+    /* 移动端子菜单 */
+    .dropdown-menu {
+        position: static;
+        transform: none;
+        background: rgba(0,0,0,0.2);
+        min-width: unset;
+        border-radius: 0;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        display: none;
+        padding: 0;
+    }
+    .dropdown.open .dropdown-menu {
+        display: block;
+    }
+    .dropdown-menu li a {
+        padding: 0.7rem 3rem;
+        font-size: 0.95rem;
+    }
+    .dropdown > a::after {
+        display: none;
+    }
+    .dropdown > a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .dropdown > a .arrow {
+        font-size: 0.7rem;
+        transition: transform 0.3s;
+    }
+    .dropdown.open > a .arrow {
+        transform: rotate(180deg);
+    }
+
     .section-title {
         font-size: 2rem;
     }

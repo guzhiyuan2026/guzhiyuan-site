@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专题平台 - 贵州古芝源品牌管理有限公司</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .special-page {
+            padding: 120px 2rem 5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .special-page h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+        .special-page .subtitle {
+            text-align: center;
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+        .special-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        .special-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-green);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .special-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(45,80,22,0.15);
+        }
+        .special-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .special-card h3 {
+            font-size: 1.5rem;
+            color: var(--dark-green);
+            margin-bottom: 1rem;
+        }
+        .special-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+        .special-card .link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .special-card .link:hover {
+            color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
+                <span class="logo-icon" id="logo-icon">芝</span>
+                <span id="logo-text">古芝源</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="products.html">产品中心</a></li>
+                <li><a href="news.html">新闻动态</a></li>
+                <li class="dropdown">
+                    <a href="special.html" style="color: var(--gold);">专题平台 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="zhong-houlu.html" class="active-link">钟氏中医药第十八代传人钟厚禄传记</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">联系方式</a></li>
+                <li>
+                    <a href="cart.html" class="cart-link">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-badge" id="cart-badge">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 专题平台页面 -->
+    <section class="special-page">
+        <h2>专题平台</h2>
+        <p class="subtitle">传承中医药文化 · 讲述古芝源故事</p>
+        
+        <div class="special-grid" id="special-grid">
+            <!-- JS 动态生成 -->
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer" id="footer"></footer>
+
+    <script>
+    // ======== 数据加载 ========
+    async function loadSiteData() {
+        try {
+            const res = await fetch('content/site.json?t=' + Date.now());
+            const site = await res.json();
+            // 动态设置 logo
+            const co = site.company || {};
+            const img = document.getElementById('logo-img');
+            const icon = document.getElementById('logo-icon');
+            const text = document.getElementById('logo-text');
+            text.textContent = co.shortName || co.name || '古芝源';
+            if (co.logoImage) {
+                img.src = co.logoImage;
+                img.style.display = '';
+                icon.style.display = 'none';
+                img.onerror = function() {
+                    img.style.display = 'none';
+                    icon.style.display = '';
+                };
+            }
+            // 渲染页脚
+            renderFooter(site);
+        } catch(e) { console.error('site.json load error:', e); }
+    }
+
+    function renderFooter(site) {
+        const footer = document.getElementById('footer');
+        if (!site.footer) return;
+        const f = site.footer;
+        const companyName = (site.company && site.company.name) || '贵州古芝源品牌管理有限公司';
+        footer.innerHTML = `
+            <p>© ${new Date().getFullYear()} ${companyName} 版权所有</p>
+            <p>${f.slogan || '传承古法 · 芝养人生'}</p>
+        `;
+    }
+
+    // ======== 专题数据 ========
+    async function loadSpecialData() {
+        // 目前硬编码，后续可从 content/special.json 读取
+        const items = [
+            {
+                icon: '📜',
+                title: '钟氏中医药第十八代传人钟厚禄传记',
+                description: '传承百年中医药精髓，讲述钟厚禄先生悬壶济世的传奇人生与中医药文化传承之路。',
+                link: 'zhong-houlu.html'
+            }
+        ];
+        
+        const grid = document.getElementById('special-grid');
+        grid.innerHTML = items.map(item => `
+            <div class="special-card" onclick="location.href='${item.link}'">
+                <div class="icon">${item.icon || ''}</div>
+                <h3>${item.title || ''}</h3>
+                <p>${item.description || ''}</p>
+                <span class="link">阅读详情 →</span>
+            </div>
+        `).join('');
+    }
+
+    // ======== 初始化 ========
+    (async function init() {
+        await loadSiteData();
+        await loadSpecialData();
+    })();
+    </script>
+</body>
+</html>

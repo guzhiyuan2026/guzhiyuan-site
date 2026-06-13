@@ -132,6 +132,77 @@ body {
     width: 100%;
 }
 
+/* 下拉菜单 */
+.dropdown {
+    position: relative;
+}
+
+.dropdown > a::after {
+    content: '' !important;
+    width: 0 !important;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(45, 80, 22, 0.98);
+    min-width: 280px;
+    padding: 0.5rem 0;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1001;
+    list-style: none;
+}
+
+.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-menu li {
+    display: block;
+    white-space: nowrap;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 0.7rem 1.5rem;
+    color: var(--white) !important;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+}
+
+.dropdown-menu a:hover {
+    background: rgba(212, 165, 116, 0.2);
+    color: var(--gold) !important;
+}
+
+.dropdown-menu a.active-link {
+    color: var(--gold) !important;
+}
+
+@media (max-width: 768px) {
+    .dropdown-menu {
+        position: static;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        background: rgba(0,0,0,0.2);
+        box-shadow: none;
+        padding-left: 1rem;
+        display: none;
+    }
+    .dropdown.active .dropdown-menu {
+        display: block;
+    }
+}
+
 /* 通用区域标题 */
 .section-title {
     text-align: center;

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钟氏中医药第十八代传人钟厚禄传记 - 贵州古芝源品牌管理有限公司</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .bio-page {
+            padding: 120px 2rem 5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .bio-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .bio-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+        .bio-header .subtitle {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+        .bio-image {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        .bio-content h3 {
+            font-size: 1.5rem;
+            color: var(--dark-green);
+            margin: 2rem 0 1rem;
+            border-left: 4px solid var(--primary-green);
+            padding-left: 1rem;
+        }
+        .bio-content p {
+            line-height: 2;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            text-indent: 2em;
+        }
+        .bio-back {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        .bio-back a {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--primary-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .bio-back a:hover {
+            background: var(--light-green);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
+                <span class="logo-icon" id="logo-icon">芝</span>
+                <span id="logo-text">古芝源</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="products.html">产品中心</a></li>
+                <li><a href="news.html">新闻动态</a></li>
+                <li class="dropdown">
+                    <a href="special.html">专题平台 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="zhong-houlu.html" class="active-link">钟氏中医药第十八代传人钟厚禄传记</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">联系方式</a></li>
+                <li>
+                    <a href="cart.html" class="cart-link">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-badge" id="cart-badge">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 钟厚禄传记页面 -->
+    <section class="bio-page">
+        <div class="bio-header">
+            <h2>钟氏中医药第十八代传人钟厚禄传记</h2>
+            <p class="subtitle">传承百年中医药精髓 · 悬壶济世的传奇人生</p>
+        </div>
+
+        <div class="bio-image">
+            🏔️
+        </div>
+
+        <div class="bio-content" id="bio-content">
+            <!-- JS 动态生成 -->
+        </div>
+
+        <div class="bio-back">
+            <a href="special.html">← 返回专题平台</a>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer" id="footer"></footer>
+
+    <script>
+    // ======== 数据加载 ========
+    async function loadSiteData() {
+        try {
+            const res = await fetch('content/site.json?t=' + Date.now());
+            const site = await res.json();
+            // 动态设置 logo
+            const co = site.company || {};
+            const img = document.getElementById('logo-img');
+            const icon = document.getElementById('logo-icon');
+            const text = document.getElementById('logo-text');
+            text.textContent = co.shortName || co.name || '古芝源';
+            if (co.logoImage) {
+                img.src = co.logoImage;
+                img.style.display = '';
+                icon.style.display = 'none';
+                img.onerror = function() {
+                    img.style.display = 'none';
+                    icon.style.display = '';
+                };
+            }
+            // 渲染页脚
+            renderFooter(site);
+        } catch(e) { console.error('site.json load error:', e); }
+    }
+
+    function renderFooter(site) {
+        const footer = document.getElementById('footer');
+        if (!site.footer) return;
+        const f = site.footer;
+        const companyName = (site.company && site.company.name) || '贵州古芝源品牌管理有限公司';
+        footer.innerHTML = `
+            <p>© ${new Date().getFullYear()} ${companyName} 版权所有</p>
+            <p>${f.slogan || '传承古法 · 芝养人生'}</p>
+        `;
+    }
+
+    // ======== 传记数据 ========
+    async function loadBioData() {
+        try {
+            const res = await fetch('content/zhong-houlu.json?t=' + Date.now());
+            const data = await res.json();
+            renderBio(data);
+        } catch(e) {
+            // 如果 JSON 不存在，使用默认内容
+            console.warn('zhong-houlu.json not found, using default content');
+            renderBio(defaultBioData());
+        }
+    }
+
+    function defaultBioData() {
+        return {
+            title: '钟氏中医药第十八代传人钟厚禄传记',
+            subtitle: '传承百年中医药精髓 · 悬壶济世的传奇人生',
+            sections: [
+                {
+                    heading: '传承世家',
+                    content: '钟厚禄先生出身于中医药世家，自幼受家族熏陶，秉承"医者仁心"的祖训。作为钟氏中医药第十八代传人，他不仅继承了祖辈的医术精髓，更将中医药文化与现代科技相结合，致力于让传统中医药焕发新的生机。'
+                },
+                {
+                    heading: '悬壶济世',
+                    content: '钟厚禄先生从医数十载，始终坚持以患者为中心，恪守中医药"治未病"的理念。他擅长运用道地药材，结合古法炮制工艺，为无数患者解除了病痛。其医德高尚，医术精湛，在业内享有盛誉。'
+                },
+                {
+                    heading: '守正创新',
+                    content: '作为新时代中医药传承人，钟厚禄先生深知"传承不泥古，创新不离宗"的道理。他在继承祖辈医术的同时，积极引入现代科技手段，提升中药材的品质与安全性，让中医药更好地服务于现代人的健康需求。'
+                },
+                {
+                    heading: '创立古芝源',
+                    content: '怀着"让中医药文化惠及千家万户"的愿景，钟厚禄先生创立了贵州古芝源品牌管理有限公司。公司以"传承古法、科技创新、品质至上、健康守护"为发展理念，致力于打造中华汉方草本口腔护理领军品牌，让千年汉方守护国民口腔健康。'
+                }
+            ]
+        };
+    }
+
+    function renderBio(data) {
+        const container = document.getElementById('bio-content');
+        if (!data || !data.sections) return;
+        
+        let html = '';
+        data.sections.forEach(section => {
+            html += `<h3>${section.heading || ''}</h3>`;
+            // 将 content 按 \n 分割成多个段落
+            const paragraphs = (section.content || '').split('\n');
+            paragraphs.forEach(p => {
+                if (p.trim()) {
+                    html += `<p>${p.trim()}</p>`;
+                }
+            });
+        });
+        
+        container.innerHTML = html;
+    }
+
+    // ======== 初始化 ========
+    (async function init() {
+        await loadSiteData();
+        await loadBioData();
+    })();
+    </script>
+</body>
+</html>

@@ -202,13 +202,24 @@
 
         .culture-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.3rem;
+        }
+
+        @media (max-width: 992px) {
+            .culture-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .culture-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .culture-item {
             background: rgba(255,255,255,0.1);
-            padding: 2rem;
+            padding: 1.8rem 1.1rem;
             border-radius: 10px;
             text-align: center;
             backdrop-filter: blur(10px);
@@ -216,13 +227,23 @@
         }
 
         .culture-item .icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2.4rem;
+            margin-bottom: 0.7rem;
         }
 
         .culture-item h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .culture-item .subtitle {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            line-height: 1.45;
+            opacity: 0.95;
         }
 
         .culture-item p {
@@ -557,6 +578,7 @@
             <div class="culture-item fade-in">
                 <div class="icon">${item.icon || ''}</div>
                 <h3>${item.name || ''}</h3>
+                ${item.subtitle ? `<div class="subtitle">${item.subtitle}</div>` : ''}
                 <p>${item.description || ''}</p>
             </div>
         `).join('');

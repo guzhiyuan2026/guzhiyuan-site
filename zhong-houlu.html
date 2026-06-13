@@ -26,6 +26,21 @@
         }
         .bio-image {
             width: 100%;
+            max-width: 480px;
+            margin: 0 auto 3rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,80,40,0.18);
+            border: 4px solid #e8f0e8;
+        }
+        .bio-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+        .bio-image-fallback {
+            width: 100%;
             height: 350px;
             background: linear-gradient(135deg, var(--primary-green), var(--light-green));
             border-radius: 12px;
@@ -34,7 +49,6 @@
             justify-content: center;
             font-size: 6rem;
             color: white;
-            margin-bottom: 3rem;
         }
         .bio-toc {
             background: #f8faf8;
@@ -208,7 +222,8 @@
         </div>
 
         <div class="bio-image" id="bio-image">
-            🏔️
+            <img src="" alt="钟厚禄" id="bio-image-img" style="display:none;">
+            <div class="bio-image-fallback" id="bio-image-fallback">🏔️</div>
         </div>
 
         <!-- 右侧章节导航 -->
@@ -301,8 +316,21 @@
         document.getElementById('bio-tagline').textContent = data.tagline || '';
         
         // 更新图片
-        const imgEl = document.getElementById('bio-image');
-        if (data.imageText) imgEl.textContent = data.imageText;
+        const imgEl = document.getElementById('bio-image-img');
+        const fallbackEl = document.getElementById('bio-image-fallback');
+        if (data.imageUrl) {
+            imgEl.src = data.imageUrl;
+            imgEl.style.display = '';
+            fallbackEl.style.display = 'none';
+            imgEl.onerror = function() {
+                this.style.display = 'none';
+                fallbackEl.style.display = '';
+            };
+        } else if (data.imageText) {
+            imgEl.style.display = 'none';
+            fallbackEl.textContent = data.imageText;
+            fallbackEl.style.display = '';
+        }
 
         const chapters = data.chapters || data.sections || [];
         if (!chapters.length) return;

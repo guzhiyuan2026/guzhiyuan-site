@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钟氏中医药第十八代传人钟厚禄传记 - 贵州古芝源品牌管理有限公司</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .bio-page {
+            padding: 120px 2rem 5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .bio-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .bio-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+        .bio-header .subtitle {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+        .bio-image {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        .bio-toc {
+            background: #f8faf8;
+            border: 1px solid #e0e8e0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .bio-toc h4 {
+            font-size: 1.2rem;
+            color: var(--dark-green);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .bio-toc ol {
+            list-style: none;
+            counter-reset: toc-counter;
+            padding-left: 0;
+        }
+        .bio-toc > ol > li {
+            counter-increment: toc-counter;
+            margin-bottom: 0.6rem;
+        }
+        .bio-toc > ol > li > a {
+            color: var(--primary-green);
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .bio-toc > ol > li > a:hover {
+            background: #e8f0e8;
+        }
+        .bio-toc .toc-subs {
+            list-style: none;
+            padding-left: 1.5rem;
+            margin-top: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .bio-toc .toc-subs a {
+            color: var(--text-dark);
+            font-weight: 400;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .bio-toc .toc-subs a:hover {
+            background: #e8f0e8;
+            color: var(--primary-green);
+        }
+        .bio-content h3 {
+            font-size: 1.5rem;
+            color: var(--dark-green);
+            margin: 2.5rem 0 1rem;
+            border-left: 4px solid var(--primary-green);
+            padding-left: 1rem;
+            cursor: pointer;
+        }
+        .bio-content h3::before {
+            content: '';
+        }
+        .bio-content h4 {
+            font-size: 1.2rem;
+            color: var(--dark-green);
+            margin: 1.8rem 0 0.8rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--light-green);
+        }
+        .bio-content p {
+            line-height: 2;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            text-indent: 2em;
+        }
+        .bio-chapter-divider {
+            border: none;
+            border-top: 1px dashed #d0d8d0;
+            margin: 3rem 0;
+        }
+        .bio-back {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        .bio-back a {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--primary-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .bio-back a:hover {
+            background: var(--light-green);
+        }
+        .bio-chapter-nav {
+            position: fixed;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+        .bio-chapter-nav a {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+            text-indent: -9999px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .bio-chapter-nav a:hover,
+        .bio-chapter-nav a.active {
+            background: var(--primary-green);
+            transform: scale(1.5);
+        }
+        @media (max-width: 768px) {
+            .bio-chapter-nav {
+                display: none;
+            }
+            .bio-page { padding: 100px 1rem 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
+                <span class="logo-icon" id="logo-icon">芝</span>
+                <span id="logo-text">古芝源</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="products.html">产品中心</a></li>
+                <li><a href="news.html">新闻动态</a></li>
+                <li class="dropdown">
+                    <a href="special.html">专题平台 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="zhong-houlu.html" class="active-link">钟氏中医药第十八代传人钟厚禄传记</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">联系方式</a></li>
+                <li>
+                    <a href="cart.html" class="cart-link">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-badge" id="cart-badge">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 钟厚禄传记页面 -->
+    <section class="bio-page">
+        <div class="bio-header">
+            <h2 id="bio-title">钟氏中医药第十八代传人钟厚禄传记</h2>
+            <p class="subtitle" id="bio-subtitle">当代大医钟厚禄：十八代医脉守正，二千年仁心济世</p>
+            <p id="bio-tagline" style="color:#888;font-size:0.95rem;margin-top:0.3rem;"></p>
+        </div>
+
+        <div class="bio-image" id="bio-image">
+            🏔️
+        </div>
+
+        <!-- 右侧章节导航 -->
+        <div class="bio-chapter-nav" id="chapter-nav"></div>
+
+        <!-- 目录 -->
+        <div class="bio-toc" id="bio-toc" style="display:none;">
+            <h4>📑 目 录</h4>
+            <ol id="toc-list"></ol>
+        </div>
+
+        <div class="bio-content" id="bio-content">
+            <!-- JS 动态生成 -->
+        </div>
+
+        <div class="bio-back">
+            <a href="special.html">← 返回专题平台</a>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer" id="footer"></footer>
+
+    <script>
+    // ======== 数据加载 ========
+    async function loadSiteData() {
+        try {
+            const res = await fetch('content/site.json?t=' + Date.now());
+            const site = await res.json();
+            // 动态设置 logo
+            const co = site.company || {};
+            const img = document.getElementById('logo-img');
+            const icon = document.getElementById('logo-icon');
+            const text = document.getElementById('logo-text');
+            text.textContent = co.shortName || co.name || '古芝源';
+            if (co.logoImage) {
+                img.src = co.logoImage;
+                img.style.display = '';
+                icon.style.display = 'none';
+                img.onerror = function() {
+                    img.style.display = 'none';
+                    icon.style.display = '';
+                };
+            }
+            // 渲染页脚
+            renderFooter(site);
+        } catch(e) { console.error('site.json load error:', e); }
+    }
+
+    function renderFooter(site) {
+        const footer = document.getElementById('footer');
+        if (!site.footer) return;
+        const f = site.footer;
+        const companyName = (site.company && site.company.name) || '贵州古芝源品牌管理有限公司';
+        footer.innerHTML = `
+            <p>© ${new Date().getFullYear()} ${companyName} 版权所有</p>
+            <p>${f.slogan || '传承古法 · 芝养人生'}</p>
+        `;
+    }
+
+    // ======== 传记数据 ========
+    async function loadBioData() {
+        try {
+            const res = await fetch('content/zhong-houlu.json?t=' + Date.now());
+            const data = await res.json();
+            renderBio(data);
+        } catch(e) {
+            console.warn('zhong-houlu.json not found, using default content');
+            renderBio(defaultBioData());
+        }
+    }
+
+    function defaultBioData() {
+        return {
+            title: '钟氏中医药第十八代传人钟厚禄传记',
+            subtitle: '当代大医钟厚禄：十八代医脉守正，二千年仁心济世',
+            tagline: '从楚汉金创到古芝源牙膏，一个中医世家二千年传承密码',
+            imageText: '🏔️',
+            chapters: [
+                { heading: '传承世家', subsections: [], content: ['钟厚禄先生出身于中医药世家，自幼受家族熏陶……'] },
+                { heading: '悬壶济世', subsections: [], content: ['钟厚禄先生从医数十载，始终坚持以患者为中心……'] }
+            ]
+        };
+    }
+
+    function renderBio(data) {
+        // 更新标题区
+        document.getElementById('bio-title').textContent = data.title || '钟氏中医药第十八代传人钟厚禄传记';
+        document.getElementById('bio-subtitle').textContent = data.subtitle || '';
+        document.getElementById('bio-tagline').textContent = data.tagline || '';
+        
+        // 更新图片
+        const imgEl = document.getElementById('bio-image');
+        if (data.imageText) imgEl.textContent = data.imageText;
+
+        const chapters = data.chapters || data.sections || [];
+        if (!chapters.length) return;
+
+        // 生成目录
+        const tocList = document.getElementById('toc-list');
+        let tocHTML = '';
+        chapters.forEach((ch, ci) => {
+            const chId = 'chapter-' + ci;
+            tocHTML += `<li><a href="#${chId}">${ch.heading || ''}</a>`;
+            if (ch.subsections && ch.subsections.length > 0) {
+                tocHTML += '<ul class="toc-subs">';
+                ch.subsections.forEach((sec, si) => {
+                    tocHTML += `<li><a href="#${chId}-s${si}">${sec.heading || ''}</a></li>`;
+                });
+                tocHTML += '</ul>';
+            }
+            tocHTML += '</li>';
+        });
+        tocList.innerHTML = tocHTML;
+        document.getElementById('bio-toc').style.display = 'block';
+
+        // 生成正文
+        const container = document.getElementById('bio-content');
+        let html = '';
+        chapters.forEach((ch, ci) => {
+            const chId = 'chapter-' + ci;
+            html += `<hr class="bio-chapter-divider" id="${chId}">`;
+            html += `<h3>${ch.heading || ''}</h3>`;
+
+            // 章前导言
+            if (ch.content && ch.content.length > 0) {
+                ch.content.forEach(para => {
+                    if (para.trim()) html += `<p>${para.trim()}</p>`;
+                });
+            }
+
+            // 子节
+            if (ch.subsections && ch.subsections.length > 0) {
+                ch.subsections.forEach((sec, si) => {
+                    const secId = chId + '-s' + si;
+                    html += `<h4 id="${secId}">${sec.heading || ''}</h4>`;
+                    if (sec.content) {
+                        sec.content.forEach(para => {
+                            if (para.trim()) html += `<p>${para.trim()}</p>`;
+                        });
+                    }
+                });
+            }
+        });
+        container.innerHTML = html;
+
+        // 生成右侧章节导航点
+        const nav = document.getElementById('chapter-nav');
+        let navHTML = '';
+        chapters.forEach((ch, ci) => {
+            navHTML += `<a href="#chapter-${ci}" title="${ch.heading}">${ci + 1}</a>`;
+        });
+        nav.innerHTML = navHTML;
+
+        // 滚动时高亮当前章节导航点
+        updateNavOnScroll();
+    }
+
+    function updateNavOnScroll() {
+        const navLinks = document.querySelectorAll('.bio-chapter-nav a');
+        if (!navLinks.length) return;
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('.bio-chapter-divider').forEach(el => {
+                if (window.scrollY >= el.offsetTop - 120) {
+                    current = el.id;
+                }
+            });
+            navLinks.forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href') === '#' + current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // ======== 初始化 ========
+    (async function init() {
+        await loadSiteData();
+        await loadBioData();
+    })();
+    </script>
+</body>
+</html>

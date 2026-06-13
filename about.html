@@ -153,7 +153,63 @@
             color: var(--text-light);
             font-size: 0.95rem;
         }
+        .culture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .culture-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            border-left: 4px solid var(--primary-green);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .culture-card:nth-child(2) { border-left-color: var(--gold); }
+        .culture-card:nth-child(3) { border-left-color: #2C5F2D; }
+        .culture-card:nth-child(4) { border-left-color: var(--earth-brown); }
+        .culture-card:nth-child(5) { border-left-color: #8B4513; }
+        .culture-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+        }
+        .culture-card .culture-icon {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+        .culture-card .culture-label {
+            font-size: 0.85rem;
+            color: var(--primary-green);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .culture-card .culture-subtitle {
+            font-size: 1.25rem;
+            color: var(--dark-green);
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
+        .culture-card .culture-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            flex: 1;
+        }
         @media (max-width: 768px) {
+            .culture-grid {
+                grid-template-columns: 1fr;
+            }
+            .culture-card { padding: 1.8rem 1.5rem; }
             .timeline::before { left: 20px; }
             .timeline-item {
                 flex-direction: column !important;
@@ -181,6 +237,12 @@
                 <li><a href="about.html" style="color: var(--gold);">关于我们</a></li>
                 <li><a href="products.html">产品中心</a></li>
                 <li><a href="news.html">新闻动态</a></li>
+                <li class="dropdown">
+                    <a href="special.html">专题平台 ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="zhong-houlu.html">钟氏中医药第十八代传人钟厚禄传记</a></li>
+                    </ul>
+                </li>
                 <li><a href="contact.html">联系方式</a></li>
                 <li>
                     <a href="cart.html" class="cart-link">
@@ -233,6 +295,22 @@
             });
             introHtml += '</div></div>';
 
+            // === 文化理念 ===
+            const culture = about.culture || {};
+            let cultureHtml = '';
+            if (culture.items && culture.items.length > 0) {
+                cultureHtml = '<div class="about-section fade-in"><h2>' + (culture.title || '文化理念') + '</h2><div class="culture-grid">';
+                (culture.items || []).forEach(function(item) {
+                    cultureHtml += '<div class="culture-card">';
+                    if (item.icon) cultureHtml += '<div class="culture-icon">' + item.icon + '</div>';
+                    cultureHtml += '<div class="culture-label">' + item.title + '</div>';
+                    cultureHtml += '<div class="culture-subtitle">' + item.subtitle + '</div>';
+                    cultureHtml += '<div class="culture-desc">' + item.description + '</div>';
+                    cultureHtml += '</div>';
+                });
+                cultureHtml += '</div></div>';
+            }
+
             // === 发展历程 ===
             const timeline = about.timeline || {};
             let timelineHtml = '<div class="about-section fade-in"><h2>' + (timeline.title || '发展历程') + '</h2><div class="timeline">';
@@ -261,7 +339,7 @@
             });
             certHtml += '</div></div>';
 
-            document.getElementById('about-content').innerHTML = introHtml + timelineHtml + teamHtml + certHtml;
+            document.getElementById('about-content').innerHTML = introHtml + cultureHtml + timelineHtml + teamHtml + certHtml;
 
             // === 页脚 ===
             document.getElementById('footer').innerHTML =

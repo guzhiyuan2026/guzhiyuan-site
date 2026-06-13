@@ -1,4 +1,18 @@
 {
+  "nav": [
+    { "file": "index.html", "label": "首页" },
+    { "file": "about.html", "label": "关于我们" },
+    { "file": "products.html", "label": "产品中心" },
+    { "file": "news.html", "label": "新闻动态" },
+    {
+      "file": "special.html",
+      "label": "专题平台",
+      "children": [
+        { "file": "zhong-houlu.html", "label": "钟氏中医药第十八代传人钟厚禄传记" }
+      ]
+    },
+    { "file": "contact.html", "label": "联系方式" }
+  ],
   "company": {
     "name": "贵州古芝源品牌管理有限公司",
     "shortName": "古芝源",

@@ -202,13 +202,24 @@
 
         .culture-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.3rem;
+        }
+
+        @media (max-width: 992px) {
+            .culture-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .culture-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .culture-item {
             background: rgba(255,255,255,0.1);
-            padding: 2rem;
+            padding: 1.8rem 1.1rem;
             border-radius: 10px;
             text-align: center;
             backdrop-filter: blur(10px);
@@ -216,13 +227,23 @@
         }
 
         .culture-item .icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2.4rem;
+            margin-bottom: 0.7rem;
         }
 
         .culture-item h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .culture-item .subtitle {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            line-height: 1.45;
+            opacity: 0.95;
         }
 
         .culture-item p {
@@ -461,18 +482,35 @@
 
     function renderNav(site) {
         const nav = document.getElementById('nav-links');
-        const pages = [
+        const navItems = (site.nav || [
             { file: 'index.html', label: '首页' },
             { file: 'about.html', label: '关于我们' },
             { file: 'products.html', label: '产品中心' },
             { file: 'news.html', label: '新闻动态' },
             { file: 'contact.html', label: '联系方式' }
-        ];
+        ]);
         const current = window.location.pathname.split('/').pop() || 'index.html';
-        let html = pages.map(p => {
-            const active = p.file === current ? 'style="color:var(--gold);"' : '';
-            return `<li><a href="${p.file}" ${active}>${p.label}</a></li>`;
-        }).join('');
+        let html = '';
+        navItems.forEach(item => {
+            const isActive = item.file === current;
+            const hasChildren = item.children && item.children.length > 0;
+            if (hasChildren) {
+                // 下拉菜单
+                const isChildActive = item.children.some(c => c.file === current);
+                html += `<li class="dropdown ${isChildActive ? 'active' : ''}">`;
+                html += `  <a href="${item.file || '#'}" class="${isChildActive ? 'active-link' : ''}">${item.label} ▾</a>`;
+                html += `  <ul class="dropdown-menu">`;
+                item.children.forEach(child => {
+                    const isChild = child.file === current;
+                    html += `    <li><a href="${child.file}" class="${isChild ? 'active-link' : ''}">${child.label}</a></li>`;
+                });
+                html += `  </ul>`;
+                html += `</li>`;
+            } else {
+                // 普通链接
+                html += `<li><a href="${item.file}" ${isActive ? 'style="color:var(--gold);"' : ''}>${item.label}</a></li>`;
+            }
+        });
         html += `
             <li>
                 <a href="cart.html" class="cart-link">
@@ -557,6 +595,7 @@
             <div class="culture-item fade-in">
                 <div class="icon">${item.icon || ''}</div>
                 <h3>${item.name || ''}</h3>
+                ${item.subtitle ? `<div class="subtitle">${item.subtitle}</div>` : ''}
                 <p>${item.description || ''}</p>
             </div>
         `).join('');

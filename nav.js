@@ -54,7 +54,7 @@ function setupMobileNav() {
         overlay.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         // 关闭所有展开的dropdown
-        document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+        document.querySelectorAll('.dropdown[data-open]').forEach(d => d.removeAttribute('data-open'));
     }
 
     toggleBtn.addEventListener('click', () => {
@@ -113,7 +113,7 @@ function renderNav(site) {
             // 下拉菜单
             const isChildActive = item.children.some(c => c.file === current);
             html += '<li class="dropdown ' + (isChildActive ? 'active' : '') + '">';
-            html += '  <a href="' + (item.file || '#') + '" class="' + (isChildActive ? 'active-link' : '') + '" onclick="event.preventDefault();event.stopPropagation();this.parentElement.classList.toggle(\'open\');">' + item.label + ' ▾<span class="arrow">▼</span></a>';
+            html += '  <a href="' + (item.file || '#') + '" class="' + (isChildActive ? 'active-link' : '') + '" onclick="event.preventDefault();event.stopPropagation();this.parentElement.toggleAttribute(\'data-open\');">' + item.label + ' ▾<span class="arrow">▼</span></a>';
             html += '  <ul class="dropdown-menu">';
             item.children.forEach(child => {
                 const isChild = child.file === current;

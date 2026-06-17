@@ -188,6 +188,11 @@ body {
     color: var(--gold) !important;
 }
 
+/* 桌面端隐藏移动端箭头指示器 */
+.dropdown > a .arrow {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .dropdown-menu {
         position: static;
@@ -446,6 +451,7 @@ html {
         align-items: center;
     }
     .dropdown > a .arrow {
+        display: inline;
         font-size: 0.7rem;
         transition: transform 0.3s;
     }

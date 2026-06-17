@@ -67,15 +67,13 @@ function setupMobileNav() {
 
     overlay.addEventListener('click', closeMenu);
 
-    // 点击导航链接后关闭菜单
+    // 点击导航链接后关闭菜单（下拉菜单由 inline onclick 处理）
     navLinks.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (link && link.getAttribute('href') && !link.getAttribute('href').startsWith('#')) {
-            // 如果是dropdown父链接，切换展开状态
             const parentLi = link.parentElement;
+            // 下拉菜单父链接已由 inline onclick 处理（stopPropagation），此处不重复
             if (parentLi && parentLi.classList.contains('dropdown')) {
-                e.preventDefault();
-                parentLi.classList.toggle('open');
                 return;
             }
             // 普通链接点击后关闭
@@ -115,7 +113,7 @@ function renderNav(site) {
             // 下拉菜单
             const isChildActive = item.children.some(c => c.file === current);
             html += '<li class="dropdown ' + (isChildActive ? 'active' : '') + '">';
-            html += '  <a href="' + (item.file || '#') + '" class="' + (isChildActive ? 'active-link' : '') + '">' + item.label + ' ▾<span class="arrow">▼</span></a>';
+            html += '  <a href="' + (item.file || '#') + '" class="' + (isChildActive ? 'active-link' : '') + '" onclick="event.preventDefault();event.stopPropagation();this.parentElement.classList.toggle(\'open\');">' + item.label + ' ▾<span class="arrow">▼</span></a>';
             html += '  <ul class="dropdown-menu">';
             item.children.forEach(child => {
                 const isChild = child.file === current;
@@ -133,19 +131,6 @@ function renderNav(site) {
     html += '<li><a href="cart.html" class="cart-link"><span class="cart-icon">🛒</span><span class="cart-badge" id="cart-badge">0</span></a></li>';
     
     nav.innerHTML = html;
-
-    // 直接绑定下拉菜单点击事件（桌面端+移动端均可靠触发）
-    // 使用 stopPropagation 防止事件冒泡到 navLinks 的委托处理器造成二次 toggle
-    nav.querySelectorAll('.dropdown > a').forEach(function(a) {
-        a.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var parentLi = this.parentElement;
-            if (parentLi) {
-                parentLi.classList.toggle('open');
-            }
-        });
-    });
 
     // 更新购物车角标
     if (typeof updateCartBadge === 'function') {

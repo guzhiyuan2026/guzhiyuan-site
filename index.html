@@ -498,7 +498,7 @@
                 // 下拉菜单
                 const isChildActive = item.children.some(c => c.file === current);
                 html += `<li class="dropdown ${isChildActive ? 'active' : ''}">`;
-                html += `  <a href="${item.file || '#'}" class="${isChildActive ? 'active-link' : ''}">${item.label} ▾<span class="arrow">▼</span></a>`;
+                html += `  <a href="${item.file || '#'}" class="${isChildActive ? 'active-link' : ''}" onclick="event.preventDefault();event.stopPropagation();this.parentElement.classList.toggle('open');">${item.label} ▾<span class="arrow">▼</span></a>`;
                 html += `  <ul class="dropdown-menu">`;
                 item.children.forEach(child => {
                     const isChild = child.file === current;
@@ -519,19 +519,6 @@
                 </a>
             </li>`;
         nav.innerHTML = html;
-
-        // 直接绑定下拉菜单点击事件（桌面端+移动端均可靠触发）
-        nav.querySelectorAll('.dropdown > a').forEach(function(a) {
-            a.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var parentLi = this.parentElement;
-                if (parentLi) {
-                    parentLi.classList.toggle('open');
-                }
-            });
-        });
-
         updateCartBadge();
     }
 

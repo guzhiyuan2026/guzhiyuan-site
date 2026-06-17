@@ -519,6 +519,19 @@
                 </a>
             </li>`;
         nav.innerHTML = html;
+
+        // 直接绑定下拉菜单点击事件（桌面端+移动端均可靠触发）
+        nav.querySelectorAll('.dropdown > a').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var parentLi = this.parentElement;
+                if (parentLi) {
+                    parentLi.classList.toggle('open');
+                }
+            });
+        });
+
         updateCartBadge();
     }
 

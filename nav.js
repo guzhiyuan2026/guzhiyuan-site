@@ -133,7 +133,20 @@ function renderNav(site) {
     html += '<li><a href="cart.html" class="cart-link"><span class="cart-icon">🛒</span><span class="cart-badge" id="cart-badge">0</span></a></li>';
     
     nav.innerHTML = html;
-    
+
+    // 直接绑定下拉菜单点击事件（桌面端+移动端均可靠触发）
+    // 使用 stopPropagation 防止事件冒泡到 navLinks 的委托处理器造成二次 toggle
+    nav.querySelectorAll('.dropdown > a').forEach(function(a) {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var parentLi = this.parentElement;
+            if (parentLi) {
+                parentLi.classList.toggle('open');
+            }
+        });
+    });
+
     // 更新购物车角标
     if (typeof updateCartBadge === 'function') {
         updateCartBadge();

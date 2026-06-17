@@ -511,13 +511,13 @@
             loadCart();
         }
 
-        // 移除商品
+        // 移除商品（使用美观确认弹窗）
         function removeItem(productId) {
-            if (confirm('确定要移除这件商品吗？')) {
+            showConfirm('移除商品', '确定要从购物车中移除此商品吗？', function() {
                 removeFromCart(productId);
                 loadCart();
                 updateCartBadge();
-            }
+            });
         }
 
         // 更新总价
@@ -528,9 +528,14 @@
 
         // 显示结算弹窗
         function showCheckoutModal() {
-            const cart = getCart();
+            var cart = getCart();
             if (cart.length === 0) {
-                alert('购物车是空的！');
+                showModal({
+                    icon: '🛒',
+                    title: '购物车为空',
+                    message: '请先添加商品到购物车后再提交订单。',
+                    buttons: [{ text: '去逛逛', type: 'primary', onClick: function(close) { window.location.href = 'products.html'; } }]
+                });
                 return;
             }
             document.getElementById('checkout-modal').classList.add('show');
@@ -545,39 +550,54 @@
         function submitOrder(event) {
             event.preventDefault();
 
-            const name = document.getElementById('customer-name').value.trim();
-            const phone = document.getElementById('customer-phone').value.trim();
-            const address = document.getElementById('customer-address').value.trim();
-            const remark = document.getElementById('customer-remark').value.trim();
+            var name = document.getElementById('customer-name').value.trim();
+            var phone = document.getElementById('customer-phone').value.trim();
+            var address = document.getElementById('customer-address').value.trim();
+            var remark = document.getElementById('customer-remark').value.trim();
 
-            if (!name || !phone) {
-                alert('请填写姓名和电话！');
+            // 姓名校验
+            if (!name) {
+                showModal({
+                    icon: '📝',
+                    title: '请填写信息',
+                    message: '请输入您的姓名。',
+                    buttons: [{ text: '好的', type: 'primary', onClick: null }]
+                });
+                return;
+            }
+
+            // 手机号格式校验
+            var phoneResult = validatePhone(phone);
+            if (!phoneResult.valid) {
+                showModal({
+                    icon: '📱',
+                    title: '号码格式不正确',
+                    message: phoneResult.message + '<br><span style="color:#999;font-size:0.85rem;">示例：13812345678 或 0851-12345678</span>',
+                    buttons: [{ text: '重新输入', type: 'primary', onClick: null }]
+                });
                 return;
             }
 
             // 构造订单信息
-            const cart = getCart();
-            const total = getCartTotal();
-            const orderInfo = {
+            var cart = getCart();
+            var total = getCartTotal();
+
+            // 保存订单到 localStorage
+            var order = saveOrder({
                 customerName: name,
                 customerPhone: phone,
                 customerAddress: address,
                 customerRemark: remark,
                 items: cart,
-                total: total,
-                orderTime: new Date().toLocaleString('zh-CN')
-            };
+                total: total
+            });
 
-            // 这里可以发送到服务器，现在先显示成功消息
-            console.log('订单信息：', orderInfo);
+            console.log('订单已保存：', order);
 
             // 清空购物车
             clearCart();
 
-            // 显示成功消息
-            alert('订单提交成功！我们的工作人员会在24小时内联系您确认订单信息。\n\n订单详情：\n姓名：' + name + '\n电话：' + phone + '\n总金额：¥' + total.toFixed(2));
-
-            // 关闭弹窗
+            // 关闭结算弹窗
             closeCheckoutModal();
 
             // 重置表单
@@ -586,6 +606,37 @@
             // 重新加载购物车页面
             loadCart();
             updateCartBadge();
+
+            // 计算商品摘要
+            var itemsSummary = cart.map(function(item) {
+                return item.name + ' × ' + item.quantity;
+            }).join('<br>');
+
+            // 显示成功弹窗
+            showModal({
+                icon: '<svg class="g-success-check" viewBox="0 0 52 52"><circle class="g-success-circle" cx="26" cy="26" r="25" fill="none"/><path class="g-success-path" fill="none" d="M14 27l7 7 16-16"/></svg>',
+                title: '订单提交成功！',
+                message:
+                    '<div class="order-summary">' +
+                    '<div><span class="label">订单编号</span><span class="order-id">' + order.id + '</span></div>' +
+                    '<div><span class="label">下单时间</span>' + order.orderTimeDisplay + '</div>' +
+                    '<div><span class="label">姓名</span>' + name + '</div>' +
+                    '<div><span class="label">电话</span>' + phone + '</div>' +
+                    (address ? '<div><span class="label">地址</span>' + address + '</div>' : '') +
+                    '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px dashed #ddd;">' +
+                    '<span class="label">商品</span>' + itemsSummary + '</div>' +
+                    '<div style="font-weight:bold;font-size:1.1rem;margin-top:0.5rem;">' +
+                    '<span class="label">总金额</span>¥ ' + total.toFixed(2) + '</div>' +
+                    '</div>' +
+                    '<div class="payment-notice">' +
+                    '<div class="title">💳 支付说明</div>' +
+                    '<div>当前为线下交易模式。微信支付 / 支付宝在线支付功能需要后端服务支持，我们的工作人员将在 <strong>24小时内</strong> 通过电话与您联系确认订单详情及付款方式。</div>' +
+                    '</div>',
+                buttons: [
+                    { text: '继续购物', type: 'default', onClick: function(close) { window.location.href = 'products.html'; } },
+                    { text: '查看我的订单', type: 'primary', onClick: function(close) { window.location.href = 'order-history.html'; } }
+                ]
+            });
         }
 
         // 页面加载时执行

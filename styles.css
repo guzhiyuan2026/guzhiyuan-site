@@ -685,8 +685,330 @@ html {
     background: var(--light-green);
 }
 
+/* ==========================================
+   模态弹窗系统
+   ========================================== */
+
+.g-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    transition: background 0.3s ease;
+    pointer-events: none;
+}
+
+.g-modal-overlay.show {
+    background: rgba(0, 0, 0, 0.55);
+    pointer-events: auto;
+}
+
+.g-modal {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem 2rem 2rem;
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.25s ease;
+    text-align: center;
+}
+
+.g-modal-overlay.show .g-modal {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.g-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color 0.2s, background 0.2s;
+    line-height: 1;
+}
+
+.g-modal-close:hover {
+    color: #333;
+    background: #f0f0f0;
+}
+
+.g-modal-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.g-modal-title {
+    font-size: 1.3rem;
+    color: var(--primary-green);
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+
+.g-modal-body {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.g-modal-body p {
+    margin-bottom: 0.5rem;
+}
+
+.g-modal-body .order-id {
+    font-family: monospace;
+    font-weight: bold;
+    color: var(--primary-green);
+    background: var(--cream);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.g-modal-body .order-summary {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 0.75rem 0;
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 1.8;
+}
+
+.g-modal-body .order-summary .label {
+    color: var(--text-light);
+    margin-right: 0.5rem;
+}
+
+.g-modal-body .payment-notice {
+    background: #fff8e1;
+    border: 1px solid #ffcc02;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #8d6e00;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.g-modal-body .payment-notice .title {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.g-modal-body .error-msg {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.g-modal-body .form-group {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.g-modal-body .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.g-modal-body .form-group input,
+.g-modal-body .form-group textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 2px solid #e0d8cc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.3s;
+    background: #fafaf7;
+}
+
+.g-modal-body .form-group input:focus,
+.g-modal-body .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    background: #fff;
+}
+
+.g-modal-body .form-group input.input-error {
+    border-color: #d32f2f;
+    background: #fff5f5;
+}
+
+.g-modal-body .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* 支付方式选择器 */
+.payment-methods {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.payment-method-option {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.75rem 0.5rem;
+    border: 2px solid #e0d8cc;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #fafaf7;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.payment-method-option:hover {
+    border-color: var(--gold);
+}
+
+.payment-method-option.selected {
+    border-color: var(--primary-green);
+    background: #f0f7e8;
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.payment-method-option .pm-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+/* 按钮 */
+.g-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.g-modal-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.g-modal-btn-primary {
+    background: var(--primary-green);
+    color: #fff;
+}
+
+.g-modal-btn-primary:hover {
+    background: var(--light-green);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+}
+
+.g-modal-btn-danger {
+    background: #d32f2f;
+    color: #fff;
+}
+
+.g-modal-btn-danger:hover {
+    background: #b71c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.g-modal-btn-default {
+    background: #f0f0f0;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+.g-modal-btn-default:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+/* 成功对勾动画 */
+.g-success-check {
+    width: 60px;
+    height: 60px;
+    display: block;
+    margin: 0 auto;
+}
+
+.g-success-circle {
+    stroke: var(--primary-green);
+    stroke-width: 2;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    animation: g-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards 0.1s;
+}
+
+.g-success-path {
+    stroke: var(--primary-green);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: g-stroke 0.35s cubic-bezier(0.65, 0, 0.45, 1) forwards 0.5s;
+}
+
+@keyframes g-stroke {
+    100% { stroke-dashoffset: 0; }
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
+    .g-modal {
+        padding: 2rem 1.5rem 1.5rem;
+        max-width: 92vw;
+        border-radius: 14px;
+    }
+
+    .g-modal-actions {
+        flex-direction: column;
+    }
+
+    .g-modal-btn {
+        width: 100%;
+    }
+
     .cart-toast {
         top: 80px;
         right: 10px;
@@ -703,6 +1025,10 @@ html {
 
     .notification.show {
         transform: translateY(0);
+    }
+
+    .payment-methods {
+        flex-direction: column;
     }
 }
 

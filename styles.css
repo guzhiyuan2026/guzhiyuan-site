@@ -159,7 +159,8 @@ body {
     list-style: none;
 }
 
-.dropdown:hover .dropdown-menu {
+.dropdown:hover .dropdown-menu,
+.dropdown.open .dropdown-menu {
     opacity: 1;
     visibility: visible;
 }

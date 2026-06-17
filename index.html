@@ -498,7 +498,7 @@
                 // 下拉菜单
                 const isChildActive = item.children.some(c => c.file === current);
                 html += `<li class="dropdown ${isChildActive ? 'active' : ''}">`;
-                html += `  <a href="${item.file || '#'}" class="${isChildActive ? 'active-link' : ''}">${item.label} ▾</a>`;
+                html += `  <a href="${item.file || '#'}" class="${isChildActive ? 'active-link' : ''}">${item.label} ▾<span class="arrow">▼</span></a>`;
                 html += `  <ul class="dropdown-menu">`;
                 item.children.forEach(child => {
                     const isChild = child.file === current;

@@ -395,6 +395,13 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 确保 .fade-in 元素始终可见
+            var fadeIns = document.querySelectorAll('.fade-in');
+            fadeIns.forEach(function(el) {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+
             renderOrders();
             updateCartBadge();
         });

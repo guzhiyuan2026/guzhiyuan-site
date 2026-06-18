@@ -652,12 +652,20 @@
 
         // 页面加载时执行
         document.addEventListener('DOMContentLoaded', function() {
+            // 确保 .fade-in 元素始终可见（购物车页面不需要滚动触发动画）
+            var fadeIns = document.querySelectorAll('.fade-in');
+            fadeIns.forEach(function(el) {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+
             try {
                 loadCart();
                 if (typeof updateCartBadge === 'function') updateCartBadge();
             } catch(e) {
                 console.error('购物车页面初始化失败：', e);
-                document.getElementById('cart-empty').style.display = '';
+                var emptyEl = document.getElementById('cart-empty');
+                if (emptyEl) emptyEl.style.display = '';
             }
         });
     </script>

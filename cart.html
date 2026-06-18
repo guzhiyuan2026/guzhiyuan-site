@@ -381,7 +381,7 @@
         <h2 class="cart-title fade-in">购物车</h2>
 
         <!-- 购物车为空 -->
-        <div id="cart-empty" class="cart-empty fade-in" style="display: none;">
+        <div id="cart-empty" class="cart-empty fade-in">
             <div class="cart-empty-icon">🛒</div>
             <h3>购物车是空的</h3>
             <p>快去挑选您喜欢的商品吧！</p>
@@ -447,13 +447,17 @@
     <script>
         // 加载购物车
         function loadCart() {
-            const cart = getCart();
-            const cartEmpty = document.getElementById('cart-empty');
-            const cartItems = document.getElementById('cart-items');
-            const cartSummary = document.getElementById('cart-summary');
+            var cartEmpty = document.getElementById('cart-empty');
+            var cartItems = document.getElementById('cart-items');
+            var cartSummary = document.getElementById('cart-summary');
+
+            if (!cartEmpty || !cartItems || !cartSummary) return;
+
+            var cart;
+            try { cart = getCart(); } catch(e) { cart = []; }
+            if (!Array.isArray(cart)) cart = [];
 
             if (cart.length === 0) {
-                // 购物车为空
                 cartEmpty.style.display = '';
                 cartItems.style.display = 'none';
                 cartSummary.style.display = 'none';
@@ -489,7 +493,9 @@
 
         // 更新数量
         function updateQuantity(productId, delta) {
-            const cart = getCart();
+            var cart;
+            try { cart = getCart(); } catch(e) { return; }
+            if (!Array.isArray(cart)) return;
             const item = cart.find(i => i.id === productId);
             if (item) {
                 const newQty = item.quantity + delta;
@@ -513,6 +519,12 @@
 
         // 移除商品（使用美观确认弹窗）
         function removeItem(productId) {
+            if (typeof showConfirm !== 'function') {
+                if (typeof removeFromCart === 'function') removeFromCart(productId);
+                loadCart();
+                if (typeof updateCartBadge === 'function') updateCartBadge();
+                return;
+            }
             showConfirm('移除商品', '确定要从购物车中移除此商品吗？', function() {
                 removeFromCart(productId);
                 loadCart();
@@ -522,14 +534,19 @@
 
         // 更新总价
         function updateTotalPrice() {
-            const total = getCartTotal();
+            var total;
+            try { total = getCartTotal(); } catch(e) { total = 0; }
             document.getElementById('cart-total-price').textContent = '¥ ' + total.toFixed(2);
         }
 
         // 显示结算弹窗
         function showCheckoutModal() {
-            var cart = getCart();
-            if (cart.length === 0) {
+            var modal = document.getElementById('checkout-modal');
+            if (!modal) return;
+
+            var cart;
+            try { cart = getCart(); } catch(e) { cart = []; }
+            if (!Array.isArray(cart) || cart.length === 0) {
                 showModal({
                     icon: '🛒',
                     title: '购物车为空',
@@ -579,8 +596,11 @@
             }
 
             // 构造订单信息
-            var cart = getCart();
-            var total = getCartTotal();
+            var cart;
+            try { cart = getCart(); } catch(e) { cart = []; }
+            if (!Array.isArray(cart)) cart = [];
+            var total;
+            try { total = getCartTotal(); } catch(e) { total = 0; }
 
             // 保存订单到 localStorage
             var order = saveOrder({
@@ -641,8 +661,13 @@
 
         // 页面加载时执行
         document.addEventListener('DOMContentLoaded', function() {
-            loadCart();
-            updateCartBadge();
+            try {
+                loadCart();
+                if (typeof updateCartBadge === 'function') updateCartBadge();
+            } catch(e) {
+                console.error('购物车页面初始化失败：', e);
+                document.getElementById('cart-empty').style.display = '';
+            }
         });
     </script>
     <script src="nav.js"></script>

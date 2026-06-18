@@ -614,9 +614,6 @@
 
             console.log('订单已保存：', order);
 
-            // 清空购物车
-            clearCart();
-
             // 关闭结算弹窗
             closeCheckoutModal();
 
@@ -627,36 +624,30 @@
             loadCart();
             updateCartBadge();
 
-            // 计算商品摘要
-            var itemsSummary = cart.map(function(item) {
-                return item.name + ' × ' + item.quantity;
-            }).join('<br>');
-
-            // 显示成功弹窗
-            showModal({
-                icon: '<svg class="g-success-check" viewBox="0 0 52 52"><circle class="g-success-circle" cx="26" cy="26" r="25" fill="none"/><path class="g-success-path" fill="none" d="M14 27l7 7 16-16"/></svg>',
-                title: '订单提交成功！',
-                message:
-                    '<div class="order-summary">' +
-                    '<div><span class="label">订单编号</span><span class="order-id">' + order.id + '</span></div>' +
-                    '<div><span class="label">下单时间</span>' + order.orderTimeDisplay + '</div>' +
-                    '<div><span class="label">姓名</span>' + name + '</div>' +
-                    '<div><span class="label">电话</span>' + phone + '</div>' +
-                    (address ? '<div><span class="label">地址</span>' + address + '</div>' : '') +
-                    '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px dashed #ddd;">' +
-                    '<span class="label">商品</span>' + itemsSummary + '</div>' +
-                    '<div style="font-weight:bold;font-size:1.1rem;margin-top:0.5rem;">' +
-                    '<span class="label">总金额</span>¥ ' + total.toFixed(2) + '</div>' +
-                    '</div>' +
-                    '<div class="payment-notice">' +
-                    '<div class="title">💳 支付说明</div>' +
-                    '<div>当前为线下交易模式。微信支付 / 支付宝在线支付功能需要后端服务支持，我们的工作人员将在 <strong>24小时内</strong> 通过电话与您联系确认订单详情及付款方式。</div>' +
-                    '</div>',
-                buttons: [
-                    { text: '继续购物', type: 'default', onClick: function(close) { window.location.href = 'products.html'; } },
-                    { text: '查看我的订单', type: 'primary', onClick: function(close) { window.location.href = 'order-history.html'; } }
-                ]
-            });
+            // 显示支付弹窗（订单将在支付完成后才清空购物车）
+            if (typeof showPaymentModal === 'function') {
+                showPaymentModal(order, cart, total, name, phone);
+                // 支付弹窗关闭后清空购物车
+                // 注意：cart 已在前面保存，这里延迟清空防止用户关闭支付弹窗后丢失订单
+            } else {
+                // 兜底：如果支付模块未加载，使用旧版成功提示
+                clearCart();
+                showModal({
+                    icon: '💳',
+                    title: '订单已创建',
+                    message:
+                        '<div class="order-summary">' +
+                        '<div><span class="label">订单编号</span><span class="order-id">' + order.id + '</span></div>' +
+                        '<div><span class="label">下单时间</span>' + order.orderTimeDisplay + '</div>' +
+                        '</div>' +
+                        '<div class="payment-notice">' +
+                        '<div class="title">💳 支付说明</div>我们的工作人员将在 <strong>24小时内</strong> 与您联系确认付款方式。</div>',
+                    buttons: [
+                        { text: '继续购物', type: 'default', onClick: function() { window.location.href = 'products.html'; } },
+                        { text: '查看订单', type: 'primary', onClick: function() { window.location.href = 'order-history.html'; } }
+                    ]
+                });
+            }
         }
 
         // 页面加载时执行

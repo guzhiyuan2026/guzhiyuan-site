@@ -100,6 +100,11 @@
             font-weight: 600;
         }
 
+        .status-paid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
         .status-pending {
             background: #fff3e0;
             color: #e65100;
@@ -333,7 +338,8 @@
             actionsBar.style.display = '';
 
             var statusMap = {
-                'pending': '待处理',
+                'pending': '待支付',
+                'paid': '已支付',
                 'confirmed': '已确认',
                 'shipped': '已发货',
                 'completed': '已完成',
@@ -352,14 +358,23 @@
                     '</div>';
                 }).join('');
 
+                // 支付方式显示
+                var payInfo = '';
+                if (order.status === 'paid' && order.payTimeDisplay) {
+                    payInfo = '<div style="font-size:0.8rem;color:var(--text-light);margin-top:0.25rem;">✓ 已支付 · ' + order.payTimeDisplay + '</div>';
+                } else if (order.status === 'pending') {
+                    payInfo = '<div style="font-size:0.8rem;color:#e65100;margin-top:0.25rem;">⏳ 等待支付</div>';
+                }
+
                 return '<div class="order-card">' +
                     '<div class="order-header">' +
                         '<span class="order-id">订单 ' + order.id + '</span>' +
                         '<span class="order-time">' + (order.orderTimeDisplay || '') + '</span>' +
-                        '<span class="order-status status-' + (order.status || 'pending') + '">' + (statusMap[order.status] || '待处理') + '</span>' +
+                        '<span class="order-status status-' + (order.status || 'pending') + '">' + (statusMap[order.status] || '待支付') + '</span>' +
                     '</div>' +
                     '<div class="order-body">' +
                         '<div class="order-items">' + itemsHtml + '</div>' +
+                        payInfo +
                     '</div>' +
                     '<div class="order-footer">' +
                         '<span class="order-customer">' + order.customerName + ' | ' + order.customerPhone + (order.customerAddress ? ' | ' + order.customerAddress : '') + '</span>' +

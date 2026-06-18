@@ -722,6 +722,11 @@ html {
     text-align: center;
 }
 
+/* 支付弹窗需要更宽 */
+.g-modal-overlay.payment-wide .g-modal {
+    max-width: 560px;
+}
+
 .g-modal-overlay.show .g-modal {
     transform: translateY(0) scale(1);
     opacity: 1;

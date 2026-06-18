@@ -338,6 +338,11 @@ html {
     scroll-behavior: smooth;
 }
 
+/* 桌面端隐藏汉堡菜单按钮（仅移动端显示） */
+.nav-toggle {
+    display: none;
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
     .nav-links {

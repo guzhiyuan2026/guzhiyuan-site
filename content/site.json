@@ -37,8 +37,8 @@
     "workHours": "周一至周五：9:00-18:00 | 周六：9:00-12:00 | 周日及法定节假日休息"
   },
   "bankAccount": {
-    "bankName": "请配置开户行",
-    "accountName": "请配置户名",
-    "accountNumber": "请配置账号"
+    "bankName": "中国工商银行股份有限公司遵义碧云支行",
+    "accountName": "贵州古芝源品牌管理有限公司",
+    "accountNumber": "2403028209200515275"
   }
 }

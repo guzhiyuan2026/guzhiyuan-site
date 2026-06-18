@@ -97,7 +97,7 @@ body {
     gap: 2rem;
     flex-wrap: nowrap;
     flex-shrink: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .nav-links li {

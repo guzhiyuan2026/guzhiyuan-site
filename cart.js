@@ -93,15 +93,20 @@ function clearCart() {
 
 // 更新购物车角标
 function updateCartBadge() {
-    const badge = document.getElementById('cart-badge');
-    if (badge) {
-        const count = getCartCount();
-        if (count > 0) {
-            badge.textContent = count > 99 ? '99+' : count;
-            badge.style.display = 'flex';
-        } else {
-            badge.style.display = 'none';
-        }
+    var badge = document.getElementById('cart-badge');
+    if (!badge) {
+        // 可能是 nav.js 尚未加载或动态替换了导航，静默忽略
+        return;
+    }
+    var count = getCartCount();
+    if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'flex';
+        badge.style.alignItems = 'center';
+        badge.style.justifyContent = 'center';
+    } else {
+        badge.textContent = '0';
+        badge.style.display = 'none';
     }
 }
 
@@ -384,48 +389,79 @@ function updateOrderStatus(orderId, status) {
 // ==================== 支付二维码生成 ====================
 
 /**
- * 生成模拟的支付二维码 SVG（微信/支付宝风格）
+ * 生成支付二维码图片 URL（使用 qrserver API 生成真实可扫描的二维码）
+ * @param {string} orderId - 订单编号
+ * @param {number} total - 支付金额
  * @param {string} method - 支付方式: 'wechat' | 'alipay'
- * @returns {string} SVG HTML
+ * @returns {string} 二维码图片 URL
  */
-function generatePaymentQR(method) {
-    var colors = method === 'wechat'
-        ? { bg: '#09BB07', dots: '#fff' }
-        : { bg: '#1677FF', dots: '#fff' };
+function generatePaymentQRUrl(orderId, total, method) {
+    // 编码订单支付信息到二维码数据中
+    var payData = encodeURIComponent(
+        'order=' + orderId +
+        '&amount=' + total.toFixed(2) +
+        '&method=' + method +
+        '&merchant=gzguzhiyuan'
+    );
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + payData + '&margin=8&format=png';
+}
 
-    // 生成伪随机二维码图案（12x12 的小格子扩展为 13x13 的定位图案）
-    var size = 15, cellSize = 11, matrix = [];
-    for (var i = 0; i < size; i++) {
-        matrix[i] = [];
-        for (var j = 0; j < size; j++) {
-            // 定位图案（三个角落的 3x3）
-            var isFinder = (i < 4 && j < 4) || (i < 4 && j > size - 5) || (i > size - 5 && j < 4);
-            if (isFinder) {
-                var inner = (i > 0 && i < 3 && j > 0 && j < 3) || (i > 0 && i < 3 && j > size - 4 && j < size - 1) || (i > size - 4 && i < size - 1 && j > 0 && j < 3);
-                matrix[i][j] = inner ? 0 : 1;
-            } else {
-                // 随机填充（用订单信息种子模拟）
-                var seed = (i * 37 + j * 73 + (method === 'wechat' ? 13 : 71)) % 100;
-                matrix[i][j] = seed < 45 ? 1 : 0;
-            }
-        }
+/**
+ * 生成支付二维码 HTML（带加载状态和重试机制）
+ * @param {string} orderId - 订单编号
+ * @param {number} total - 支付金额
+ * @param {string} method - 支付方式
+ * @returns {string} HTML
+ */
+function generatePaymentQRHtml(orderId, total, method) {
+    var qrUrl = generatePaymentQRUrl(orderId, total, method);
+    var uniqueId = 'qr-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    return '<div style="background:#fff;display:inline-block;padding:0.75rem;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);position:relative;min-width:200px;min-height:200px;display:flex;align-items:center;justify-content:center;">' +
+        '<div id="' + uniqueId + '-loading" style="text-align:center;color:#999;font-size:0.85rem;">' +
+        '<div style="font-size:2rem;margin-bottom:0.5rem;">⏳</div>加载二维码中...</div>' +
+        '<img id="' + uniqueId + '" src="' + qrUrl + '" width="200" height="200" ' +
+        'alt="支付二维码" style="border-radius:6px;display:none;" ' +
+        'onload="var img=document.getElementById(\'' + uniqueId + '\');var ld=document.getElementById(\'' + uniqueId + '-loading\');if(img){img.style.display=\'\';}if(ld){ld.style.display=\'none\';}" ' +
+        'onerror="var ld=document.getElementById(\'' + uniqueId + '-loading\');if(ld){ld.innerHTML=\'<div style=font-size:2rem;margin-bottom:0.5rem;>⚠️</div>二维码加载失败<br><small style=color:#999;>请刷新重试或选择其他支付方式</small>\';}" ' +
+        '/></div>';
+}
+
+// ==================== 银行转账工具 ====================
+
+/**
+ * 一键复制银行转账信息到剪贴板
+ */
+function copyBankInfo(bankName, accountName, accountNumber, orderId) {
+    var text = '开户行：' + bankName + '\n' +
+               '户名：' + accountName + '\n' +
+               '账号：' + accountNumber + '\n' +
+               '转账附言：' + orderId;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+            showNotification('收款信息已复制到剪贴板', 'success');
+        }).catch(function() {
+            fallbackCopy(text);
+        });
+    } else {
+        fallbackCopy(text);
     }
+}
 
-    var svgWidth = size * cellSize + 20;
-    var cells = '';
-    for (var r = 0; r < size; r++) {
-        for (var c = 0; c < size; c++) {
-            if (matrix[r][c]) {
-                cells += '<rect x="' + (c * cellSize + 10) + '" y="' + (r * cellSize + 10) + '" width="' + cellSize + '" height="' + cellSize + '" rx="1"/>';
-            }
-        }
+function fallbackCopy(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand('copy');
+        showNotification('收款信息已复制到剪贴板', 'success');
+    } catch (e) {
+        showNotification('复制失败，请手动记录收款信息', 'error');
     }
-
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + svgWidth + ' ' + svgWidth + '" width="180" height="180">' +
-        '<rect width="' + svgWidth + '" height="' + svgWidth + '" rx="6" fill="#fff"/>' +
-        cells +
-        '<rect x="' + (Math.floor(size/2) * cellSize + 10 - cellSize/2 + 1) + '" y="' + (Math.floor(size/2) * cellSize + 10 - cellSize/2 + 1) + '" width="' + (cellSize - 2) + '" height="' + (cellSize - 2) + '" rx="2" fill="' + colors.bg + '"/>' +
-        '</svg>';
+    document.body.removeChild(textarea);
 }
 
 // ==================== 支付弹窗 ====================
@@ -492,7 +528,7 @@ function showPaymentModal(order, cart, total, name, phone) {
 
     // 初始化支付内容（默认微信支付）
     setTimeout(function() {
-        showPaymentContent('wechat', total);
+        showPaymentContent('wechat', total, order.id);
     }, 150);
 
     // 存储订单引用到window
@@ -519,49 +555,56 @@ function selectPaymentMethod(method) {
         }
     });
 
-    showPaymentContent(method, window._currentPaymentTotal || 0);
+    showPaymentContent(method, window._currentPaymentTotal || 0, window._currentPaymentOrder ? window._currentPaymentOrder.id : '');
 }
 
 /**
  * 显示支付内容（QR码或转账信息）
  */
-function showPaymentContent(method, total) {
+function showPaymentContent(method, total, orderId) {
     var area = document.getElementById('payment-content-area');
     if (!area) return;
 
     if (method === 'wechat') {
         area.innerHTML =
             '<div style="text-align:center;padding:1rem;">' +
-            '<div style="background:#fff;display:inline-block;padding:1rem;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:0.75rem;">' +
-            generatePaymentQR('wechat') +
-            '</div>' +
-            '<div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-bottom:0.5rem;color:#09BB07;font-weight:600;font-size:0.9rem;">' +
+            generatePaymentQRHtml(orderId, total, 'wechat') +
+            '<div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-top:0.75rem;margin-bottom:0.5rem;color:#09BB07;font-weight:600;font-size:0.9rem;">' +
             '<span>💚</span> 微信扫码支付</div>' +
             '<div style="font-size:0.8rem;color:var(--text-light);">请使用微信扫描二维码完成支付</div>' +
-            '<div style="margin-top:0.5rem;font-size:0.85rem;color:var(--earth-brown);font-weight:bold;">¥ ' + total.toFixed(2) + '</div>' +
+            '<div style="margin-top:0.5rem;font-size:1rem;color:var(--earth-brown);font-weight:bold;">¥ ' + total.toFixed(2) + '</div>' +
             '<div style="margin-top:0.75rem;background:#fff8e1;border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:#8d6e00;text-align:left;">' +
             '💡 <strong>电脑端提示：</strong>请用手机微信扫描上方二维码完成支付，支付完成后点击下方「已完成支付」按钮。</div>' +
             '</div>';
     } else if (method === 'alipay') {
         area.innerHTML =
             '<div style="text-align:center;padding:1rem;">' +
-            '<div style="background:#fff;display:inline-block;padding:1rem;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:0.75rem;">' +
-            generatePaymentQR('alipay') +
-            '</div>' +
-            '<div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-bottom:0.5rem;color:#1677FF;font-weight:600;font-size:0.9rem;">' +
+            generatePaymentQRHtml(orderId, total, 'alipay') +
+            '<div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-top:0.75rem;margin-bottom:0.5rem;color:#1677FF;font-weight:600;font-size:0.9rem;">' +
             '<span>💙</span> 支付宝扫码支付</div>' +
             '<div style="font-size:0.8rem;color:var(--text-light);">请使用支付宝扫描二维码完成支付</div>' +
-            '<div style="margin-top:0.5rem;font-size:0.85rem;color:var(--earth-brown);font-weight:bold;">¥ ' + total.toFixed(2) + '</div>' +
+            '<div style="margin-top:0.5rem;font-size:1rem;color:var(--earth-brown);font-weight:bold;">¥ ' + total.toFixed(2) + '</div>' +
             '<div style="margin-top:0.75rem;background:#e8f4ff;border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:#0d47a1;text-align:left;">' +
             '💡 <strong>电脑端提示：</strong>请用手机支付宝扫描上方二维码完成支付，支付完成后点击下方「已完成支付」按钮。</div>' +
             '</div>';
     } else if (method === 'bank') {
+        // 银行转账信息（可在 site.json 中配置，此处为默认值）
+        var bankInfo = (window._siteConfig && window._siteConfig.bankAccount) ? window._siteConfig.bankAccount : {
+            bankName: '请配置开户行',
+            accountName: '请配置户名',
+            accountNumber: '请配置账号'
+        };
         area.innerHTML =
             '<div style="text-align:center;padding:1rem;width:100%;">' +
             '<div style="background:var(--cream);border-radius:10px;padding:1.25rem;text-align:left;font-size:0.85rem;line-height:2;margin-bottom:0.75rem;">' +
-            '<div><strong>开户行：</strong>中国建设银行贵阳分行</div>' +
-            '<div><strong>户名：</strong>贵州古芝源品牌管理有限公司</div>' +
-            '<div><strong>账号：</strong>6217 0028 8001 2345 678</div>' +
+            '<div><strong>开户行：</strong>' + bankInfo.bankName + '</div>' +
+            '<div><strong>户名：</strong>' + bankInfo.accountName + '</div>' +
+            '<div><strong>账号：</strong>' + bankInfo.accountNumber + '</div>' +
+            '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px dashed #ccc;font-size:0.75rem;color:var(--text-light);">' +
+            '<strong>转账附言：</strong>' + orderId + '</div>' +
+            '</div>' +
+            '<div style="margin-bottom:0.5rem;">' +
+            '<button onclick="copyBankInfo(\'' + bankInfo.bankName.replace(/'/g, "\\\'") + '\',\'' + bankInfo.accountName.replace(/'/g, "\\\'") + '\',\'' + bankInfo.accountNumber.replace(/'/g, "\\\'") + '\',\'' + orderId + '\')" style="padding:0.5rem 1.5rem;background:var(--primary-green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;" onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">📋 一键复制收款信息</button>' +
             '</div>' +
             '<div style="background:#f0f7e8;border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:var(--primary-green);text-align:left;">' +
             '💡 转账完成后请点击下方「已完成支付」按钮，我们的工作人员将核实到账情况。</div>' +
@@ -633,7 +676,23 @@ function processPaymentCompletion(order, total, closeModal) {
 
 // ==================== 初始化 ====================
 
+// 加载站点配置（用于银行账户等可配置信息）
+(function loadSiteConfig() {
+    try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'content/site.json', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                window._siteConfig = JSON.parse(xhr.responseText);
+            }
+        };
+        xhr.send();
+    } catch(e) {}
+})();
+
 // 页面加载时更新角标
 document.addEventListener('DOMContentLoaded', function () {
     updateCartBadge();
+    // 兜底：部分页面 nav.js 可能异步更新导航，延迟再更新一次确保角标准确
+    setTimeout(function() { updateCartBadge(); }, 300);
 });

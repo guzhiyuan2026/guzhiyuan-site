@@ -35,5 +35,10 @@
     "wechat": "Guzhiyuan_Health",
     "wechatWork": "古芝源客服",
     "workHours": "周一至周五：9:00-18:00 | 周六：9:00-12:00 | 周日及法定节假日休息"
+  },
+  "bankAccount": {
+    "bankName": "请配置开户行",
+    "accountName": "请配置户名",
+    "accountNumber": "请配置账号"
   }
 }

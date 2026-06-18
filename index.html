@@ -625,11 +625,22 @@
         return getCart().reduce((s, i) => s + i.quantity, 0);
     }
     function updateCartBadge() {
+        var retryCount = arguments[0] || 0;
         const badge = document.getElementById('cart-badge');
-        if (!badge) return;
+        if (!badge) {
+            if (retryCount < 5) setTimeout(function() { updateCartBadge(retryCount + 1); }, 150);
+            return;
+        }
         const count = getCartCount();
-        badge.textContent = count;
-        badge.classList.toggle('show', count > 0);
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.setAttribute('data-count', String(count));
+        if (count > 0) {
+            badge.classList.add('visible', 'show');
+            badge.style.display = 'flex';
+        } else {
+            badge.classList.remove('visible', 'show');
+            badge.style.display = 'none';
+        }
     }
 
     // ============ 初始化 ============
@@ -657,7 +668,7 @@
         });
     })();
     </script>
-    <script src="cart.js?v=20260618b"></script>
+    <script src="cart.js?v=20260618c"></script>
     <script src="nav.js"></script>
 </body>
 </html>

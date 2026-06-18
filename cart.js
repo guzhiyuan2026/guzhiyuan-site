@@ -91,21 +91,25 @@ function clearCart() {
     updateCartBadge();
 }
 
-// 更新购物车角标
+// 更新购物车角标（使用双重机制：class + data属性，兼容所有页面）
 function updateCartBadge() {
+    // 延迟重试机制，确保 nav.js 已渲染完成
+    var retryCount = arguments[0] || 0;
     var badge = document.getElementById('cart-badge');
     if (!badge) {
-        // 可能是 nav.js 尚未加载或动态替换了导航，静默忽略
+        if (retryCount < 5) {
+            setTimeout(function () { updateCartBadge(retryCount + 1); }, 150);
+        }
         return;
     }
     var count = getCartCount();
+    badge.textContent = count > 99 ? '99+' : count;
+    badge.setAttribute('data-count', String(count));
     if (count > 0) {
-        badge.textContent = count > 99 ? '99+' : count;
+        badge.classList.add('visible', 'show');
         badge.style.display = 'flex';
-        badge.style.alignItems = 'center';
-        badge.style.justifyContent = 'center';
     } else {
-        badge.textContent = '0';
+        badge.classList.remove('visible', 'show');
         badge.style.display = 'none';
     }
 }
@@ -758,9 +762,28 @@ function processPaymentCompletion(order, total, closeModal) {
     } catch(e) {}
 })();
 
-// 页面加载时更新角标
+// 页面加载时更新角标（多重延迟确保兼容各种加载时序）
 document.addEventListener('DOMContentLoaded', function () {
     updateCartBadge();
-    // 兜底：部分页面 nav.js 可能异步更新导航，延迟再更新一次确保角标准确
+    // 兜底延迟：nav.js 可能异步替换导航 HTML
     setTimeout(function() { updateCartBadge(); }, 300);
+    setTimeout(function() { updateCartBadge(); }, 800);
+    setTimeout(function() { updateCartBadge(); }, 1500);
 });
+
+// 监听 nav.js 动态渲染完成（nav.js 调用 renderNav 后会触发）
+if (window.MutationObserver) {
+    (function watchNavChanges() {
+        var navEl = document.getElementById('nav-links');
+        if (!navEl) { setTimeout(watchNavChanges, 100); return; }
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                if (m.addedNodes.length > 0 || m.type === 'childList') {
+                    // 导航被重新渲染，更新角标
+                    setTimeout(function() { updateCartBadge(); }, 50);
+                }
+            });
+        });
+        observer.observe(navEl, { childList: true, subtree: true });
+    })();
+}

@@ -405,23 +405,24 @@ function getBankAccountInfo() {
 
 /**
  * 生成支付二维码图片 URL（使用 qrserver API 生成真实可扫描的二维码）
- * 二维码关联银行账户信息，扫码后显示完整转账信息
+ * 数据采用银行转账标准 key-value 格式，银行卡号排首位，
+ * 微信/支付宝/银行APP扫码后可直接识别并填入转账信息。
  * @param {string} orderId - 订单编号
  * @param {number} total - 支付金额
  * @returns {string} 二维码图片 URL
  */
 function generatePaymentQRUrl(orderId, total) {
     var bank = getBankAccountInfo();
-    // 二维码编码银行账户+订单信息，银行APP扫码可自动识别转账
+    // 银行/支付APP友好的 key=value 格式（卡号优先，便于APP智能识别）
     var payData = encodeURIComponent(
-        '收款方：' + bank.accountName + '\n' +
-        '开户行：' + bank.bankName + '\n' +
-        '账号：' + bank.accountNumber + '\n' +
-        '订单号：' + orderId + '\n' +
-        '金额：¥' + total.toFixed(2) + '\n' +
-        '商户：贵州古芝源品牌管理有限公司'
+        '卡号=' + bank.accountNumber +
+        '&户名=' + bank.accountName +
+        '&银行=' + bank.bankName +
+        '&金额=' + total.toFixed(2) +
+        '&订单=' + orderId +
+        '&用途=货款'
     );
-    return 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + payData + '&margin=8&format=png';
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + payData + '&margin=10&format=png';
 }
 
 /**
@@ -433,11 +434,11 @@ function generatePaymentQRUrl(orderId, total) {
 function generatePaymentQRHtml(orderId, total) {
     var qrUrl = generatePaymentQRUrl(orderId, total);
     var uniqueId = 'qr-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
-    return '<div style="background:#fff;display:inline-block;padding:0.75rem;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);position:relative;min-width:200px;min-height:200px;display:flex;align-items:center;justify-content:center;">' +
+    return '<div style="background:#fff;display:inline-block;padding:0.85rem;border-radius:14px;box-shadow:0 3px 16px rgba(0,0,0,0.1);position:relative;min-width:240px;min-height:240px;display:flex;align-items:center;justify-content:center;">' +
         '<div id="' + uniqueId + '-loading" style="text-align:center;color:#999;font-size:0.85rem;">' +
         '<div style="font-size:2rem;margin-bottom:0.5rem;">⏳</div>加载二维码中...</div>' +
-        '<img id="' + uniqueId + '" src="' + qrUrl + '" width="200" height="200" ' +
-        'alt="支付二维码" style="border-radius:6px;display:none;" ' +
+        '<img id="' + uniqueId + '" src="' + qrUrl + '" width="240" height="240" ' +
+        'alt="支付二维码" style="border-radius:8px;display:none;" ' +
         'onload="var img=document.getElementById(\'' + uniqueId + '\');var ld=document.getElementById(\'' + uniqueId + '-loading\');if(img){img.style.display=\'\';}if(ld){ld.style.display=\'none\';}" ' +
         'onerror="var ld=document.getElementById(\'' + uniqueId + '-loading\');if(ld){ld.innerHTML=\'<div style=font-size:2rem;margin-bottom:0.5rem;>⚠️</div>二维码加载失败<br><small style=color:#999;>请刷新重试或选择其他支付方式</small>\';}" ' +
         '/></div>';
@@ -582,70 +583,103 @@ function showPaymentContent(method, total, orderId) {
     var area = document.getElementById('payment-content-area');
     if (!area) return;
 
+    var bank = getBankAccountInfo();
+
+    // 银行账户信息卡片（三种支付方式共用）
+    var bankCardHtml =
+        '<div style="background:var(--cream);border-radius:10px;padding:1rem;margin-top:0.8rem;text-align:left;font-size:0.82rem;line-height:2;">' +
+        '<div style="font-weight:600;color:var(--primary-green);margin-bottom:0.3rem;font-size:0.85rem;">🏦 收款银行账户</div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>开户行</span><span style="font-weight:600;">' + bank.bankName + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>户名</span><span style="font-weight:600;">' + bank.accountName + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;"><span>账号</span><span style="font-family:monospace;font-weight:700;color:var(--earth-brown);font-size:0.9rem;">' + bank.accountNumber + '</span></div>' +
+        '</div>';
+
+    // 一键复制按钮
+    var copyBtnHtml =
+        '<button onclick="copyBankInfo(\'' + bank.bankName.replace(/'/g, "\\\'") + '\',\'' + bank.accountName.replace(/'/g, "\\\'") + '\',\'' + bank.accountNumber.replace(/'/g, "\\\'") + '\',\'' + orderId + '\')" ' +
+        'style="padding:0.5rem 1.5rem;background:var(--primary-green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;width:100%;" ' +
+        'onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">📋 一键复制收款信息</button>';
+
     if (method === 'wechat') {
-        var bank = getBankAccountInfo();
         area.innerHTML =
-            '<div style="text-align:center;padding:1rem;">' +
+            '<div style="text-align:center;padding:0.5rem 0;">' +
+            // QR 码
+            '<div style="margin-bottom:0.5rem;">' +
             generatePaymentQRHtml(orderId, total) +
-            '<div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-top:0.75rem;margin-bottom:0.5rem;color:#09BB07;font-weight:600;font-size:0.9rem;">' +
-            '<span>💚</span> 微信扫码查看转账信息</div>' +
-            '<div style="font-size:0.8rem;color:var(--text-light);">扫码后可查看下方银行账户信息进行转账</div>' +
-            '<div style="margin-top:0.75rem;font-size:1rem;color:var(--earth-brown);font-weight:bold;">¥ ' + total.toFixed(2) + '</div>' +
-            // 银行账户信息卡片
-            '<div style="background:var(--cream);border-radius:10px;padding:0.9rem;margin-top:0.75rem;text-align:left;font-size:0.8rem;line-height:1.9;">' +
-            '<div style="font-weight:600;color:var(--primary-green);margin-bottom:0.3rem;font-size:0.85rem;">🏦 收款银行账户</div>' +
-            '<div><strong>户名：</strong>' + bank.accountName + '</div>' +
-            '<div><strong>开户行：</strong>' + bank.bankName + '</div>' +
-            '<div><strong>账号：</strong>' + bank.accountNumber + '</div>' +
             '</div>' +
-            '<div style="margin-top:0.5rem;">' +
-            '<button onclick="copyBankInfo(\'' + bank.bankName.replace(/'/g, "\\\'") + '\',\'' + bank.accountName.replace(/'/g, "\\\'") + '\',\'' + bank.accountNumber.replace(/'/g, "\\\'") + '\',\'' + orderId + '\')" style="padding:0.45rem 1.2rem;background:var(--primary-green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.8rem;transition:all 0.3s;" onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">📋 一键复制收款信息</button>' +
+            // 金额醒目
+            '<div style="font-size:1.1rem;color:var(--earth-brown);font-weight:bold;margin-bottom:0.8rem;">' +
+            '<span style="color:var(--text-light);font-size:0.8rem;">应付金额</span><br>¥ ' + total.toFixed(2) + '</div>' +
+            // 操作引导 - 微信
+            '<div style="background:#f0fff0;border:1px solid #b7eb8f;border-radius:8px;padding:0.75rem;text-align:left;font-size:0.78rem;line-height:1.8;margin-bottom:0.5rem;">' +
+            '<div style="font-weight:700;color:#52c41a;margin-bottom:0.3rem;font-size:0.85rem;">📱 微信扫码支付流程</div>' +
+            '<div>① 打开手机微信 <strong>扫一扫</strong>，扫描上方二维码</div>' +
+            '<div>② 微信将识别银行卡号 <strong>' + bank.accountNumber + '</strong></div>' +
+            '<div>③ 微信内点击 <strong>「收付款 → 向银行卡转账」</strong></div>' +
+            '<div>④ 填入金额 <strong>¥' + total.toFixed(2) + '</strong> 完成转账</div>' +
+            '<div style="color:#888;margin-top:0.3rem;">💡 也可复制收款信息 → 打开手机银行APP完成转账</div>' +
             '</div>' +
-            '<div style="margin-top:0.5rem;background:#fff8e1;border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:#8d6e00;text-align:left;">' +
-            '💡 <strong>电脑端提示：</strong>用手机微信扫描二维码查看转账信息，或复制收款信息到手机银行 APP 完成转账。支付完成后点击下方「已完成支付」。</div>' +
+            // 银行账户卡片
+            bankCardHtml +
+            // 复制按钮
+            '<div style="margin-top:0.6rem;">' + copyBtnHtml + '</div>' +
             '</div>';
     } else if (method === 'alipay') {
-        var bank = getBankAccountInfo();
         area.innerHTML =
-            '<div style="text-align:center;padding:1rem;">' +
+            '<div style="text-align:center;padding:0.5rem 0;">' +
+            // QR 码
+            '<div style="margin-bottom:0.5rem;">' +
             generatePaymentQRHtml(orderId, total) +
-            '<div style="display:flex;align-items:center;justify-content:center;gap:0.4rem;margin-top:0.75rem;margin-bottom:0.5rem;color:#1677FF;font-weight:600;font-size:0.9rem;">' +
-            '<span>💙</span> 支付宝扫码查看转账信息</div>' +
-            '<div style="font-size:0.8rem;color:var(--text-light);">扫码后可查看下方银行账户信息进行转账</div>' +
-            '<div style="margin-top:0.75rem;font-size:1rem;color:var(--earth-brown);font-weight:bold;">¥ ' + total.toFixed(2) + '</div>' +
-            // 银行账户信息卡片
-            '<div style="background:var(--cream);border-radius:10px;padding:0.9rem;margin-top:0.75rem;text-align:left;font-size:0.8rem;line-height:1.9;">' +
-            '<div style="font-weight:600;color:var(--primary-green);margin-bottom:0.3rem;font-size:0.85rem;">🏦 收款银行账户</div>' +
-            '<div><strong>户名：</strong>' + bank.accountName + '</div>' +
-            '<div><strong>开户行：</strong>' + bank.bankName + '</div>' +
-            '<div><strong>账号：</strong>' + bank.accountNumber + '</div>' +
             '</div>' +
-            '<div style="margin-top:0.5rem;">' +
-            '<button onclick="copyBankInfo(\'' + bank.bankName.replace(/'/g, "\\\'") + '\',\'' + bank.accountName.replace(/'/g, "\\\'") + '\',\'' + bank.accountNumber.replace(/'/g, "\\\'") + '\',\'' + orderId + '\')" style="padding:0.45rem 1.2rem;background:var(--primary-green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.8rem;transition:all 0.3s;" onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">📋 一键复制收款信息</button>' +
+            // 金额醒目
+            '<div style="font-size:1.1rem;color:var(--earth-brown);font-weight:bold;margin-bottom:0.8rem;">' +
+            '<span style="color:var(--text-light);font-size:0.8rem;">应付金额</span><br>¥ ' + total.toFixed(2) + '</div>' +
+            // 操作引导 - 支付宝
+            '<div style="background:#e6f0ff;border:1px solid #91caff;border-radius:8px;padding:0.75rem;text-align:left;font-size:0.78rem;line-height:1.8;margin-bottom:0.5rem;">' +
+            '<div style="font-weight:700;color:#1677ff;margin-bottom:0.3rem;font-size:0.85rem;">📱 支付宝扫码支付流程</div>' +
+            '<div>① 打开手机支付宝 <strong>扫一扫</strong>，扫描上方二维码</div>' +
+            '<div>② 支付宝将识别银行卡号 <strong>' + bank.accountNumber + '</strong></div>' +
+            '<div>③ 支付宝内点击 <strong>「转账 → 转到银行卡」</strong></div>' +
+            '<div>④ 填入金额 <strong>¥' + total.toFixed(2) + '</strong> 完成转账</div>' +
+            '<div style="color:#888;margin-top:0.3rem;">💡 也可复制收款信息 → 打开手机银行APP完成转账</div>' +
             '</div>' +
-            '<div style="margin-top:0.5rem;background:#e8f4ff;border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:#0d47a1;text-align:left;">' +
-            '💡 <strong>电脑端提示：</strong>用手机支付宝扫描二维码查看转账信息，或复制收款信息到手机银行 APP 完成转账。支付完成后点击下方「已完成支付」。</div>' +
+            // 银行账户卡片
+            bankCardHtml +
+            // 复制按钮
+            '<div style="margin-top:0.6rem;">' + copyBtnHtml + '</div>' +
             '</div>';
     } else if (method === 'bank') {
-        var bank = getBankAccountInfo();
         area.innerHTML =
-            '<div style="text-align:center;padding:1rem;width:100%;">' +
-            '<div style="background:var(--cream);border-radius:10px;padding:1.25rem;text-align:left;font-size:0.85rem;line-height:2;margin-bottom:0.75rem;">' +
-            '<div><strong>开户行：</strong>' + bank.bankName + '</div>' +
-            '<div><strong>户名：</strong>' + bank.accountName + '</div>' +
-            '<div><strong>账号：</strong>' + bank.accountNumber + '</div>' +
-            '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px dashed #ccc;font-size:0.75rem;color:var(--text-light);">' +
-            '<strong>转账附言：</strong>' + orderId + '</div>' +
+            '<div style="text-align:center;padding:0.5rem 0;">' +
+            // 银行账户卡片（银行转账模式放在顶部）
+            '<div style="background:var(--cream);border-radius:10px;padding:1.25rem;text-align:left;font-size:0.85rem;line-height:2.2;margin-bottom:0.75rem;">' +
+            '<div style="font-weight:700;color:var(--primary-green);margin-bottom:0.5rem;font-size:0.9rem;">🏦 银行转账收款账户</div>' +
+            '<div style="display:flex;justify-content:space-between;"><span>开户行</span><span style="font-weight:600;">' + bank.bankName + '</span></div>' +
+            '<div style="display:flex;justify-content:space-between;"><span>户名</span><span style="font-weight:600;">' + bank.accountName + '</span></div>' +
+            '<div style="display:flex;justify-content:space-between;"><span>账号</span><span style="font-family:monospace;font-weight:700;color:var(--earth-brown);font-size:0.95rem;">' + bank.accountNumber + '</span></div>' +
+            '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px dashed #ccc;font-size:0.78rem;color:var(--text-light);display:flex;justify-content:space-between;">' +
+            '<span>转账附言</span><span style="font-family:monospace;font-weight:600;">' + orderId + '</span></div>' +
+            '<div style="margin-top:0.4rem;font-size:0.78rem;color:var(--earth-brown);text-align:right;font-weight:bold;">' +
+            '转账金额：¥ ' + total.toFixed(2) + '</div>' +
             '</div>' +
+            // QR 码（用于手机银行APP扫码识别）
             '<div style="margin-bottom:0.5rem;">' +
-            '<button onclick="copyBankInfo(\'' + bank.bankName.replace(/'/g, "\\\'") + '\',\'' + bank.accountName.replace(/'/g, "\\\'") + '\',\'' + bank.accountNumber.replace(/'/g, "\\\'") + '\',\'' + orderId + '\')" style="padding:0.5rem 1.5rem;background:var(--primary-green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;" onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">📋 一键复制收款信息</button>' +
+            generatePaymentQRHtml(orderId, total) +
             '</div>' +
-            '<div style="background:#f0f7e8;border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:var(--primary-green);text-align:left;">' +
-            '💡 转账完成后请点击下方「已完成支付」按钮，我们的工作人员将核实到账情况。</div>' +
+            '<div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.5rem;">📱 用手机银行APP扫描上方二维码，自动填入转账信息</div>' +
+            // 操作引导 - 银行APP
+            '<div style="background:#f5f5f0;border:1px solid #d9d9d9;border-radius:8px;padding:0.75rem;text-align:left;font-size:0.78rem;line-height:1.8;margin-bottom:0.5rem;">' +
+            '<div style="font-weight:700;color:var(--text-dark);margin-bottom:0.3rem;">📱 手机银行APP转账步骤</div>' +
+            '<div>① 打开<strong>工商银行</strong>或其他银行APP</div>' +
+            '<div>② 选择 <strong>「转账汇款」</strong></div>' +
+            '<div>③ 扫描上方二维码自动填入账号信息</div>' +
+            '<div>④ 确认金额 <strong>¥' + total.toFixed(2) + '</strong> 后完成转账</div>' +
+            '</div>' +
+            // 复制按钮
+            '<div>' + copyBtnHtml + '</div>' +
             '</div>';
     }
 
-    // 存储当前支付方式
     window._currentPaymentMethod = method;
 }
 

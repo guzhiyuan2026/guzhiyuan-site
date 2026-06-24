@@ -399,6 +399,14 @@ window._paymentPollingTimer = null;
 window._paymentPollingMax = 100; // 最多轮询100次（约5分钟）
 window._paymentPollingCount = 0;
 
+// ==================== 设备检测 ====================
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+function isWeChatBrowser() {
+    return /MicroMessenger/i.test(navigator.userAgent);
+}
+
 // ==================== 支付二维码生成 ====================
 
 /**
@@ -620,10 +628,10 @@ function fallbackCopy(text) {
     document.body.removeChild(textarea);
 }
 
-// ==================== 支付弹窗 ====================
+// ==================== 统一无感支付弹窗（仿美团外卖） ====================
 
 /**
- * 显示支付选择弹窗
+ * 显示统一支付弹窗 — 无需选择支付方式，一键直接支付
  * @param {Object} order - 订单信息
  * @param {Array} cart - 购物车商品
  * @param {number} total - 总金额
@@ -638,8 +646,12 @@ function showPaymentModal(order, cart, total, name, phone) {
             '</div>';
     }).join('');
 
-    // 构建支付弹窗HTML
+    var isMobile = isMobileDevice();
+    var isWeChat = isWeChatBrowser();
+    var deviceLabel = isWeChat ? '微信内支付 · 一键确认' : (isMobile ? '手机支付 · 自动唤起微信' : '请使用手机微信扫码支付');
+
     var paymentHtml =
+        // 订单摘要
         '<div style="text-align:left;background:#fafaf7;border-radius:10px;padding:1rem;margin-bottom:1rem;">' +
         '<div style="font-weight:bold;color:var(--primary-green);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem;">' +
         '<span>📋</span> 订单确认</div>' +
@@ -647,22 +659,35 @@ function showPaymentModal(order, cart, total, name, phone) {
         '<div>订单编号：<span style="font-family:monospace;color:var(--primary-green);font-weight:bold;">' + order.id + '</span></div>' +
         '<div>下单时间：' + order.orderTimeDisplay + '</div>' +
         '<div style="margin-top:0.4rem;padding-top:0.4rem;border-top:1px dashed #ddd;">' + itemsSummary + '</div>' +
-        '<div style="margin-top:0.5rem;text-align:right;font-size:1.1rem;font-weight:bold;color:var(--earth-brown);">应付金额：¥ ' + total.toFixed(2) + '</div>' +
         '</div></div>' +
 
-        // 支付方式选择
-        '<div style="text-align:left;margin-bottom:0.5rem;font-weight:600;font-size:0.9rem;color:var(--text-dark);">选择支付方式：</div>' +
-        '<div class="payment-methods" id="payment-methods" style="margin-bottom:1rem;">' +
-        '<div class="payment-method-option selected" data-method="wechat" onclick="selectPaymentMethod(\'wechat\')">' +
-        '<span class="pm-icon">💚</span>微信支付</div>' +
-        '<div class="payment-method-option" data-method="alipay" onclick="selectPaymentMethod(\'alipay\')">' +
-        '<span class="pm-icon">💙</span>支付宝</div>' +
-        '<div class="payment-method-option" data-method="bank" onclick="selectPaymentMethod(\'bank\')">' +
-        '<span class="pm-icon">🏦</span>银行转账</div>' +
+        // 金额醒目展示
+        '<div style="text-align:center;margin-bottom:1rem;">' +
+        '<div style="font-size:0.8rem;color:var(--text-light);">应付金额</div>' +
+        '<div style="font-size:2rem;font-weight:700;color:#e53935;line-height:1.4;">¥ ' + total.toFixed(2) + '</div>' +
+        '<div style="font-size:0.75rem;color:#999;margin-top:0.2rem;">' + deviceLabel + '</div>' +
         '</div>' +
 
         // 支付内容区
-        '<div id="payment-content-area" style="min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;"></div>';
+        '<div id="unified-pay-area" style="min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;">' +
+        // 加载状态
+        '<div id="unified-pay-loading" style="text-align:center;padding:1.5rem 0;color:#999;">' +
+        '<div style="font-size:2rem;margin-bottom:0.5rem;">⏳</div>' +
+        '<div>正在连接支付网关...</div>' +
+        '</div>' +
+        // 二维码容器
+        '<div id="unified-pay-qr" style="display:none;text-align:center;"></div>' +
+        // 手机端提示 + 唤起按钮
+        '<div id="unified-pay-mobile" style="display:none;text-align:center;margin-bottom:0.8rem;">' +
+        '<div style="font-size:2.5rem;margin-bottom:0.3rem;">💚</div>' +
+        '<div style="font-size:0.95rem;font-weight:600;color:var(--primary-green);margin-bottom:0.5rem;">正在打开微信支付...</div>' +
+        '<button onclick="tryOpenWeChatPay()" ' +
+        'style="display:inline-block;padding:0.7rem 2rem;background:#07c160;color:#fff;border:none;border-radius:24px;font-size:0.95rem;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(7,193,96,0.3);transition:all 0.3s;" ' +
+        'onmouseover="this.style.transform=\'scale(1.03)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
+        '💚 使用微信支付</button>' +
+        '<div style="font-size:0.72rem;color:#999;margin-top:0.5rem;">如未自动跳转，可点击上方按钮或扫码支付</div>' +
+        '</div>' +
+        '</div>';
 
     var modal = showModal({
         icon: '💳',
@@ -673,21 +698,6 @@ function showPaymentModal(order, cart, total, name, phone) {
             { text: '暂不支付', type: 'default', onClick: function(close) {
                 stopPaymentPolling();
                 window.location.href = 'order-history.html';
-            }},
-            { text: '已完成支付 ✓', type: 'primary', onClick: async function(close) {
-                // 如果有 PayJS 订单，先查询支付状态
-                if (window._currentPayJSOrderId) {
-                    var checkResult = await checkPayJSOrder(window._currentPayJSOrderId);
-                    if (checkResult.code === 200 && checkResult.data && checkResult.data.paid) {
-                        stopPaymentPolling();
-                        return processPaymentCompletion(order, total, close);
-                    } else {
-                        showNotification('尚未检测到支付记录，请确认已完成扫码支付后再点此按钮', 'warning');
-                        return true; // 保持弹窗打开
-                    }
-                }
-                stopPaymentPolling();
-                return processPaymentCompletion(order, total, close);
             }}
         ],
         onClose: function() {
@@ -696,187 +706,193 @@ function showPaymentModal(order, cart, total, name, phone) {
         }
     });
 
-    // 初始化支付内容（默认微信支付）
-    setTimeout(function() {
-        showPaymentContent('wechat', total, order.id);
-    }, 150);
-
-    // 存储订单引用到window
+    // 存储引用
     window._currentPaymentOrder = order;
     window._currentPaymentTotal = total;
     window._currentPaymentModal = modal;
 
-    // 支付弹窗使用宽屏样式
+    // 启动统一支付流程
+    setTimeout(function() {
+        unifiedPaymentFlow(order.id, total, isMobile, isWeChat);
+    }, 200);
+
+    // 宽屏样式
     var overlay = document.querySelector('.g-modal-overlay');
     if (overlay) overlay.classList.add('payment-wide');
 }
 
 /**
- * 选择支付方式
+ * 尝试打开微信支付（手机端无感拉起）
  */
-function selectPaymentMethod(method) {
-    // 更新选中状态
-    var options = document.querySelectorAll('.payment-method-option');
-    options.forEach(function(opt) {
-        if (opt.getAttribute('data-method') === method) {
-            opt.classList.add('selected');
-        } else {
-            opt.classList.remove('selected');
-        }
-    });
+function tryOpenWeChatPay() {
+    if (window._currentPayCodeUrl) {
+        // iframe 方式尝试唤起微信（不离开当前页面）
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = window._currentPayCodeUrl;
+        document.body.appendChild(iframe);
+        setTimeout(function() {
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }, 3000);
 
-    // 停止之前的轮询
-    stopPaymentPolling();
-    window._currentPayJSOrderId = null;
-
-    showPaymentContent(method, window._currentPaymentTotal || 0, window._currentPaymentOrder ? window._currentPaymentOrder.id : '');
+        showNotification('正在打开微信支付...', 'success');
+    }
 }
 
 /**
- * 显示支付内容（异步加载 PayJS 二维码）
+ * 统一支付流程 — 美团式直付
+ * 桌面端：显示微信扫码二维码
+ * 手机端：自动唤起微信 + 二维码备选
  */
-function showPaymentContent(method, total, orderId) {
-    var area = document.getElementById('payment-content-area');
-    if (!area) return;
+function unifiedPaymentFlow(orderId, total, isMobile, isWeChat) {
+    createPayJSOrder(orderId, total, '古芝源订单-' + orderId).then(function(result) {
+        var loading = document.getElementById('unified-pay-loading');
+        var qrContainer = document.getElementById('unified-pay-qr');
+        var mobileHint = document.getElementById('unified-pay-mobile');
 
-    var bank = getBankAccountInfo();
+        if (loading) loading.style.display = 'none';
 
-    // 银行账户信息卡片（支付宝/银行转账共用）
-    var bankCardHtml =
-        '<div style="background:var(--cream);border-radius:10px;padding:1rem;margin-top:0.8rem;text-align:left;font-size:0.82rem;line-height:2;">' +
-        '<div style="font-weight:600;color:var(--primary-green);margin-bottom:0.3rem;font-size:0.85rem;">🏦 收款银行账户</div>' +
-        '<div style="display:flex;justify-content:space-between;"><span>开户行</span><span style="font-weight:600;">' + bank.bankName + '</span></div>' +
-        '<div style="display:flex;justify-content:space-between;"><span>户名</span><span style="font-weight:600;">' + bank.accountName + '</span></div>' +
-        '<div style="display:flex;justify-content:space-between;"><span>账号</span><span style="font-family:monospace;font-weight:700;color:var(--earth-brown);font-size:0.9rem;">' + bank.accountNumber + '</span></div>' +
-        '</div>';
+        if (result.code === 200 && result.data) {
+            // PayJS 下单成功
+            window._currentPayJSOrderId = result.data.payjs_order_id;
+            window._currentPayCodeUrl = result.data.code_url;
+            var qrcodeImg = result.data.qrcode;
 
-    // 一键复制按钮
-    var copyBtnHtml =
-        '<button onclick="copyBankInfo(\'' + bank.bankName.replace(/'/g, "\\\'") + '\',\'' + bank.accountName.replace(/'/g, "\\\'") + '\',\'' + bank.accountNumber.replace(/'/g, "\\\'") + '\',\'' + orderId + '\')" ' +
-        'style="padding:0.5rem 1.5rem;background:var(--primary-green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:all 0.3s;width:100%;" ' +
-        'onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">📋 一键复制收款信息</button>';
+            if (isMobile || isWeChat) {
+                // === 手机端 / 微信内：自动唤起 + QR备选 ===
+                if (mobileHint) mobileHint.style.display = '';
 
-    if (method === 'wechat') {
-        // ===== 微信支付：PayJS 直接扫码支付 =====
-        area.innerHTML =
-            '<div style="text-align:center;padding:0.5rem 0;">' +
-            // 加载状态
-            '<div id="payjs-loading" style="padding:2rem 0;color:#999;">' +
-            '<div style="font-size:2rem;margin-bottom:0.5rem;">⏳</div>' +
-            '<div>正在连接支付网关...</div>' +
-            '</div>' +
-            // 二维码容器（异步填充）
-            '<div id="payjs-qr-container" style="display:none;"></div>' +
-            // 金额显示
-            '<div style="margin-top:0.8rem;">' +
-            '<div style="font-size:1.1rem;color:var(--earth-brown);font-weight:bold;">' +
-            '<span style="color:var(--text-light);font-size:0.8rem;">应付金额</span><br>¥ ' + total.toFixed(2) + '</div>' +
-            '</div>' +
-            // 提示
-            '<div id="payjs-hint" style="background:#f0fff0;border:1px solid #b7eb8f;border-radius:8px;padding:0.75rem;text-align:left;font-size:0.78rem;line-height:1.8;margin-top:0.5rem;">' +
-            '<div style="font-weight:700;color:#52c41a;margin-bottom:0.3rem;font-size:0.85rem;">📱 微信扫码支付流程</div>' +
-            '<div>① 打开手机微信 <strong>扫一扫</strong>，扫描上方二维码</div>' +
-            '<div>② 微信将自动跳转到支付页面，确认金额后完成支付</div>' +
-            '<div>③ 支付成功后，系统将自动确认订单</div>' +
-            '<div style="color:#faad14;margin-top:0.3rem;">⚠️ 二维码有效期 2 小时，请尽快完成支付</div>' +
-            '</div>' +
-            '</div>';
-
-        // 异步加载 PayJS 二维码
-        generatePaymentQRHtmlAsync(orderId, total, 'wechat').then(function(qrHtml) {
-            var container = document.getElementById('payjs-qr-container');
-            var loading = document.getElementById('payjs-loading');
-            var hint = document.getElementById('payjs-hint');
-
-            if (container) {
-                container.innerHTML = qrHtml;
-                container.style.display = '';
-            }
-            if (loading) loading.style.display = 'none';
-
-            // 如果 PayJS 下单成功，开启自动轮询
-            if (window._currentPayJSOrderId) {
-                // 更新提示
-                if (hint) {
-                    hint.innerHTML = hint.innerHTML.replace('支付成功后，系统将自动确认订单', '支付成功后，<strong style="color:#52c41a;">系统将在 3 秒内自动确认</strong>订单');
+                // 显示备选二维码（缩小尺寸）
+                if (qrContainer) {
+                    qrContainer.style.display = '';
+                    qrContainer.innerHTML =
+                        '<div style="margin-top:0.3rem;">' +
+                        '<div style="font-size:0.75rem;color:#999;margin-bottom:0.3rem;">— 也可扫码支付 —</div>' +
+                        '<img src="' + qrcodeImg + '" width="200" height="200" alt="支付二维码" ' +
+                        'style="border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.1);">' +
+                        '<div style="font-size:0.7rem;color:#aaa;margin-top:0.3rem;">支付成功后自动确认</div>' +
+                        '</div>';
                 }
 
-                startPaymentPolling(
-                    window._currentPayJSOrderId,
-                    // 支付成功回调
-                    function(payData) {
-                        var order = window._currentPaymentOrder;
-                        var payTotal = window._currentPaymentTotal;
-                        var modal = window._currentPaymentModal;
-                        if (order && modal) {
-                            processPaymentCompletion(order, payTotal, function() { modal.close(); });
-                        }
-                    },
-                    // 超时回调
-                    function() {
-                        var hint = document.getElementById('payjs-hint');
-                        if (hint) {
-                            hint.innerHTML =
-                                '<div style="font-weight:700;color:#faad14;margin-bottom:0.3rem;font-size:0.85rem;">⏰ 二维码已超时</div>' +
-                                '<div>请点击右上角「<strong>已完成支付</strong>」按钮手动确认，或关闭弹窗后重新下单</div>';
-                            hint.style.background = '#fffbe6';
-                            hint.style.borderColor = '#ffe58f';
-                        }
-                    }
-                );
+                // 自动尝试唤起微信（非微信浏览器内）
+                if (!isWeChat) {
+                    setTimeout(function() {
+                        tryOpenWeChatPay();
+                    }, 800);
+                }
+            } else {
+                // === 桌面端：清晰的大二维码 ===
+                if (qrContainer) {
+                    qrContainer.style.display = '';
+                    qrContainer.innerHTML =
+                        '<div style="background:#fff;display:inline-block;padding:0.85rem;border-radius:14px;box-shadow:0 3px 16px rgba(0,0,0,0.12);">' +
+                        '<img src="' + qrcodeImg + '" width="260" height="260" alt="微信支付二维码" style="border-radius:8px;display:block;">' +
+                        '<div style="text-align:center;margin-top:0.5rem;font-size:0.8rem;color:var(--primary-green);font-weight:600;">' +
+                        '<span style="font-size:1.1rem;">📱</span> 请使用手机微信扫码支付</div>' +
+                        '<div style="text-align:center;margin-top:0.15rem;font-size:0.7rem;color:#999;">支付成功后 3 秒内自动确认</div>' +
+                        '</div>';
+                }
             }
-        });
 
-    } else if (method === 'alipay') {
-        // ===== 支付宝：PayJS 备选（如失败则显示银行转账二维码）=====
-        var qrPromise = generatePaymentQRHtmlAsync(orderId, total, 'alipay');
-        area.innerHTML =
-            '<div style="text-align:center;padding:0.5rem 0;">' +
-            '<div id="alipay-qr-container" style="margin-bottom:0.5rem;">加载中...</div>' +
-            '<div style="font-size:1.1rem;color:var(--earth-brown);font-weight:bold;margin-bottom:0.8rem;">' +
-            '<span style="color:var(--text-light);font-size:0.8rem;">应付金额</span><br>¥ ' + total.toFixed(2) + '</div>' +
-            '<div style="background:#e6f0ff;border:1px solid #91caff;border-radius:8px;padding:0.75rem;text-align:left;font-size:0.78rem;line-height:1.8;margin-bottom:0.5rem;">' +
-            '<div style="font-weight:700;color:#1677ff;margin-bottom:0.3rem;font-size:0.85rem;">📱 支付宝扫码支付</div>' +
-            '<div>① 打开支付宝 <strong>扫一扫</strong>，扫描上方二维码</div>' +
-            '<div>② 支付宝识别银行卡号后，点击 <strong>「转账 → 转到银行卡」</strong></div>' +
-            '<div>③ 填入金额 <strong>¥' + total.toFixed(2) + '</strong>，确认后完成支付</div>' +
-            '</div>' +
-            bankCardHtml +
-            '<div style="margin-top:0.6rem;">' + copyBtnHtml + '</div>' +
-            '</div>';
-        qrPromise.then(function(html) {
-            var c = document.getElementById('alipay-qr-container');
-            if (c) c.innerHTML = html;
-        });
+            // 开始轮询支付状态
+            startPaymentPolling(
+                result.data.payjs_order_id,
+                function(payData) {
+                    var order = window._currentPaymentOrder;
+                    var payTotal = window._currentPaymentTotal;
+                    var modal = window._currentPaymentModal;
+                    if (order && modal) {
+                        processPaymentCompletion(order, payTotal, function() { modal.close(); });
+                    }
+                },
+                function() {
+                    // 超时
+                    var area = document.getElementById('unified-pay-area');
+                    if (area) {
+                        area.innerHTML +=
+                            '<div id="pay-timeout-hint" style="margin-top:0.5rem;padding:0.6rem;background:#fffbe6;border:1px solid #ffe58f;border-radius:6px;font-size:0.78rem;color:#faad14;text-align:center;">' +
+                            '⏰ 二维码已过期，请关闭弹窗后重新下单</div>';
+                    }
+                }
+            );
 
-    } else if (method === 'bank') {
-        // ===== 银行转账 =====
-        area.innerHTML =
-            '<div style="text-align:center;padding:0.5rem 0;">' +
-            '<div style="background:var(--cream);border-radius:10px;padding:1.25rem;text-align:left;font-size:0.85rem;line-height:2.2;margin-bottom:0.75rem;">' +
-            '<div style="font-weight:700;color:var(--primary-green);margin-bottom:0.5rem;font-size:0.9rem;">🏦 银行转账收款账户</div>' +
+        } else {
+            // PayJS 不可用 → 降级为银行转账
+            showBankTransferFallback(orderId, total);
+        }
+    }).catch(function(e) {
+        console.error('PayJS 下单异常:', e);
+        showBankTransferFallback(orderId, total);
+    });
+}
+
+/**
+ * PayJS 不可用时降级为银行转账支付
+ */
+function showBankTransferFallback(orderId, total) {
+    var loading = document.getElementById('unified-pay-loading');
+    var qrContainer = document.getElementById('unified-pay-qr');
+    var mobileHint = document.getElementById('unified-pay-mobile');
+
+    if (loading) loading.style.display = 'none';
+    if (mobileHint) mobileHint.style.display = 'none';
+
+    var bank = getBankAccountInfo();
+    var payData = encodeURIComponent(
+        '卡号=' + bank.accountNumber +
+        '&户名=' + bank.accountName +
+        '&银行=' + bank.bankName +
+        '&金额=' + total.toFixed(2) +
+        '&订单=' + orderId +
+        '&用途=货款'
+    );
+    var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + payData + '&margin=10&format=png';
+
+    if (qrContainer) {
+        qrContainer.style.display = '';
+        qrContainer.innerHTML =
+            '<div style="text-align:center;">' +
+            // 降级提示
+            '<div style="background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.8rem;font-size:0.78rem;color:#ad6800;text-align:center;">' +
+            '⚠️ 支付网关暂时不可用，请通过银行转账完成支付</div>' +
+            // 银行账户信息
+            '<div style="background:var(--cream);border-radius:10px;padding:1rem;text-align:left;font-size:0.82rem;line-height:2;margin-bottom:0.8rem;">' +
+            '<div style="font-weight:600;color:var(--primary-green);margin-bottom:0.3rem;">🏦 收款银行账户</div>' +
             '<div style="display:flex;justify-content:space-between;"><span>开户行</span><span style="font-weight:600;">' + bank.bankName + '</span></div>' +
             '<div style="display:flex;justify-content:space-between;"><span>户名</span><span style="font-weight:600;">' + bank.accountName + '</span></div>' +
-            '<div style="display:flex;justify-content:space-between;"><span>账号</span><span style="font-family:monospace;font-weight:700;color:var(--earth-brown);font-size:0.95rem;">' + bank.accountNumber + '</span></div>' +
-            '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px dashed #ccc;font-size:0.78rem;color:var(--text-light);display:flex;justify-content:space-between;">' +
-            '<span>转账附言</span><span style="font-family:monospace;font-weight:600;">' + orderId + '</span></div>' +
-            '<div style="margin-top:0.4rem;font-size:0.78rem;color:var(--earth-brown);text-align:right;font-weight:bold;">' +
+            '<div style="display:flex;justify-content:space-between;"><span>账号</span><span style="font-family:monospace;font-weight:700;color:var(--earth-brown);">' + bank.accountNumber + '</span></div>' +
+            '<div style="margin-top:0.4rem;padding-top:0.4rem;border-top:1px dashed #ccc;font-size:0.78rem;color:var(--earth-brown);text-align:right;font-weight:bold;">' +
             '转账金额：¥ ' + total.toFixed(2) + '</div>' +
             '</div>' +
-            generatePaymentQRHtml(orderId, total) +
-            '<div style="font-size:0.78rem;color:var(--text-light);margin-top:0.5rem;">📱 用手机银行APP扫描上方二维码，自动填入转账信息</div>' +
-            '<div style="background:#f5f5f0;border:1px solid #d9d9d9;border-radius:8px;padding:0.75rem;text-align:left;font-size:0.78rem;line-height:1.8;margin-top:0.5rem;">' +
-            '<div style="font-weight:700;color:var(--text-dark);margin-bottom:0.3rem;">📱 手机银行APP转账步骤</div>' +
-            '<div>① 打开<strong>工商银行</strong>或其他银行APP</div>' +
-            '<div>② 选择 <strong>「转账汇款」</strong></div>' +
-            '<div>③ 扫描上方二维码自动填入账号信息</div>' +
-            '<div>④ 确认金额 <strong>¥' + total.toFixed(2) + '</strong> 后完成转账</div>' +
+            // QR
+            '<div style="background:#fff;display:inline-block;padding:0.5rem;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);">' +
+            '<img src="' + qrUrl + '" width="220" height="220" alt="银行转账二维码" style="border-radius:6px;display:block;">' +
             '</div>' +
-            '<div style="margin-top:0.6rem;">' + copyBtnHtml + '</div>' +
+            '<div style="font-size:0.72rem;color:#999;margin-top:0.3rem;">📱 手机银行APP扫码可自动填入转账信息</div>' +
+            // 复制按钮
+            '<button onclick="copyBankInfo(\'' + bank.bankName.replace(/'/g, "\\\'") + '\',\'' + bank.accountName.replace(/'/g, "\\\'") + '\',\'' + bank.accountNumber.replace(/'/g, "\\\'") + '\',\'' + orderId + '\')" ' +
+            'style="margin-top:0.6rem;padding:0.5rem 1.5rem;background:var(--primary-green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;width:80%;max-width:280px;">📋 一键复制收款信息</button>' +
             '</div>';
     }
 
-    window._currentPaymentMethod = method;
+    // 银行转账模式（手动确认）
+    window._currentPaymentMethod = 'bank';
+
+    // 更新底部按钮
+    updateModalButtonsForBankTransfer(orderId, total);
+}
+
+/**
+ * 银行转账模式下更新弹窗按钮（添加"已完成转账"按钮）
+ */
+function updateModalButtonsForBankTransfer(orderId, total) {
+    var footer = document.querySelector('.g-modal-footer');
+    if (!footer) return;
+
+    var order = window._currentPaymentOrder;
+    footer.innerHTML =
+        '<button class="btn-modal-default" onclick="stopPaymentPolling();window.location.href=\'order-history.html\'">暂不支付</button>' +
+        '<button class="btn-modal-primary" onclick="(function(){var o=window._currentPaymentOrder;var t=window._currentPaymentTotal;var m=window._currentPaymentModal;processPaymentCompletion(o,t,function(){m.close();});})()">已完成转账 ✓</button>';
 }
 
 /**

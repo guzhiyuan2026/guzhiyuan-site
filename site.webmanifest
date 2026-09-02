@@ -1,0 +1,21 @@
+{
+  "name": "贵州古芝源",
+  "short_name": "古芝源",
+  "description": "贵州古芝源品牌管理有限公司——传承古法·芝养人生",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#F39423",
+  "lang": "zh-CN",
+  "icons": [
+    {"src": "favicon-16.png", "sizes": "16x16", "type": "image/png"},
+    {"src": "favicon-32.png", "sizes": "32x32", "type": "image/png"},
+    {"src": "favicon-48.png", "sizes": "48x48", "type": "image/png"},
+    {"src": "favicon-96.png", "sizes": "96x96", "type": "image/png"},
+    {"src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png"},
+    {"src": "android-chrome-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "android-chrome-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

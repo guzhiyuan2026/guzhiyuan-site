@@ -1,4 +1,34 @@
+# robots.txt for www.gzguzhiyuan.com
+# 贵州古芝源品牌管理有限公司
+
+# ---------- 搜索引擎爬虫 ----------
 User-agent: *
 Allow: /
+Allow: /images/
+Allow: /styles.css
+Allow: /nav.js
+Disallow: /cart.html
+Disallow: /order-history.html
+Disallow: /admin/
 
+# ---------- 图片爬虫（保障 OG 分享图被抓取）----------
+User-agent: Baiduspider-image
+Allow: /images/
+
+User-agent: Googlebot-Image
+Allow: /images/
+
+User-agent: Sogou web spider
+Allow: /
+Allow: /images/
+
+User-agent: 360Spider
+Allow: /
+Allow: /images/
+
+User-agent: Bytespider
+Allow: /
+Allow: /images/
+
+# ---------- 站点地图 ----------
 Sitemap: https://www.gzguzhiyuan.com/sitemap.xml

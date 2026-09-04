@@ -381,9 +381,10 @@
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
-                <span class="logo-icon">芝</span>
-                古芝源
+            <a href="index.html" class="logo" id="logo-link">
+                <img class="logo-img" id="logo-img" src="" alt="" style="display:none;">
+                <span class="logo-icon" id="logo-icon">芝</span>
+                <span id="logo-text">古芝源</span>
             </a>
             <ul class="nav-links">
                 <li><a href="index.html">首页</a></li>
@@ -475,6 +476,17 @@
     </footer>
 
     <script src="cart.js?v=20260624"></script>
+    <script>
+        // 加载站点设置 (含 LOGO)
+        fetch('content/site.json').then(function(r){return r.json();}).then(function(co){
+            var li = document.getElementById('logo-img');
+            if (li && co.logoImage) { li.src = co.logoImage; li.style.display = ''; li.onerror = function(){ li.style.display = 'none'; var lc2 = document.getElementById('logo-icon'); if (lc2) lc2.style.display = ''; }; }
+            var lc = document.getElementById('logo-icon');
+            if (lc && co.logoIcon) lc.textContent = co.logoIcon;
+            var lt = document.getElementById('logo-text');
+            if (lt) lt.textContent = co.shortName || '古芝源';
+        }).catch(function(){});
+    </script>
     <script>
         // 加载购物车
         function loadCart() {

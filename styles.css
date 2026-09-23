@@ -79,9 +79,13 @@ body {
 }
 
 .logo-img {
+    height: 45px;
     max-height: 45px;
     max-width: 180px;
+    width: auto;
     object-fit: contain;
+    /* 方形 PNG 渲染为 45x45；非方形素材自动 contain，绝不拉伸变形 */
+    flex-shrink: 0;
 }
 
 .logo-text {
@@ -89,6 +93,25 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* 移动端 LOGO 适配：整体收紧，避免与汉堡菜单争抢横向空间 */
+@media (max-width: 768px) {
+    .logo {
+        font-size: 1.4rem;
+        gap: 8px;
+    }
+
+    .logo-img {
+        height: 38px;
+        max-height: 38px;
+    }
+
+    .logo-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 1.25rem;
+    }
 }
 
 .nav-links {

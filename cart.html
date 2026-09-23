@@ -478,13 +478,22 @@
     <script src="cart.js?v=20260624"></script>
     <script>
         // 加载站点设置 (含 LOGO)
-        fetch('content/site.json').then(function(r){return r.json();}).then(function(co){
+        fetch('content/site.json').then(function(r){return r.json();}).then(function(site){
+            var co = site.company || {};
             var li = document.getElementById('logo-img');
-            if (li && co.logoImage) { li.src = co.logoImage; li.style.display = ''; li.onerror = function(){ li.style.display = 'none'; var lc2 = document.getElementById('logo-icon'); if (lc2) lc2.style.display = ''; }; }
             var lc = document.getElementById('logo-icon');
-            if (lc && co.logoIcon) lc.textContent = co.logoIcon;
             var lt = document.getElementById('logo-text');
-            if (lt) lt.textContent = co.shortName || '古芝源';
+            if (lt) lt.textContent = co.shortName || co.name || '古芝源';
+            if (lc && co.logoIcon) lc.textContent = co.logoIcon;
+            if (li && co.logoImage) {
+                li.src = co.logoImage;
+                li.style.display = '';
+                if (lc) lc.style.display = 'none';
+                li.onerror = function(){
+                    li.style.display = 'none';
+                    if (lc) lc.style.display = '';
+                };
+            }
         }).catch(function(){});
     </script>
     <script>

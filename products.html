@@ -69,6 +69,37 @@
             justify-content: center;
             font-size: 4rem;
             color: white;
+            overflow: hidden;
+        }
+        .product-image img.product-image-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        /* 分类色带：直观区分产品系列 */
+        .product-card .cat-band {
+            height: 4px;
+            width: 100%;
+        }
+        .product-meta {
+            color: #8a8a8a;
+            font-size: 0.88rem;
+            margin-bottom: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .product-meta span { white-space: nowrap; }
+        .disclaimer {
+            margin-top: 2.5rem;
+            font-size: 0.9rem;
+            color: #7a7a7a;
+            line-height: 1.9;
+            padding: 1rem 1.3rem;
+            border-left: 3px solid var(--gold, #c9a227);
+            background: var(--cream, #faf6ee);
+            border-radius: 4px;
         }
         .product-info { padding: 2rem; }
         .product-info h3 {
@@ -205,9 +236,20 @@
             // === 收集所有分类 ===
             var categories = ['all'];
             var catNames = { all: '全部产品' };
+            // 分类中文名
+            var CAT_LABEL = { herbs: '道地药材', tea: '养生茶饮', formula: '汉方制剂', gift: '健康礼品', healthcare: '健康产品', wine: '养生酒' };
+            // 分类主题色（用于图片区渐变与顶部色带）
+            var CAT_COLOR = {
+                herbs:   ['#2d5016', '#6b9b3a'],
+                formula: ['#8b6f2a', '#d4a94e'],
+                wine:    ['#7a1f2b', '#b8443c'],
+                tea:     ['#c9662a', '#e8a04f'],
+                gift:    ['#8e2f3d', '#c96a4e']
+            };
+            var CAT_DEFAULT = ['#2d5016', '#6b9b3a'];
             items.forEach(function(p) {
                 if (p.category && !catNames[p.category]) {
-                    catNames[p.category] = { herbs: '道地药材', tea: '养生茶饮', formula: '汉方制剂', gift: '健康礼品', healthcare: '健康产品' }[p.category] || p.category;
+                    catNames[p.category] = CAT_LABEL[p.category] || p.category;
                     categories.push(p.category);
                 }
             });
@@ -229,8 +271,17 @@
                 html += '<div class="products-grid" id="products-grid">';
                 items.forEach(function(p) {
                     var display = (activeCat === 'all' || p.category === activeCat) ? '' : 'display:none;';
+                    var colors = CAT_COLOR[p.category] || CAT_DEFAULT;
                     html += '<div class="product-card fade-in" data-category="' + (p.category || '') + '" style="' + display + '" onclick="location.href=\'product-detail.html?id=' + (p.id || '') + '\'">';
-                    html += '<div class="product-image">' + (p.icon || '🌿') + '</div>';
+                    html += '<div class="cat-band" style="background:linear-gradient(90deg,' + colors[0] + ',' + colors[1] + ')"></div>';
+                    // 有真实产品图则显示图片，否则显示 emoji 图标
+                    if (p.image) {
+                        html += '<div class="product-image" style="background:#fff">'
+                            + '<img class="product-image-img" src="' + p.image + '" alt="' + (p.name || '产品图片') + '" loading="lazy">'
+                            + '</div>';
+                    } else {
+                        html += '<div class="product-image" style="background:linear-gradient(135deg,' + colors[0] + ',' + colors[1] + ')">' + (p.icon || '🌿') + '</div>';
+                    }
                     html += '<div class="product-info">';
                     html += '<h3>' + p.name + '</h3>';
                     if (p.tags && p.tags.length > 0) {
@@ -239,11 +290,29 @@
                         html += '</div>';
                     }
                     html += '<p>' + (p.description || '') + '</p>';
-                    html += '<div class="product-price">' + (p.price || '') + ' / ' + (p.unit || '') + '</div>';
+                    // 规格 / 产地 元信息
+                    var metaBits = [];
+                    if (p.spec) metaBits.push('规格：' + p.spec);
+                    if (p.origin) metaBits.push('产地：' + p.origin);
+                    if (metaBits.length > 0) {
+                        html += '<div class="product-meta">';
+                        metaBits.forEach(function(m) { html += '<span>' + m + '</span>'; });
+                        html += '</div>';
+                    }
+                    // 价格：仅当以 ¥ 开头时才附带单位
+                    var priceText = p.price || '';
+                    if (priceText.indexOf('¥') === 0 && p.unit) priceText += ' / ' + p.unit;
+                    html += '<div class="product-price">' + priceText + '</div>';
                     html += '<span class="product-button">查看详情</span>';
                     html += '</div></div>';
                 });
                 html += '</div>';
+
+                // 免责声明（食品/食药同源类产品合规提示）
+                html += '<p class="disclaimer">'
+                    + '本页所载产品信息仅供参考。以上产品为食品及药食同源类产品，不能替代药品，不用于疾病的预防、治疗或诊断。'
+                    + '孕妇、哺乳期妇女、儿童及正在服药或有基础疾病者，请在专业人士指导下使用；具体用法、用量与禁忌以产品包装说明为准。'
+                    + '</p>';
 
                 document.getElementById('products-content').innerHTML = html;
 

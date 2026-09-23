@@ -686,7 +686,23 @@
                 // 更新产品基本信息
                 document.getElementById('product-name').textContent = currentProduct.name;
                 document.getElementById('product-subtitle').textContent = currentProduct.tags ? currentProduct.tags.join(' · ') : '';
-                document.getElementById('product-price').textContent = currentProduct.price + (currentProduct.unit ? ' / ' + currentProduct.unit : '');
+                // 价格：仅当以 ¥ 开头时才附带单位（避免"敬请咨询 / 盒"这类错误组合）
+                var pdPrice = currentProduct.price || '';
+                if (pdPrice.indexOf('¥') === 0 && currentProduct.unit) pdPrice += ' / ' + currentProduct.unit;
+                document.getElementById('product-price').textContent = pdPrice;
+
+                // 产品主图：有真实图片则显示图片，否则沿用 emoji 图标
+                var mainImageEl = document.getElementById('mainImage');
+                var thumbList = document.querySelector('.thumbnail-list');
+                if (mainImageEl) {
+                    if (currentProduct.image) {
+                        mainImageEl.innerHTML = '<img src="' + currentProduct.image + '" alt="' + currentProduct.name + '" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:10px;">';
+                        mainImageEl.style.background = '#fff';
+                        if (thumbList) thumbList.style.display = 'none';
+                    } else {
+                        mainImageEl.textContent = currentProduct.icon || '🌿';
+                    }
+                }
 
                 // 更新产品属性
                 document.getElementById('attr-name').textContent = currentProduct.name;
